@@ -1,2 +1,2 @@
 # migration-tasks
-stripped down code for normalising dates
+contains stripped down code for normalising dates
