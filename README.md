@@ -49,9 +49,5 @@ To use the app, do
 bundle install
 rake db:migrate
 
-Would normally edit the following with your local config, but no need to do this as yet as not using fedora/solr/blacklight at this point
-config/fedora.yml
-config/solr.yml
-config/blacklight.yml
 
 if not using solr and fedora wrappers, edit those out of the rake file
