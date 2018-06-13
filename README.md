@@ -9,6 +9,10 @@ this  takes as its  input parameter the path of a directory containing foxml. Al
 
 Note the script  does not actually edit the foxml files themselves.
 
+Requires:
+nokogiri installed
+if not already present, run bundle install
+
 To run 
 1) From the command line within the dlib-migration-tools folder, call rake date_manipulation_tasks:check_all_date_formats["<path to folder containing foxml>"] for minimal info  OR 
 rake date_manipulation_tasks:check_all_date_formats["<path to folder containing foxml", "more">] for expanded info 
@@ -22,4 +26,5 @@ To simply test the class or the normalisation of a particular known date format:
 
 Further Work needed
 1) This script checks the files but does not actually change them - we need to consider how and where this will happen
-2)Similar checks could be applied to other data elements which need to be in a standard format - possibly department and institution names, qualification names, qualification levels. These would be more complex because in some cases not all the data elements are present, and in my existing ingest scripts their value is in this case inferred from the value of other data elements. In other cases the data value is present but has been added into a different data element. 
+2)Similar checks could be applied to other data elements which need to be in a standard format - possibly department and institution names, qualification names, qualification levels. These would be more complex because in some cases not all the data elements are present, and in my existing ingest scripts their value is in this case inferred from the value of other data elements. In other cases the data value is present but has been added into a different data element.
+
