@@ -27,3 +27,7 @@ fits.log
 # Ignore installation dependent files
 /config/environments/development.rb
 /db/schema.rb
+
+# Ignore output files
+corrected_dates_list.txt
+corrected_dates_list_withMoreInfo.txt
