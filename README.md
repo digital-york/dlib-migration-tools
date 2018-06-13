@@ -1,53 +1,25 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
 
 This repository is a minimised non samvera/fedora app - just rake tasks to get metadata text out of foxml and put it into text files. No models, dlibhydra, authorities etc.
 
-1)date manipulation testing. 
-this will takes as its  input a text file derived from an risearch query containing a list of the current dc:date elements in the various student paper records - ie exam papers, theses, undergraduate papers, together with the pids of the fedora3 records they relate to. It then outputs a corresponding list of the dates normalised into the standard agreed format for these records (note that this format will not be the same throughout all the record types in our entire repository). If the date cannot be normalised into the expected form then the original date will be output, plus anything it was altered to, plus the pid of the record it belonged to. Such cases will be easily identifiable as everything else in the output file will be exactly the same length (and a lot shorter). 
+1)date quality checking. 
+this  takes as its  input parameter the path of a directory containing foxml. All the foxml should be at this level as the script will not recurse through subdirecties. The script will read the date and normalise it into a standard format : yyyy-mm-dd. A list of all those normalised dates which have been changed from their original format will then be output to a text file (DATE OUT :), corrected_dates_list.txt (by default at the root level, this could be changed). An additional parameter "more" can be supplied which will output the names of those foxml files with non standard date formats and the original, unnormalised dates in addition to the normalised dates (FILE: DATE IN: DATE OUT:2013). Not all dates can be normalised - for example typos where extra digits have been added, these will be listed in both output file versions, but only identifiable in the extended information by eyeballing the DATE IN: entry.
+
+Note the script  does not actually edit the foxml files themselves.
+
 To run 
-1) with default inputs and outputs to <root of app>/tmp/examdatesin.txt and  <root of app>/tmp/examdatesout.txt 
-	rake date_manipulation_tasks:check_date_normalisation
-2) with optional params for input and output files
-	rake date_manipulation_tasks:check_date_normalisation[tmp/yourinputfilename.txt,tmp/youroutputfilename.txt]
-	
-ri search used to obtain the data was 
-select $object $date 
-from <#ri>
-where  
-$object <dc:date> $date
-and ( $object <fedora-model:hasModel> <fedora:york:CModel-Thesis>
-  or $object <fedora-model:hasModel> <fedora:york:CModel-ExamPaper>
-or $object <dc:type> 'Thesis' or $object <dc:type> 'ExamPaper'
-)
-
-Ensure unlimited option is selected, and use search/replace to remove unwanted info:fedora/ part of id (or you could just leave it in, it shouldnt matter, just looks neater without)
+1) From the command line within the dlib-migration-tools folder, call rake date_manipulation_tasks:check_all_date_formats["<path to folder containing foxml>"] for minimal info  OR 
+rake date_manipulation_tasks:check_all_date_formats["<path to folder containing foxml", "more">] for expanded info 
 
 
+To simply test the class or the normalisation of a particular known date format:
+1)navigate into the root of dlib-migration_tools 
+2) run: ruby date_normaliser.rb
+3)type in a date (digits only, no words)at the user prompt
+4)normalised date will be output to the command line 
 
-To use the app, do
-bundle install
-rake db:migrate
-
-
-if not using solr and fedora wrappers, edit those out of the rake file
+Further Work needed
+1) This script checks the files but does not actually change them - we need to consider how and where this will happen
+2)Similar checks could be applied to other data elements which need to be in a standard format - possibly department and institution names, qualification names, qualification levels. These would be more complex because in some cases not all the data elements are present, and in my existing ingest scripts their value is in this case inferred from the value of other data elements. In other cases the data value is present but has been added into a different data element. 
