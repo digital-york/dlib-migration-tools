@@ -121,7 +121,7 @@ class DateNormaliser
 	
 	
 	
-	#rake date_manipulation_tasks:check_all_date_formats[../data] for minimal info
+	#rake date_manipulation_tasks:check_all_date_formats["../data"] for minimal info
 	#rake date_manipulation_tasks:check_all_date_formats["../data","more"] for file name and original date 
 	#default output to dlib-migration-tools root dir
 	def check_all_date_formats(directory_to_check,info_level)
