@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# encoding: UTF-8
+require 'nokogiri' #installed by sudo apt install ruby-nokogiri, not by bundle install, but have now added this into bootstrap
 class DateNormaliser
 	def initialize
 	   puts "initialising DateNormaliser"
@@ -14,7 +16,10 @@ class DateNormaliser
 		normalised = ""
 		date_in = unnormalised_date
 		matches = []
-		date_in.scan(/([\d]{4})/){matches << $~}
+		#though if a year has two many digits, this will truncate rather than report an error
+		date_in.scan(/([\d]{4})/){matches << $~}  #though if a year has two many digits, this will truncate
+		#date_in.scan(/([\d]{4}[\s\-\.\/\\\\\Z])/){matches << $~}  #that doesnt work. maybe needs two tests,
+		#one showing 4 digits PRECISELY at start followed by non digit, other similar but at end
 		if matches.size == 1
 			normalised = matches[0].to_s
 		elsif matches.size == 2
@@ -105,18 +110,80 @@ class DateNormaliser
 		return normalised
 	end #end normalise_date method
 	
-	def test_normalisation()
+	#rake date_manipulation_tasks:test["1976/01/30"]
+	def test_normalisation(date)
 	    print "input date to test"
-		date = gets
+		date = date.to_s
 		output = normalise_date(date)
 		puts "normalised date is:" + output.to_s
 	end
 	
- # end class
+	
+	
+	
+	#rake date_manipulation_tasks:check_all_date_formats[../data] for minimal info
+	#rake date_manipulation_tasks:check_all_date_formats["../data","more"] for file name and original date 
+	#default output to dlib-migration-tools root dir
+	def check_all_date_formats(directory_to_check,info_level)
+	#def bulk_date_check()
+		puts "testing file reading"
+		outfile = File.open("corrected_dates_list.txt", "a")
+		directory_to_check = directory_to_check.strip
+		Dir.foreach(directory_to_check.strip)do |item|
+			next if item == '.' or item == '..'
+			#filepath = "../data" + "/" + item
+			filepath = directory_to_check + "/" + item
+			#normalised_date = check_single_file(filepath)
+			returned_values = check_single_file(filepath)
+			date_in = returned_values[0]
+			date_out = returned_values[1]
+			if info_level == "more"
+				if date_in != date_out
+					outfile.puts("FILE:" + item + " DATE IN:" + date_in.to_s + " DATE OUT:" + date_out.to_s )
+				end
+			else
+				if date_in != date_out
+					outfile.puts("DATE OUT:" + date_out.to_s )
+				end
+			end
+		end #end iteration through folder		
+	end #end test_file_reading
+	
+		
+	
+	#default output to dlib-migration-tools root dir
+	def check_single_file(filepath)
+		doc = File.open(filepath){ |f| Nokogiri::XML(f, Encoding::UTF_8.to_s)}		
+		ns = doc.collect_namespaces # doesnt resolve nested namespaces, this fixes that
+		# find max dc version
+		nums = doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion/@ID",ns)	
+		all = nums.to_s
+		current = all.rpartition('.').last 
+		current_dc_version = 'DC.' + current
+		
+		#get dates from current dc version only
+		date = []
+		doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion[@ID='#{current_dc_version}']/foxml:xmlContent/oai_dc:dc/dc:date/text()",ns).each do |s|		
+			date.push(s.to_s)
+			puts "still checking..."
+		end
+		
+		date.each do |d|
+			return_values = []
+			unchecked_date = d.strip
+			normalised_date = normalise_date(d.strip)
+			return_values.push(unchecked_date)
+			return_values.push(normalised_date)			
+			#return normalised_date.to_s
+			return return_values
+		end			
+	end #end test_file_reading1
+	
+ 
 
 	if __FILE__==$0
 		d = DateNormaliser.new
-		d.say_hi
+		#d.say_hi
 		d.test_normalisation()
 	end	
 end
