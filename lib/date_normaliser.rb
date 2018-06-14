@@ -128,9 +128,11 @@ class DateNormaliser
 	#def bulk_date_check()
 		puts "testing file reading"
 		outfile = File.open("corrected_dates_list.txt", "a")
+		directory_to_check = directory_to_check.strip
 		Dir.foreach(directory_to_check.strip)do |item|
 			next if item == '.' or item == '..'
-			filepath = "../data" + "/" + item			
+			#filepath = "../data" + "/" + item
+			filepath = directory_to_check + "/" + item
 			#normalised_date = check_single_file(filepath)
 			returned_values = check_single_file(filepath)
 			date_in = returned_values[0]
