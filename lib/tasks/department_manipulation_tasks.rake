@@ -21,7 +21,7 @@ require_relative '../../lib/department_name_normaliser.rb'
 	end
 
 	#task :check_all_department_names, [:directory_path,:info_level] do |t, args|
-	task :check_all_department_names, [:directory_path] do |t, args|
+	task :batch_check_department_names, [:directory_path] do |t, args|
 		puts args[:directory_path]
 		#args.with_defaults(:info_level => 'less')
 		d = DepartmentNameNormaliser.new
