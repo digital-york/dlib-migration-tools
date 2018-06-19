@@ -17,11 +17,6 @@ require_relative '../../lib/date_normaliser.rb'
 		d.test_normalisation(args[:date])
 	end
 
-	task :check_single_file do
-		d = DateNormaliser.new
-		d.test_file_reading
-	end
-
 	task :bulk_date_check, [:directory_path] do |t, args|
 		puts args[:directory_path]
 		d = DateNormaliser.new
