@@ -10,6 +10,31 @@ class DepartmentNameNormaliser
 	    puts "hi! from department normaliser"
 	end
 
+ 	def check_folder(folderpath)
+ 		puts "testing check_folder"
+ 		#outfile = File.open("corrected_dates_list.txt", "a")
+ 		directory_to_check = folderpath.strip
+ 		Dir.foreach(directory_to_check.strip)do |item|
+ 			next if item == '.' or item == '..'
+ 			#filepath = "../data" + "/" + item
+ 			filepath = directory_to_check + "/" + item
+			puts "found file " + item
+ 			#normalised_date = check_single_file(filepath)
+ 			#returned_values = check_single_file(filepath)
+ 			#date_in = returned_values[0]
+ 			#date_out = returned_values[1]
+ 			#if info_level == "more"
+ 			#	if date_in != date_out
+ 			#		outfile.puts("FILE:" + item + " DATE IN:" + date_in.to_s + " DATE OUT:" + date_out.to_s )
+ 			#	end
+ 			#else
+ 			#	if date_in != date_out
+ 			#		outfile.puts("DATE OUT:" + date_out.to_s )
+ 		#		end
+ 		#	end
+ 		end
+ 	end
+
 	#default output to dlib-migration-tools root dir
 	def check_single_file(filepath)
 		doc = File.open(filepath){ |f| Nokogiri::XML(f, Encoding::UTF_8.to_s)}
