@@ -17,12 +17,6 @@ require_relative '../../lib/date_normaliser.rb'
 		d.test_normalisation(args[:date])
 	end
 
-	task :bulk_date_check, [:directory_path] do |t, args|
-		puts args[:directory_path]
-		d = DateNormaliser.new
-		d.bulk_date_check(args[:directory_path])
-	end
-
 	task :check_all_date_formats, [:directory_path,:info_level] do |t, args|
 		puts args[:directory_path]
 		args.with_defaults(:info_level => 'less')
