@@ -19,6 +19,7 @@ class DepartmentNameNormaliser
  			#filepath = "../data" + "/" + item
  			filepath = directory_to_check + "/" + item
 			puts "found file " + item
+			check_single_file(filepath)
  			#normalised_date = check_single_file(filepath)
  			#returned_values = check_single_file(filepath)
  			#date_in = returned_values[0]
