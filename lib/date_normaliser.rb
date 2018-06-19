@@ -7,7 +7,7 @@ class DateNormaliser
 	end
 
 	def say_hi
-	    puts "hodor!"
+	    puts "hi!"
 	end
 
 
@@ -109,9 +109,9 @@ class DateNormaliser
 	end
 		return normalised
 	end #end normalise_date method
-
-	#rake date_manipulation_tasks:test["1976/01/30"]
-	def test_normalisation(date)	    
+  # used in both rake task and indefault call to class
+	# rake date_manipulation_tasks:test["1976/01/30"]
+	def test_normalisation(date)
 		date = date.to_s
 		output = normalise_date(date)
 		puts "normalised date is:" + output.to_s
@@ -120,8 +120,8 @@ class DateNormaliser
 
 
 
-	#rake date_manipulation_tasks:check_all_date_formats["../data"] for minimal info
-	#rake date_manipulation_tasks:check_all_date_formats["../data","more"] for file name and original date
+	#rake date_manipulation_tasks:check_all_date_formats["/dir/where/foxml/is"] for minimal info
+	#rake date_manipulation_tasks:check_all_date_formats["/dir/where/foxml/is","more"] for file name and original date
 	#default output to dlib-migration-tools root dir
 	def check_all_date_formats(directory_to_check,info_level)
 	#def bulk_date_check()
@@ -179,10 +179,9 @@ class DateNormaliser
 	end #end test_file_reading1
 
 
-
+	#default action if ruby date_normaliser.rb called from lib folder
 	if __FILE__==$0
 		d = DateNormaliser.new
-		#d.say_hi
 		puts "please type a date"
 		date = gets
 		d.test_normalisation(date)
