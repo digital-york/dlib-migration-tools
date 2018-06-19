@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
-require 'nokogiri' #installed by sudo apt install ruby-nokogiri, not by bundle install, but have now added this into bootstrap
+require 'nokogiri' 
 class DateNormaliser
 	def initialize
 	   puts "initialising DateNormaliser"

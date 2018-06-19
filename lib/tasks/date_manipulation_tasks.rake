@@ -1,9 +1,7 @@
 namespace :date_manipulation_tasks do
 desc "date normalisation tools"
 
-
 require_relative '../../lib/date_normaliser.rb'
-
 
 	task :greet do
 		puts "greetings from the new date manipulation tasks"
