@@ -12,6 +12,12 @@ require_relative '../../lib/department_name_normaliser.rb'
 		d.say_hi
 	end
 
+	task :test_filter, [:loc_value] do |t, args|
+		d = DepartmentNameNormaliser.new
+		f = d.filter_department_values(args[:loc_value])
+		puts f
+	end
+
 	task :test, [:filepath] do |t, args|
 		puts args[:filepath]
 		param = args[:filepath]
@@ -26,7 +32,6 @@ require_relative '../../lib/department_name_normaliser.rb'
 		#args.with_defaults(:info_level => 'less')
 		d = DepartmentNameNormaliser.new
 		d.check_folder(args[:directory_path])
-		#d.check_folder(args[:directory_path],args[:info_level])
 	end
 
 	#task :check_all_date_formats, [:directory_path,:info_level] do |t, args|
