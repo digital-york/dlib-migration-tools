@@ -14,12 +14,13 @@ class DepartmentNameNormaliser
 	def check_folder(folderpath)
  		#outfile = File.open("corrected_dates_list.txt", "a")
 		unique_dept = []
+		unique_initial_values = [] #for debug
  		directory_to_check = folderpath.strip
  		Dir.foreach(directory_to_check.strip)do |item|
  			next if item == '.' or item == '..'
  			#filepath = "../data" + "/" + item
  			filepath = directory_to_check + "/" + item
-			check_single_file(filepath, unique_dept)
+			check_single_file(filepath, unique_dept, unique_initial_values)
  			#normalised_date = check_single_file(filepath)
  			#returned_values = check_single_file(filepath)
  			#date_in = returned_values[0]
@@ -35,15 +36,20 @@ class DepartmentNameNormaliser
  		#	end
  		end
 		puts "size of unique_dept " + unique_dept.size.to_s
-		outfile = File.open("uniqueDepartment_names.txt", "a")
+		outfile = File.open("unique_department_names.txt", "a")
 		unique_dept.each do |d|
 			outfile.puts(d.to_s)
+		end
+
+		outfile2 = File.open("unique_initial_values.txt", "a")
+		unique_initial_values.each do |d|
+			outfile2.puts(d.to_s)
 		end
  	end
 
 	#we now need to manipulate the data to remove the elements we dont want. do this in a separate method.
 	#default output to dlib-migration-tools root dir
-	def check_single_file(filepath, unique_dept)
+	def check_single_file(filepath, unique_dept, unique_initial_values)
 		doc = File.open(filepath){ |f| Nokogiri::XML(f, Encoding::UTF_8.to_s)}
 		ns = doc.collect_namespaces # doesnt resolve nested namespaces, this fixes that
 		# find max dc version
@@ -59,6 +65,11 @@ class DepartmentNameNormaliser
 		#look in creators first
 		doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion[@ID='#{current_dc_version}']/foxml:xmlContent/oai_dc:dc/dc:creator/text()",ns).each do |s|
       possible_value = s.to_s
+			if unique_initial_values.include? (possible_value)
+			 #do nothing
+		 	else
+			 unique_initial_values.push(possible_value)
+		 	end
 			filter_result = filter_department_values(possible_value)
 			if filter_result != "false"
 				dept.push(s.to_s)
@@ -69,6 +80,11 @@ class DepartmentNameNormaliser
 		if dept.size < 1
 			doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion[@ID='#{current_dc_version}']/foxml:xmlContent/oai_dc:dc/dc:publisher/text()",ns).each do |s|
 				possible_value = s.to_s
+				if unique_initial_values.include? (possible_value)
+				 #do nothing
+			 	else
+				 unique_initial_values.push(possible_value)
+			 	end
 				filter_result = filter_department_values(possible_value)
 				if filter_result != "false"
 					dept.push(s.to_s)
