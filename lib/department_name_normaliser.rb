@@ -6,17 +6,13 @@ class DepartmentNameNormaliser
 
 
 	def initialize
-	   puts "initialising DepartmentNameNormaliser"
-		 @unique_initial_values = []
-		 @unique_dept = []
+	    puts "initialising DepartmentNameNormaliser"
+	    @unique_initial_values = []
+		@unique_dept = []
 	end
 
 	def say_hi
 	    puts "hi! from department normaliser"
-			animal = "cat"
-			unless animal == "dog"
-				puts "not a cat"
-			end
 	end
 
 
@@ -26,19 +22,6 @@ class DepartmentNameNormaliser
  			next if item == '.' or item == '..'
  			filepath = directory_to_check + "/" + item
 			check_single_file(filepath)
- 			#normalised_date = check_single_file(filepath)
- 			#returned_values = check_single_file(filepath)
- 			#date_in = returned_values[0]
- 			#date_out = returned_values[1]
- 			#if info_level == "more"
- 			#	if date_in != date_out
- 			#		outfile.puts("FILE:" + item + " DATE IN:" + date_in.to_s + " DATE OUT:" + date_out.to_s )
- 			#	end
- 			#else
- 			#	if date_in != date_out
- 			#		outfile.puts("DATE OUT:" + date_out.to_s )
- 		#		end
- 		#	end
  		end
 		outfile = File.open("unique_department_names.txt", "a")
 		@unique_dept.each do |d|
@@ -66,15 +49,16 @@ class DepartmentNameNormaliser
 		#in undergrad papers/projects dept may be in publishe OR creator - but
 		# creator may also contain actual student names.
 		dept = []
-		#look in creators first
+		
+		#check creators first
 		doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion[@ID='#{current_dc_version}']/foxml:xmlContent/oai_dc:dc/dc:creator/text()",ns).each do |s|
-      possible_value = s.to_s
+		    possible_value = s.to_s
 			unless @unique_initial_values.include? (possible_value)
 			 	@unique_initial_values.push(possible_value)
 		 	end
 			filter_result = filter_department_values(possible_value)
 			if filter_result != "false"
-				dept.push(s.to_s)
+				dept.push(filter_result.to_s)
 			end
 		end
 		#didnt find a value looking like a department or institution in creators, so check publishers
@@ -86,20 +70,28 @@ class DepartmentNameNormaliser
 			 	end
 				filter_result = filter_department_values(possible_value)
 				if filter_result != "false"
-					dept.push(s.to_s)
+					dept.push(filter_result.to_s)
 				end
 			end
 		end
+		#now replace original value with the standard name (pref_label)
+		dept.each do |dept|
+			dept = dept.to_s
+			standardised_name = get_standard_department_name(dept)
+			puts "standardised name" + standardised_name
+		end
+
+
 		# list all unique dept values found for debugging
 		dept.each do |d|
-		 d = d.to_s
+			d = d.to_s
 			unless @unique_dept.include? (d)
 			 	@unique_dept.push(d)
 		 	end
 		end
 	end
 
-  #pattern match and return entire string if found, excluding individual names
+	#pattern match and return entire string if found, excluding individual names
 	#if not found return the string "false"
 	#this just extracts the value of the initial string - not yet stanardised
 	def filter_department_values(value)
@@ -114,12 +106,117 @@ class DepartmentNameNormaliser
 		return "false"
 	end
 
+	#pattern match and return the correct standard pref_label for a department
+	#this is horrible and wordy but cant at present see an alternative
+	#order is important in some cases - but otherwise try to order alphabetically
+	def get_standard_department_name(string_to_match)
+		standard_name = ""
+		string_to_match = string_to_match.downcase  #get rid of case inconsistencies
+		if string_to_match.include? "reconstruction"
+					standard_name = "University of York. Post-war Reconstruction and Development Unit"
+		elsif string_to_match.include? "applied human rights" #at top so looks for single subjects later
+					standard_name = "University of York. Centre for Applied Human Rights"
+		elsif string_to_match.include? "health economics" #at top so looks for single subjects later
+				standard_name = "University of York. Centre for Health Economics"
+		elsif string_to_match.include? "lifelong learning" #at top so looks for single subjects later
+				standard_name = "University of York. Centre for Lifelong Learning"
+		elsif string_to_match.include? "medieval studies" #at top so looks for single subjects later
+				standard_name = "University of York. Centre for Medieval Studies"
+		elsif string_to_match.include? "renaissance" #at top so looks for single subjects later
+				standard_name = "University of York. Centre for Renaissance and Early Modern Studies"
+		elsif string_to_match.include? "reviews" #at top so looks for single subjects later
+				standard_name = "University of York. Centre for Reviews and Disseminations"
+		elsif string_to_match.include? "women" #at top so looks for single subjects later
+				standard_name = "University of York. Centre for Women's Studies"
+		elsif string_to_match.include? "languages for all"
+				standard_name = "University of York. Languages for All"
+		elsif string_to_match.include? "school of social and political science"#at top so looks for single subjects later
+	    	standard_name = "University of York. School of Social and Political Science"
+		elsif string_to_match.include? "school of politics economics and philosophy" #at top so looks for single subjects later
+	    	standard_name = "University of York. School of Politics Economics and Philosophy"
+		elsif string_to_match.include? "economics and related" #at top so looks for single subjects later
+	    	standard_name =  "University of York. Department of Economics and Related Studies"
+		elsif string_to_match.include? "economics and philosophy" #at top so looks for single subjects later
+				standard_name = "University of York. School of Politics Economics and Philosophy"
+		elsif string_to_match.include? "departments of english and history of art"
+			  #two departments squeezed into one! MUST precede history of art. but just one such record
+				standard_name = "needs prior edit"
+	    	#standard_name =  "University of York. Department of English and Related Literature"
+				#standard_name =  "University of York. Department of History of Art"
+		elsif string_to_match.include? "history of art" #at top so looks for history later. but below english and history of art!
+	    	standard_name = "University of York. Department of History of Art"
+		elsif string_to_match.include? "electronic"
+				standard_name = "University of York. Department of Electronic Engineering"
+		elsif string_to_match.include? "theatre"
+				standard_name = "University of York. Department of Theatre, Film and Television"
+		elsif string_to_match.include? "physics"
+				standard_name = "University of York. Department of Physics"
+		elsif string_to_match.include? "computer"
+				standard_name = "University of York. Department of Computer Science"
+		elsif string_to_match.include? "psychology"
+				standard_name = "University of York. Department of Psychology"
+		elsif string_to_match.include? "law"
+				standard_name = "University of York. York Law School"
+		elsif string_to_match.include? "mathematics"
+				standard_name = "University of York. Department of Mathematics"
+		elsif string_to_match.include? "advanced architectural"
+	    	standard_name = "University of York. Institute of Advanced Architectural Studies"
+		elsif string_to_match.include? "conservation"
+	    	standard_name = "University of York. Centre for Conservation Studies"
+		elsif string_to_match.include? "eighteenth century"
+	    	standard_name = "University of York. Centre for Eighteenth Century Studies"
+		elsif string_to_match.include? "chemistry"
+	    	standard_name = "University of York. Department of Chemistry"
+		elsif string_to_match.include? "history"   #ok because of order
+	    	standard_name = "University of York. Department of History"
+		elsif string_to_match.include? "sociology"
+	    	standard_name =  "University of York. Department of Sociology"
+		elsif string_to_match.include? "education"
+	    	standard_name = "University of York. Department of Education"
+		elsif string_to_match.include? "music"
+	    	standard_name =  "University of York. Department of Music"
+		elsif string_to_match.include? "archaeology"
+	    	standard_name =  "University of York. Department of Archaeology"
+		elsif string_to_match.include? "biology"
+	    	standard_name =  "University of York. Department of Biology"
+		elsif string_to_match.include? "biochemistry"
+	    	standard_name =  "University of York. Department of Biology" #confirmed with metadata team
+		elsif string_to_match.include? "english and related literature"
+	    	standard_name =  "University of York. Department of English and Related Literature"
+		elsif string_to_match.include? "health sciences"
+	    	standard_name =  "University of York. Department of Health Sciences"
+		elsif string_to_match.include? "politics"
+	    	standard_name = "University of York. Department of Politics"
+		elsif string_to_match.include? "philosophy"
+	    	standard_name =  "University of York. Department of Philosophy"
+		elsif string_to_match.include? "social policy and social work"
+	    	standard_name =  "University of York. Department of Social Policy and Social Work"
+		elsif string_to_match.include? "management"
+	    	standard_name =  "University of York. The York Management School"
+		elsif string_to_match.include? "language and linguistic science"
+	    	standard_name = "University of York. Department of Language and Linguistic Science"
+		elsif string_to_match.include? "hull"
+	    	standard_name = "Hull York Medical School"
+		elsif string_to_match.include? "international pathway"
+	    	standard_name = "University of York. International Pathway College"
+		elsif string_to_match.include? "school of criminology"
+	    	standard_name = "University of York. School of Criminology"
+		elsif string_to_match.include? "natural sciences"
+	    	standard_name = "University of York. School of Natural Sciences"
+		elsif string_to_match.include? "environment"
+	    	standard_name = "University of York. Environment Department"
+		else
+			standard_name = "not found"
+		end
+	end
+
 
 	#default action if ruby date_normaliser.rb called from lib folder
 	if __FILE__==$0
 		d = DepartmentNameNormaliser.new
 		puts "please type a department name"
 		name = gets
-		puts "you typed " + name +" for me"
+		label = d.get_standard_department_name(name)
+		puts "standardised to " + label
 	end
 end
