@@ -15,30 +15,49 @@ class DepartmentNameNormaliser
 	    puts "hi! from department normaliser"
 	end
 
-
-	def check_folder(folderpath)
+	def check_folder(folderpath,info_level)
  		directory_to_check = folderpath.strip
+		logfile = File.open("department_edits.log", "a")
  		Dir.foreach(directory_to_check.strip)do |item|
  			next if item == '.' or item == '..'
  			filepath = directory_to_check + "/" + item
-			check_single_file(filepath)
+			return_values = check_single_file(filepath)
+			if info_level == "more"
+				pid = return_values[0].to_s 
+				initial_value = return_values[1].to_s
+				standardised_value = return_values[2].to_s 
+				#might be better lower in stack. must deal with multiple depts too
+				if standardised_value == "no value found" || standardised_value == "not found" || standardised_value == "needs prior edit"
+					logfile.puts("PID:" + pid + " VALUE IN:" + initial_value + " VALUE OUT:" + standardised_value )
+				end
+			else
+				if standardised_value == "no value found" || standardised_value == "not found" || standardised_value == "needs prior edit"
+					logfile.puts(" VALUE OUT:" + standardised_value)
+				end
+			end
  		end
-		outfile = File.open("unique_department_names.txt", "a")
-		@unique_dept.each do |d|
-			outfile.puts(d.to_s)
-		end
+			outfile = File.open("unique_department_names.txt", "a")
+			@unique_dept.each do |d|
+			if 
+				outfile.puts(d.to_s)
+			end
 
-		outfile2 = File.open("unique_initial_values.txt", "a")
-		@unique_initial_values.each do |d|
-			outfile2.puts(d.to_s)
-		end
+			outfile2 = File.open("unique_initial_values.txt", "a")
+			@unique_initial_values.each do |d|
+				outfile2.puts(d.to_s)
+			end	
+			
+		end 
  	end
 
 	#we now need to manipulate the data to remove the elements we dont want. do this in a separate method.
 	#default output to dlib-migration-tools root dir
 	def check_single_file(filepath)
+		return_values = []
 		doc = File.open(filepath){ |f| Nokogiri::XML(f, Encoding::UTF_8.to_s)}
 		ns = doc.collect_namespaces # doesnt resolve nested namespaces, this fixes that
+		#get the pid
+		pid = doc.xpath("//foxml:digitalObject/@PID",ns).to_s
 		# find max dc version
 		nums = doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion/@ID",ns)
 		all = nums.to_s
@@ -75,12 +94,19 @@ class DepartmentNameNormaliser
 			end
 		end
 		#now replace original value with the standard name (pref_label)
-		dept.each do |dept|
-			dept = dept.to_s
-			standardised_name = get_standard_department_name(dept)
-			puts "standardised name" + standardised_name
+		#departments may be multiple in case of modular courses
+		if dept.size == 0
+			return_values.push(pid)
+			return_values.push("")
+			return_values.push("no value found")		
 		end
-
+		dept.each do |dept|
+			dept = dept.to_s			
+			standardised_name = get_standard_department_name(dept)
+			return_values.push(pid)
+			return_values.push(dept)
+			return_values.push(standardised_name)
+		end
 
 		# list all unique dept values found for debugging
 		dept.each do |d|
@@ -89,6 +115,7 @@ class DepartmentNameNormaliser
 			 	@unique_dept.push(d)
 		 	end
 		end
+		return return_values
 	end
 
 	#pattern match and return entire string if found, excluding individual names
