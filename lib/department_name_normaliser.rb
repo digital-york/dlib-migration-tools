@@ -123,7 +123,8 @@ class DepartmentNameNormaliser
 	#this just extracts the value of the initial string - not yet stanardised
 	def filter_department_values(value)
 		term_to_filter = value.downcase
-		filter_words = ["university","dept","department","school","studies","language","unit","edexel","education","aqa","ocr"]
+		#include those values which are not student names but may need handling
+		filter_words = ["university","dept","department","school","studies","language","unit","edexel","education","aqa","ocr","zigzag education"]
 		filter_words.each do |w|
 			if term_to_filter.include? w
 				return term_to_filter
@@ -206,17 +207,17 @@ class DepartmentNameNormaliser
 	    	standard_name =  "University of York. Department of Archaeology"
 		elsif string_to_match.include? "biology"
 	    	standard_name =  "University of York. Department of Biology"
-		elsif string_to_match.include? "biochemistry"
+		elsif string_to_match.include? "biochemistry" or string_to_match.include? "ocr" or string_to_match.include? "aqa" or string_to_match.include? "edexcel"
 	    	standard_name =  "University of York. Department of Biology" #confirmed with metadata team
-		elsif string_to_match.include? "english and related literature"
-	    	standard_name =  "University of York. Department of English and Related Literature"
+		elsif string_to_match.include? "english and related"
+	    	standard_name =  "University of York. Department of English and Related Literature"			
 		elsif string_to_match.include? "health sciences"
 	    	standard_name =  "University of York. Department of Health Sciences"
 		elsif string_to_match.include? "politics"
 	    	standard_name = "University of York. Department of Politics"
 		elsif string_to_match.include? "philosophy"
 	    	standard_name =  "University of York. Department of Philosophy"
-		elsif string_to_match.include? "social policy and social work"
+		elsif string_to_match.include? "social policy"
 	    	standard_name =  "University of York. Department of Social Policy and Social Work"
 		elsif string_to_match.include? "management"
 	    	standard_name =  "University of York. The York Management School"
