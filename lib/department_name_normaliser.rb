@@ -9,6 +9,9 @@ class DepartmentNameNormaliser
 	    puts "initialising DepartmentNameNormaliser"
 	    @unique_initial_values = []
 		@unique_dept = []
+		@logfile = File.open("department_edits.log", "a")
+		@filtered_name_list = File.open("unique_department_names.txt", "a")
+		@unfiltered_name_list= File.open("unique_initial_values.txt", "a")
 	end
 
 	def say_hi
@@ -17,34 +20,35 @@ class DepartmentNameNormaliser
 
 	def check_folder(folderpath,info_level)
  		directory_to_check = folderpath.strip
-		logfile = File.open("department_edits.log", "a")
+		#logfile = File.open("department_edits.log", "a")
  		Dir.foreach(directory_to_check.strip)do |item|
  			next if item == '.' or item == '..'
  			filepath = directory_to_check + "/" + item
 			return_values = check_single_file(filepath)
+			#logging
 			if info_level == "more"
 				pid = return_values[0].to_s 
 				initial_value = return_values[1].to_s
 				standardised_value = return_values[2].to_s 
 				#might be better lower in stack. must deal with multiple depts too
 				if standardised_value == "no value found" || standardised_value == "not found" || standardised_value == "needs prior edit"
-					logfile.puts("PID:" + pid + " VALUE IN:" + initial_value + " VALUE OUT:" + standardised_value )
+					@logfile.puts("PID:" + pid + " VALUE IN:" + initial_value + " VALUE OUT:" + standardised_value )
 				end
 			else
 				if standardised_value == "no value found" || standardised_value == "not found" || standardised_value == "needs prior edit"
-					logfile.puts(" VALUE OUT:" + standardised_value)
+					@logfile.puts(" VALUE OUT:" + standardised_value)
 				end
 			end
  		end
-			outfile = File.open("unique_department_names.txt", "a")
+			#outfile = File.open("unique_department_names.txt", "a")
 			@unique_dept.each do |d|
 			if 
-				outfile.puts(d.to_s)
+				@filtered_name_list.puts(d.to_s)
 			end
 
-			outfile2 = File.open("unique_initial_values.txt", "a")
+			#outfile2 = File.open("unique_initial_values.txt", "a")
 			@unique_initial_values.each do |d|
-				outfile2.puts(d.to_s)
+				@unfiltered_name_list.puts(d.to_s)
 			end	
 			
 		end 
@@ -124,7 +128,7 @@ class DepartmentNameNormaliser
 	def filter_department_values(value)
 		term_to_filter = value.downcase
 		#include those values which are not student names but may need handling
-		filter_words = ["university","dept","department","school","studies","language","unit","edexel","education","aqa","ocr","zigzag education"]
+		filter_words = ["university","dept","department","school","studies","language","unit","edexcel","education","aqa","ocr","zigzag education"]
 		filter_words.each do |w|
 			if term_to_filter.include? w
 				return term_to_filter
@@ -141,23 +145,23 @@ class DepartmentNameNormaliser
 		standard_name = ""
 		string_to_match = string_to_match.downcase  #get rid of case inconsistencies
 		if string_to_match.include? "reconstruction"
-					standard_name = "University of York. Post-war Reconstruction and Development Unit"
+			standard_name = "University of York. Post-war Reconstruction and Development Unit"
 		elsif string_to_match.include? "applied human rights" #at top so looks for single subjects later
-					standard_name = "University of York. Centre for Applied Human Rights"
+			standard_name = "University of York. Centre for Applied Human Rights"
 		elsif string_to_match.include? "health economics" #at top so looks for single subjects later
-				standard_name = "University of York. Centre for Health Economics"
+			standard_name = "University of York. Centre for Health Economics"
 		elsif string_to_match.include? "lifelong learning" #at top so looks for single subjects later
-				standard_name = "University of York. Centre for Lifelong Learning"
+			standard_name = "University of York. Centre for Lifelong Learning"
 		elsif string_to_match.include? "medieval studies" #at top so looks for single subjects later
-				standard_name = "University of York. Centre for Medieval Studies"
+			standard_name = "University of York. Centre for Medieval Studies"
 		elsif string_to_match.include? "renaissance" #at top so looks for single subjects later
-				standard_name = "University of York. Centre for Renaissance and Early Modern Studies"
+			standard_name = "University of York. Centre for Renaissance and Early Modern Studies"
 		elsif string_to_match.include? "reviews" #at top so looks for single subjects later
-				standard_name = "University of York. Centre for Reviews and Disseminations"
+			standard_name = "University of York. Centre for Reviews and Disseminations"
 		elsif string_to_match.include? "women" #at top so looks for single subjects later
-				standard_name = "University of York. Centre for Women's Studies"
+			standard_name = "University of York. Centre for Women's Studies"
 		elsif string_to_match.include? "languages for all"
-				standard_name = "University of York. Languages for All"
+			standard_name = "University of York. Languages for All"
 		elsif string_to_match.include? "school of social and political science"#at top so looks for single subjects later
 	    	standard_name = "University of York. School of Social and Political Science"
 		elsif string_to_match.include? "school of politics economics and philosophy" #at top so looks for single subjects later
@@ -165,28 +169,28 @@ class DepartmentNameNormaliser
 		elsif string_to_match.include? "economics and related" #at top so looks for single subjects later
 	    	standard_name =  "University of York. Department of Economics and Related Studies"
 		elsif string_to_match.include? "economics and philosophy" #at top so looks for single subjects later
-				standard_name = "University of York. School of Politics Economics and Philosophy"
+			standard_name = "University of York. School of Politics Economics and Philosophy"
 		elsif string_to_match.include? "departments of english and history of art"
-			  #two departments squeezed into one! MUST precede history of art. but just one such record
-				standard_name = "needs prior edit"
+			#two departments squeezed into one! MUST precede history of art. but just one such record
+			standard_name = "needs prior edit"
 	    	#standard_name =  "University of York. Department of English and Related Literature"
-				#standard_name =  "University of York. Department of History of Art"
+			#standard_name =  "University of York. Department of History of Art"
 		elsif string_to_match.include? "history of art" #at top so looks for history later. but below english and history of art!
 	    	standard_name = "University of York. Department of History of Art"
 		elsif string_to_match.include? "electronic"
-				standard_name = "University of York. Department of Electronic Engineering"
+			standard_name = "University of York. Department of Electronic Engineering"
 		elsif string_to_match.include? "theatre"
-				standard_name = "University of York. Department of Theatre, Film and Television"
+			standard_name = "University of York. Department of Theatre, Film and Television"
 		elsif string_to_match.include? "physics"
-				standard_name = "University of York. Department of Physics"
+			standard_name = "University of York. Department of Physics"
 		elsif string_to_match.include? "computer"
-				standard_name = "University of York. Department of Computer Science"
+			standard_name = "University of York. Department of Computer Science"
 		elsif string_to_match.include? "psychology"
-				standard_name = "University of York. Department of Psychology"
+			standard_name = "University of York. Department of Psychology"
 		elsif string_to_match.include? "law"
-				standard_name = "University of York. York Law School"
+			standard_name = "University of York. York Law School"
 		elsif string_to_match.include? "mathematics"
-				standard_name = "University of York. Department of Mathematics"
+			standard_name = "University of York. Department of Mathematics"
 		elsif string_to_match.include? "advanced architectural"
 	    	standard_name = "University of York. Institute of Advanced Architectural Studies"
 		elsif string_to_match.include? "conservation"
