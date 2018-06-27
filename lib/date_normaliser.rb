@@ -2,6 +2,7 @@
 # encoding: UTF-8
 require 'nokogiri' 
 class DateNormaliser
+
 	def initialize
 	   puts "initialising DateNormaliser"
 	end
@@ -124,15 +125,12 @@ class DateNormaliser
 	#rake date_manipulation_tasks:check_all_date_formats["/dir/where/foxml/is","more"] for file name and original date
 	#default output to dlib-migration-tools root dir
 	def check_all_date_formats(directory_to_check,info_level)
-	#def bulk_date_check()
 		puts "testing file reading"
 		outfile = File.open("corrected_dates_list.txt", "a")
 		directory_to_check = directory_to_check.strip
 		Dir.foreach(directory_to_check.strip)do |item|
 			next if item == '.' or item == '..'
-			#filepath = "../data" + "/" + item
 			filepath = directory_to_check + "/" + item
-			#normalised_date = check_single_file(filepath)
 			returned_values = check_single_file(filepath)
 			date_in = returned_values[0]
 			date_out = returned_values[1]
@@ -145,8 +143,8 @@ class DateNormaliser
 					outfile.puts("DATE OUT:" + date_out.to_s )
 				end
 			end
-		end #end iteration through folder
-	end #end test_file_reading
+		end 
+	end 
 
 
 
@@ -173,7 +171,6 @@ class DateNormaliser
 			normalised_date = normalise_date(d.strip)
 			return_values.push(unchecked_date)
 			return_values.push(normalised_date)
-			#return normalised_date.to_s
 			return return_values
 		end
 	end #end test_file_reading1
