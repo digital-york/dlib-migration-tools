@@ -6,22 +6,23 @@ class DepartmentNameNormaliser
 
 
 	def initialize
-	    puts "initialising DepartmentNameNormaliser"
 	    @unique_initial_values = [] 
 		@unique_dept = []
 		@logfile = File.open("department_edits.log", "a")
 		@filtered_name_list = File.open("unique_department_names.txt", "a")
-		@unfiltered_name_list= File.open("unique_initial_values.txt", "a")
+		@unfiltered_name_list= File.open("unique_initial_values.txt", "a")		
 	end
 
 	def say_hi
 	    puts "hi! from department normaliser"
-	end
+	end	
+	
 
 	def check_folder(folderpath,info_level)
  		directory_to_check = folderpath.strip
  		Dir.foreach(directory_to_check.strip)do |item|
  			next if item == '.' or item == '..'
+				puts "hard at work..."
 				filepath = directory_to_check + "/" + item			
 				return_value_set = check_single_file(filepath)
 				return_value_set.each do |rv|
@@ -59,7 +60,7 @@ class DepartmentNameNormaliser
 	#think at this point this is ok for multiples ?
 	def check_single_file(filepath)
 		return_values = []  #this should be one or more sets of values for a department - its an array of single_department_values arrays
-		single_department_values = [] #this is all the values for a single department
+		#single_department_values = [] #this is all the values for a single department
 		doc = File.open(filepath){ |f| Nokogiri::XML(f, Encoding::UTF_8.to_s)}
 		ns = doc.collect_namespaces # doesnt resolve nested namespaces, this fixes that
 		#get the pid
@@ -98,8 +99,9 @@ class DepartmentNameNormaliser
 		end
 		#now replace original value with the standard name (pref_label)
 		#departments may be multiple in case of modular courses
-		dept_details = DepartmentDetails.new
+		#dept_details = DepartmentDetails.new
 		if initial_dept_names.size == 0
+			dept_details = DepartmentDetails.new
 			dept_details = DepartmentDetails.new
 			dept_details.pid = pid
 			dept_details.initial_name = "none found"
@@ -108,8 +110,9 @@ class DepartmentNameNormaliser
 		end
 		
 		initial_dept_names.each do |i_dept|
+			dept_details = DepartmentDetails.new
 			i_dept = i_dept.to_s			
-			standardised_name = get_standard_department_name(i_dept)
+			standardised_name = get_standard_department_name(i_dept) 
 			dept_details.pid = pid
 			dept_details.initial_name = i_dept
 			dept_details.standard_name = standardised_name
@@ -257,11 +260,12 @@ class DepartmentNameNormaliser
 	#use this as more readable way to create  multivalued department information
 	class DepartmentDetails
 		attr_accessor :pid, :initial_name, :standard_name
-		def initialise
+		def initialize
 			pid = ""
 			initial_name = ""
 			standard_name = ""
 		end
+		
 		
 	end
 
