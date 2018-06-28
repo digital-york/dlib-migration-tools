@@ -8,9 +8,9 @@ class DepartmentNameNormaliser
 	def initialize
 	    @unique_initial_values = []
 		@unique_dept = []
-		@logfile = File.open("department_edits.log", "a")
+		@logfile = File.open("tmp/department_edits.log", "a")
 		@filtered_name_list = File.open("tmp/unique_department_names.txt", "a")
-		@unfiltered_name_list= File.open("tmp/unique_initial_values.txt", "a")		
+		@unfiltered_name_list= File.open("tmp/unique_initial_values.txt", "a")
 	end
 
 	def say_hi
