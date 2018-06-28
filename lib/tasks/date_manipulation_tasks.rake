@@ -8,8 +8,7 @@ require_relative '../../lib/date_normaliser.rb'
 	end
 
 	task :test, [:date] do |t, args|
-		puts args[:date]
-		param = args[:date]
+		puts args[:date]		
 		d = DateNormaliser.new
 		d.say_hi
 		d.test_normalisation(args[:date])

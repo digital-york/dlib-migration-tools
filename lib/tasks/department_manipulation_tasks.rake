@@ -20,7 +20,6 @@ require_relative '../../lib/department_name_normaliser.rb'
 
 	task :test, [:filepath] do |t, args|
 		puts args[:filepath]
-		param = args[:filepath]
 		d = DepartmentNameNormaliser.new
 		d.say_hi
 		d.check_single_file(args[:filepath])
