@@ -4,7 +4,6 @@ require 'nokogiri'
 class DateNormaliser
 
 	def initialize
-	   puts "initialising DateNormaliser"
 	end
 
 	def say_hi
