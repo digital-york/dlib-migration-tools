@@ -59,21 +59,17 @@ class DepartmentNameNormaliser
 	#default output to dlib-migration-tools root dir
 	#think at this point this is ok for multiples ?
 	def check_single_file(filepath)
-		return_values = []  #this should be one or more sets of values for a department - its an array of single_department_values arrays
-		#single_department_values = [] #this is all the values for a single department
+		return_values = []  #one or more sets of values from a single file
 		doc = File.open(filepath){ |f| Nokogiri::XML(f, Encoding::UTF_8.to_s)}
 		ns = doc.collect_namespaces # doesnt resolve nested namespaces, this fixes that
-		#get the pid
 		pid = doc.xpath("//foxml:digitalObject/@PID",ns).to_s
 		# find max dc version
 		nums = doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion/@ID",ns)
 		all = nums.to_s
 		current = all.rpartition('.').last
 		current_dc_version = 'DC.' + current
-		#in exams the dept may be under creator OR publisher (a minority)
-		#in theses the department will be the publisher - the student is the creator
-		#in undergrad papers/projects dept may be in publishe OR creator - but
-		# creator may also contain actual student names.
+		#in exams the dept may be under creator OR publisher (a minority) In theses the department will be the publisher - the student is the creator
+		#in undergrad papers/projects dept may be in publishe OR creator - but  creator may also contain actual student names.
 		initial_dept_names = []
 		initial_values = []
 		
@@ -109,19 +105,19 @@ class DepartmentNameNormaliser
 			return_values.push(dept_details)	
 		end
 		
-		initial_dept_names.each do |i_dept|
+		initial_dept_names.each do |initial_dept|
 			dept_details = DepartmentDetails.new
-			i_dept = i_dept.to_s			
-			standardised_name = get_standard_department_name(i_dept) 
+			initial_dept = initial_dept.to_s			
+			standardised_name = get_standard_department_name(initial_dept) 
 			dept_details.pid = pid
-			dept_details.initial_name = i_dept
+			dept_details.initial_name = initial_dept
 			dept_details.standard_name = standardised_name
 			return_values.push(dept_details)			
 		end
 		
 				
 		# list all unique initial values found for debugging
-		initial_values.each do |v|
+		initial_values.each do |v| 
 		unless @unique_initial_values.include? (v)
 			 	@unique_initial_values.push(v)
 		 	end
