@@ -1,20 +1,19 @@
 #!/usr/bin/env ruby
 # encoding: UTF-8
 require 'nokogiri'
-require 'csv' 
+require 'csv'
 require_relative 'date_normaliser.rb'
 require_relative 'department_name_normaliser.rb'
 
 class CreateCsv
 	def initialize
-		@outfile = "csv_output.csv"	
+		@outfile = "csv_output.csv"
 	end
-	
+
 	def say_hi
 		puts "hiya! from CreateCsv"
-	end	
-	
-	
+	end
+
 	def make_csv_from_batch(folderpath)
 		directory_to_check = folderpath.strip
 		csv_rows = []
@@ -28,9 +27,8 @@ class CreateCsv
 				csv << row
 			end
 		end
-		
 	end
-	
+
 	def make_csv_from_single_file(filepath)
 		filepath = filepath.strip
 		file_row = get_csv_row(filepath)
@@ -38,7 +36,7 @@ class CreateCsv
 			csv << file_row
 		end
 	end
-	
+
 	#return the array of values for a single file to insert into csv
 	def get_csv_row(filepath)
 		filepath = filepath.strip
@@ -48,20 +46,32 @@ class CreateCsv
 		standard_date = standard_date_result[1]
 		department_names_result = department_name_normaliser.check_single_file(filepath)
 	    pid = department_names_result[0].pid
-		
 		csv_row = []
 		csv_row.push(pid)
-		csv_row.push(standard_date)
+		if standard_date == "no match"
+			msg = pid + " date error"
+			log(msg)
+		else
+			csv_row.push(standard_date)
+		end
 		department_names_result.each do |d|
-			csv_row.push(d.standard_name)
+			if d.standard_name == "no value found" or d.standard_name == "not found" or d.standard_name == "needs prior edit" or d.standard_name.length == 0
+			    msg = pid + " department name error " + d.standard_name
+				log(msg)
+			else
+				csv_row.push(d.standard_name)
+			end
 		end
 			return csv_row
-	end	
-	
+	end
+
+	def log(msg)
+		logfile = File.open("csv_output.log", "a")
+		logfile.puts(msg)
+	end
 
 	if __FILE__==$0
 		cc = CreateCsv.new
 		cc.say_hi
 	end
-
 end
