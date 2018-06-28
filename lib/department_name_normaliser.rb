@@ -6,24 +6,24 @@ class DepartmentNameNormaliser
 
 
 	def initialize
-	    @unique_initial_values = [] 
+	    @unique_initial_values = []
 		@unique_dept = []
 		@logfile = File.open("department_edits.log", "a")
-		@filtered_name_list = File.open("unique_department_names.txt", "a")
-		@unfiltered_name_list= File.open("unique_initial_values.txt", "a")		
+		@filtered_name_list = File.open("tmp/unique_department_names.txt", "a")
+		@unfiltered_name_list= File.open("tmp/unique_initial_values.txt", "a")		
 	end
 
 	def say_hi
 	    puts "hi! from department normaliser"
-	end	
-	
+	end
+
 
 	def check_folder(folderpath,info_level)
  		directory_to_check = folderpath.strip
  		Dir.foreach(directory_to_check.strip)do |item|
  			next if item == '.' or item == '..'
 				puts "hard at work..."
-				filepath = directory_to_check + "/" + item			
+				filepath = directory_to_check + "/" + item
 				return_value_set = check_single_file(filepath)
 				return_value_set.each do |rv|
 					#'more' gives extended details where no standard department found, 'show_all' logs all details for all returns, otherwise just give message where no standard department found
@@ -31,28 +31,28 @@ class DepartmentNameNormaliser
 						pid = department_details.pid
 						initial_values = department_details.initial_name
 						standardised_value = department_details.standard_name
-					if info_level == "more"												
+					if info_level == "more"
 						if standardised_value == "no value found" or standardised_value == "not found" or standardised_value == "needs prior edit"
-							@logfile.puts("PID:" + pid + " VALUE IN:" + initial_values + " VALUE OUT:" + standardised_value )					
+							@logfile.puts("PID:" + pid + " VALUE IN:" + initial_values + " VALUE OUT:" + standardised_value )
 						end
 					elsif info_level == "show_all"
 							@logfile.puts("PID:" + pid + " VALUE IN:" + initial_values + " VALUE OUT:" + standardised_value )
 					else
 						if standardised_value == "no value found" or standardised_value == "not found" or standardised_value == "needs prior edit"
 							@logfile.puts(" VALUE OUT:" + standardised_value)
-						end						
-					end	
-				end  
+						end
+					end
+				end
 			end
 
 			#make text files
 			@unique_dept.each do |d|
 				@filtered_name_list.puts(d.to_s)
 			end
-			
-			@unique_initial_values.each do |iv|	
+
+			@unique_initial_values.each do |iv|
 				@unfiltered_name_list.puts(iv.to_s)
-			end	
+			end
  	end
 
 	#we now need to manipulate the data to remove the elements we dont want. do this in a separate method.
@@ -72,11 +72,11 @@ class DepartmentNameNormaliser
 		#in undergrad papers/projects dept may be in publishe OR creator - but  creator may also contain actual student names.
 		initial_dept_names = []
 		initial_values = []
-		
+
 		#check creators first
 		doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion[@ID='#{current_dc_version}']/foxml:xmlContent/oai_dc:dc/dc:creator/text()",ns).each do |s|
 		    possible_value = s.to_s
-			initial_values.push(possible_value) 
+			initial_values.push(possible_value)
 			filter_result = filter_department_values(possible_value)
 			if filter_result != "false"
 				initial_dept_names.push(filter_result.to_s)
@@ -85,7 +85,7 @@ class DepartmentNameNormaliser
 		#didnt find a value looking like a department or institution in creators, so check publishers
 		if initial_dept_names.size < 1
 			doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion[@ID='#{current_dc_version}']/foxml:xmlContent/oai_dc:dc/dc:publisher/text()",ns).each do |s|
-				possible_value = s.to_s				
+				possible_value = s.to_s
 				initial_values.push(possible_value)
 				filter_result = filter_department_values(possible_value)
 				if filter_result != "false"
@@ -102,22 +102,22 @@ class DepartmentNameNormaliser
 			dept_details.pid = pid
 			dept_details.initial_name = "none found"
 			dept_details.standard_name = "no value found"
-			return_values.push(dept_details)	
+			return_values.push(dept_details)
 		end
-		
+
 		initial_dept_names.each do |initial_dept|
 			dept_details = DepartmentDetails.new
-			initial_dept = initial_dept.to_s			
-			standardised_name = get_standard_department_name(initial_dept) 
+			initial_dept = initial_dept.to_s
+			standardised_name = get_standard_department_name(initial_dept)
 			dept_details.pid = pid
 			dept_details.initial_name = initial_dept
 			dept_details.standard_name = standardised_name
-			return_values.push(dept_details)			
+			return_values.push(dept_details)
 		end
-		
-				
+
+
 		# list all unique initial values found for debugging
-		initial_values.each do |v| 
+		initial_values.each do |v|
 		unless @unique_initial_values.include? (v)
 			 	@unique_initial_values.push(v)
 		 	end
@@ -225,7 +225,7 @@ class DepartmentNameNormaliser
 		elsif string_to_match.include? "biochemistry" or string_to_match.include? "ocr" or string_to_match.include? "aqa" or string_to_match.include? "edexcel"
 	    	standard_name =  "University of York. Department of Biology" #confirmed with metadata team
 		elsif string_to_match.include? "english and related"
-	    	standard_name =  "University of York. Department of English and Related Literature"			
+	    	standard_name =  "University of York. Department of English and Related Literature"
 		elsif string_to_match.include? "health sciences"
 	    	standard_name =  "University of York. Department of Health Sciences"
 		elsif string_to_match.include? "politics"
@@ -252,7 +252,7 @@ class DepartmentNameNormaliser
 			standard_name = "not found"
 		end
 	end
-	
+
 	#use this as more readable way to create  multivalued department information
 	class DepartmentDetails
 		attr_accessor :pid, :initial_name, :standard_name
@@ -261,8 +261,8 @@ class DepartmentNameNormaliser
 			initial_name = ""
 			standard_name = ""
 		end
-		
-		
+
+
 	end
 
 

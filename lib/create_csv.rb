@@ -7,7 +7,7 @@ require_relative 'department_name_normaliser.rb'
 
 class CreateCsv
 	def initialize
-		@outfile = "csv_output.csv"
+		@outfile = "tmp/csv_output.csv"
 	end
 
 	def say_hi
@@ -66,7 +66,7 @@ class CreateCsv
 	end
 
 	def log(msg)
-		logfile = File.open("csv_output.log", "a")
+		logfile = File.open("tmp/csv_output.log", "a")
 		logfile.puts(msg)
 	end
 
