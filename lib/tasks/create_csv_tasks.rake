@@ -9,21 +9,13 @@ require_relative '../../lib/create_csv.rb'
 		puts "greetings from the new csv creation tasks"
 	end
 
-	task :test, [:filepath] do |t, args|
+	task :batch_make_csv, [:folderpath] do |t, args|
 		c = CreateCsv.new
-		c.say_hi
-		c.make_csv_from_single_file(args[:filepath])
-	end	
-		
-	
-	task :batch_make_csv, [:folderpath] do |t, args|	
-		c = CreateCsv.new
-		c.make_csv_from_batch(args[:folderpath])		
+		c.make_csv_from_batch(args[:folderpath])
 	end
-	
+
 	task :make_csv, [:filepath] do |t, args|
 		c = CreateCsv.new
-		c.make_csv_from_single_file(args[:filepath])	
+		c.make_csv_from_single_file(args[:filepath])
 	end
-	
 end
