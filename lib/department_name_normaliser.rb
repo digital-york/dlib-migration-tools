@@ -3,8 +3,6 @@
 require 'nokogiri'
 class DepartmentNameNormaliser
 
-
-
 	def initialize
 	    @unique_initial_values = []
 		@unique_dept = []
@@ -17,7 +15,8 @@ class DepartmentNameNormaliser
 	    puts "hi! from department normaliser"
 	end
 
-
+	#runs department name data quality checking against a folder containing foxml files only
+	#info level denotes amount of info provided - see README.md
 	def check_folder(folderpath,info_level)
  		directory_to_check = folderpath.strip
  		Dir.foreach(directory_to_check.strip)do |item|
@@ -44,7 +43,6 @@ class DepartmentNameNormaliser
 					end
 				end
 			end
-
 			#make text files
 			@unique_dept.each do |d|
 				@filtered_name_list.puts(d.to_s)
@@ -55,9 +53,8 @@ class DepartmentNameNormaliser
 			end
  	end
 
-	#we now need to manipulate the data to remove the elements we dont want. do this in a separate method.
-	#default output to dlib-migration-tools root dir
-	#think at this point this is ok for multiples ?
+	# check all department names for a single file and return an arroy of DepartmentDetails
+	# objects
 	def check_single_file(filepath)
 		return_values = []  #one or more sets of values from a single file
 		doc = File.open(filepath){ |f| Nokogiri::XML(f, Encoding::UTF_8.to_s)}
@@ -72,7 +69,6 @@ class DepartmentNameNormaliser
 		#in undergrad papers/projects dept may be in publishe OR creator - but  creator may also contain actual student names.
 		initial_dept_names = []
 		initial_values = []
-
 		#check creators first
 		doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion[@ID='#{current_dc_version}']/foxml:xmlContent/oai_dc:dc/dc:creator/text()",ns).each do |s|
 		    possible_value = s.to_s
@@ -95,16 +91,15 @@ class DepartmentNameNormaliser
 		end
 		#now replace original value with the standard name (pref_label)
 		#departments may be multiple in case of modular courses
-		#dept_details = DepartmentDetails.new
+		#handle the case where no department name was found
 		if initial_dept_names.size == 0
-			dept_details = DepartmentDetails.new
 			dept_details = DepartmentDetails.new
 			dept_details.pid = pid
 			dept_details.initial_name = "none found"
 			dept_details.standard_name = "no value found"
 			return_values.push(dept_details)
 		end
-
+    #otherwise replace all original values with the matched standard name (pref_label)
 		initial_dept_names.each do |initial_dept|
 			dept_details = DepartmentDetails.new
 			initial_dept = initial_dept.to_s
@@ -114,15 +109,14 @@ class DepartmentNameNormaliser
 			dept_details.standard_name = standardised_name
 			return_values.push(dept_details)
 		end
-
-
-		# list all unique initial values found for debugging
+		# list all unique initial values (ie not yet filtered to exclude data which
+		# is unlikely to be a department name)
 		initial_values.each do |v|
 		unless @unique_initial_values.include? (v)
 			 	@unique_initial_values.push(v)
 		 	end
 		end
-		# list all unique dept values found for debugging
+		# list all unique dept names found within the folder, in their initial unstandardised form
 		initial_dept_names.each do |d|
 			d = d.to_s
 			unless @unique_dept.include? (d)
@@ -133,9 +127,11 @@ class DepartmentNameNormaliser
 		return return_values
 	end
 
-	#pattern match and return entire string if found, excluding individual names
+	#some of the values in the dc elements checked are not in fact department names -
+	#for example some contain individual names. Filter these out, then
+	# return entire string of any valid department names found. This is the initial value -
+	#it has not yet been matched to the official department name
 	#if not found return the string "false"
-	#this just extracts the value of the initial string - not yet stanardised
 	def filter_department_values(value)
 		term_to_filter = value.downcase
 		#include those values which are not student names but may need handling
@@ -149,9 +145,10 @@ class DepartmentNameNormaliser
 		return "false"
 	end
 
+  #this is the method which matches the input strings to the correct official name
 	#pattern match and return the correct standard pref_label for a department
 	#this is horrible and wordy but cant at present see an alternative
-	#order is important in some cases - but otherwise try to order alphabetically
+	#order is important in some cases - but otherwise could try to order alphabetically
 	def get_standard_department_name(string_to_match)
 		standard_name = ""
 		string_to_match = string_to_match.downcase  #get rid of case inconsistencies
@@ -183,9 +180,11 @@ class DepartmentNameNormaliser
 			standard_name = "University of York. School of Politics Economics and Philosophy"
 		elsif string_to_match.include? "departments of english and history of art"
 			#two departments squeezed into one! MUST precede history of art. but just one such record
-			standard_name = "needs prior edit"
-	    	#standard_name =  "University of York. Department of English and Related Literature"
+			#so manual correction would be best
+			#actual names required as below:
+			#standard_name =  "University of York. Department of English and Related Literature"
 			#standard_name =  "University of York. Department of History of Art"
+			standard_name = "needs prior edit"
 		elsif string_to_match.include? "history of art" #at top so looks for history later. but below english and history of art!
 	    	standard_name = "University of York. Department of History of Art"
 		elsif string_to_match.include? "electronic"
@@ -253,7 +252,7 @@ class DepartmentNameNormaliser
 		end
 	end
 
-	#use this as more readable way to create  multivalued department information
+	#use this as more readable way to create and read multivalued department names
 	class DepartmentDetails
 		attr_accessor :pid, :initial_name, :standard_name
 		def initialize
@@ -261,10 +260,7 @@ class DepartmentNameNormaliser
 			initial_name = ""
 			standard_name = ""
 		end
-
-
 	end
-
 
 	#default action if ruby date_normaliser.rb called from lib folder
 	if __FILE__==$0

@@ -10,16 +10,14 @@ class DateNormaliser
 	    puts "hi!"
 	end
 
-
-	#this can just look for 4 digit groups, and expect either one or two.
+	#this looks for 4 digit groups, and expects either one or two. There will be two in the case
+	#of a date range, in which case we should use only the second date
 	def get_year(unnormalised_date)
 		normalised = ""
 		date_in = unnormalised_date
 		matches = []
 		#though if a year has two many digits, this will truncate rather than report an error
 		date_in.scan(/([\d]{4})/){matches << $~}  #though if a year has two many digits, this will truncate
-		#date_in.scan(/([\d]{4}[\s\-\.\/\\\\\Z])/){matches << $~}  #that doesnt work. maybe needs two tests,
-		#one showing 4 digits PRECISELY at start followed by non digit, other similar but at end
 		if matches.size == 1
 			normalised = matches[0].to_s
 		elsif matches.size == 2
@@ -29,8 +27,8 @@ class DateNormaliser
 		end
 	end
 
-	#what will happen if they have used the 1066-2001 format ie a year range? it will interpret second year as the month - oops
-	#take the string for the entire date and  return just the month  if it is specified. zero pad if single digit
+	#take the string for the entire date and  return just the month  if it is specified.
+	#Zero pad if single digit
 	def get_month(unnormalised_date)
 		month = ""
 	    # if its a year range dont proceed further
@@ -52,7 +50,8 @@ class DateNormaliser
 		return month
 	end
 
-	#take the string for the entire date and  return just the month  if it is specified. zero pad if single digit
+	#take the string for the entire date and  return just the month  if it is specified.
+	# zero pad if single digit
 	def get_day(unnormalised_date)
 		day = ""
 		# if its a year range dont proceed further
@@ -117,9 +116,6 @@ class DateNormaliser
 		puts "normalised date is:" + output.to_s
 	end
 
-
-
-
 	#rake date_manipulation_tasks:check_all_date_formats["/dir/where/foxml/is"] for minimal info
 	#rake date_manipulation_tasks:check_all_date_formats["/dir/where/foxml/is","more"] for file name and original date
 	#default output to dlib-migration-tools root dir
@@ -144,8 +140,7 @@ class DateNormaliser
 		end
 	end
 
-
-
+  #get normalised date from a single file
 	#default output to dlib-migration-tools root dir
 	def check_single_file(filepath)
 		doc = File.open(filepath){ |f| Nokogiri::XML(f, Encoding::UTF_8.to_s)}
@@ -171,8 +166,7 @@ class DateNormaliser
 			return_values.push(normalised_date)
 			return return_values
 		end
-	end #end test_file_reading1
-
+	end
 
 	#default action if ruby date_normaliser.rb called from lib folder
 	if __FILE__==$0

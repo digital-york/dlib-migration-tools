@@ -7,18 +7,14 @@ require_relative '../../lib/date_normaliser.rb'
 		puts "greetings from the new date manipulation tasks"
 	end
 
-	task :test, [:date] do |t, args|
-		puts args[:date]		
-		d = DateNormaliser.new
-		d.say_hi
-		d.test_normalisation(args[:date])
-	end
-
+  #read a folder of foxml files and check the date values, outputting a text File
+	#if info_level is "more" then pid, original and standardies values will be listed,
+	#otherwise only the standardised values will be listed
 	task :check_all_date_formats, [:directory_path,:info_level] do |t, args|
 		puts args[:directory_path]
 		args.with_defaults(:info_level => 'less')
 		d = DateNormaliser.new
 		d.check_all_date_formats(args[:directory_path],args[:info_level])
 	end
-
+	
 end

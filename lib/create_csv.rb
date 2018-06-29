@@ -14,6 +14,8 @@ class CreateCsv
 		puts "hiya! from CreateCsv"
 	end
 
+	#This method will create a single csv file from a folder containing foxml files only,
+	# with csv row for each foxml file
 	def make_csv_from_batch(folderpath)
 		directory_to_check = folderpath.strip
 		csv_rows = []
@@ -29,6 +31,7 @@ class CreateCsv
 		end
 	end
 
+	#This method will create a single csv file from a single foxml file
 	def make_csv_from_single_file(filepath)
 		filepath = filepath.strip
 		file_row = get_csv_row(filepath)
@@ -65,11 +68,13 @@ class CreateCsv
 			return csv_row
 	end
 
+	#log message to file
 	def log(msg)
 		logfile = File.open("tmp/csv_output.log", "a")
 		logfile.puts(msg)
 	end
 
+	#default action if ruby create_csv.rb called from lib folder
 	if __FILE__==$0
 		cc = CreateCsv.new
 		cc.say_hi

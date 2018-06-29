@@ -7,11 +7,6 @@ require_relative '../../lib/department_name_normaliser.rb'
 		puts "greetings from the new department manipulation tasks"
 	end
 
-	task :say_hi do
-		d = DepartmentNameNormaliser.new
-		d.say_hi
-	end
-
 	task :test_filter, [:loc_value] do |t, args|
 		d = DepartmentNameNormaliser.new
 		f = d.filter_department_values(args[:loc_value])

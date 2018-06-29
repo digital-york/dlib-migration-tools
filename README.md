@@ -20,7 +20,7 @@ if not already present, run bundle install
 TO RUN DATE CHECKING
 1) From the command line within the dlib-migration-tools folder, call rake date_manipulation_tasks:check_all_date_formats["/path/to/folder/containing/foxml"] for minimal info  
 OR
-rake date_manipulation_tasks:check_all_date_formats["/path/to/folder/containing/foxml", "more">] for expanded info 
+rake date_manipulation_tasks:check_all_date_formats["/path/to/folder/containing/foxml", "more"] for expanded info 
 
 
 To simply test the class or the normalisation of a particular known date format:
@@ -43,13 +43,13 @@ B}BATCH CHECK ON A FOLDER
 OR
 department_manipulation_tasks:batch_check_department_names["/path/to/foxml/folder", "more"] for expanded info where a standard department name could not be found
 OR
-department_manipulation_tasks:batch_check_department_names["/path/to/foxml/folder", "show_all"] for expanded info on all the foxml files 
+department_manipulation_tasks:batch_check_department_names["/path/to/foxml/folder", "show_all"] for expanded info on all the foxml files
 
 TO RUN CSV CREATION
-This is in progress. no logging as yet although csv output is in place 
+This is in progress. no logging as yet although csv output is in place
 1) to make csv for a single file
-From the command line within the dlib-migration-tools folder, call rake create_csv_tasks:make_csv["/path/to/foxmlfile"] 
-2)to batch create csv for a folder: From the command line within the dlib-migration-tools folder, call rake create_csv_tasks:batch_make_csv["/path/to/foxml/folder"] 
+From the command line within the dlib-migration-tools folder, call rake create_csv_tasks:make_csv["/path/to/foxmlfile"]
+2)to batch create csv for a folder: From the command line within the dlib-migration-tools folder, call rake create_csv_tasks:batch_make_csv["/path/to/foxml/folder"]
 
 
 Further Work needed
