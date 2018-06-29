@@ -20,7 +20,7 @@ if not already present, run bundle install
 TO RUN DATE CHECKING
 1) From the command line within the dlib-migration-tools folder, call rake date_manipulation_tasks:check_all_date_formats["/path/to/folder/containing/foxml"] for minimal info  
 OR
-rake date_manipulation_tasks:check_all_date_formats["/path/to/folder/containing/foxml", "more"] for expanded info 
+rake date_manipulation_tasks:check_all_date_formats["/path/to/folder/containing/foxml", "more"] for expanded info
 
 
 To simply test the class or the normalisation of a particular known date format:
@@ -50,6 +50,14 @@ This is in progress. no logging as yet although csv output is in place
 1) to make csv for a single file
 From the command line within the dlib-migration-tools folder, call rake create_csv_tasks:make_csv["/path/to/foxmlfile"]
 2)to batch create csv for a folder: From the command line within the dlib-migration-tools folder, call rake create_csv_tasks:batch_make_csv["/path/to/foxml/folder"]
+
+THIS BRANCH
+Aims: abstract out foxml metadata extraction
+Outputs:
+  *class to handle reading from foxml. passed open foxml handle as a parameter. returns hash of key metadata elements and values. in first instance for DC. No standardisation at this point.
+  *class to take hash from the above and create csv output from unnormalised data (could maybe do this as name:value pairs). Takes file_doc as input parameter to specify where to write csv file.
+  *overall task tying the above together.  task takes an output location as a parameter, and sets a default if no parameter set. Then calls the metadata extraction task and feeds the output hash to the csv creator
+
 
 
 Further Work needed

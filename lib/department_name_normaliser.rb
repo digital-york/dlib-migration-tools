@@ -4,7 +4,7 @@ require 'nokogiri'
 class DepartmentNameNormaliser
 
 	def initialize
-	    @unique_initial_values = []
+	  @unique_initial_values = []
 		@unique_dept = []
 		@logfile = File.open("tmp/department_edits.log", "a")
 		@filtered_name_list = File.open("tmp/unique_department_names.txt", "a")
