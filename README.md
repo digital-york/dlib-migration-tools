@@ -1,8 +1,6 @@
 # README
 
-
-
-This repository is a minimised non samvera/fedora app - just rake tasks to get metadata text out of foxml and put it into text/csv files.  No models, dlibhydra, authorities etc.
+This repository is a minimised non-samvera/fedora app - just rake tasks to get metadata text out of foxml and put it into text/csv files.  No models, dlibhydra, authorities etc.
 
 1)date quality checking.
 this  takes as its  input parameter the path of a directory containing foxml. All the foxml should be at this level as the script will not recurse through subdirecties. The script will read the date and normalise it into a standard format : yyyy-mm-dd. A list of all those normalised dates which have been changed from their original format will then be output to a text file (DATE OUT :), corrected_dates_list.txt (by default at the root level, this could be changed). An additional parameter "more" can be supplied which will output the names of those foxml files with non standard date formats and the original, unnormalised dates in addition to the normalised dates (FILE: DATE IN: DATE OUT:2013). Not all dates can be normalised - for example typos where extra digits have been added, these will be listed in both output file versions, but only identifiable in the extended information by eyeballing the DATE IN: entry.
