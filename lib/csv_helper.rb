@@ -11,7 +11,7 @@ class CsvHelper
   def collect_dc_metadata(filename)
     #open a foxml file and pass to ExtractDublinCoreMetadata
       doc = File.open("../small_data/york_666.xml"){ |f| Nokogiri::XML(f, Encoding::UTF_8.to_s)}
-    dc_metadata_extractor = DublinCoreElementsExtractor.new
+    dc_metadata_extractor = DublinCoreElementsExtractor.new(doc)
     values_hash = dc_metadata_extractor.extract_key_metadata(doc)
     keys = values_hash.keys
     keys.each do |k|
