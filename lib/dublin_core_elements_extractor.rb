@@ -29,7 +29,7 @@ class DublinCoreElementsExtractor
     extract_single_valued_element("date")
     extract_multivalued_element("type") # may include model types, resource types (eg Exam paper) exam levels, Qualification names
     extract_multivalued_element("rights") # may include copyright holder, rights statement, rights url
-    extract_multivalued_element("identifier") # may include pid, which we dont need twice,  but also module code    
+    extract_multivalued_element("identifier") # may include pid, which we dont need twice,  but also module code
     return @key_metadata
   end
 
@@ -39,7 +39,6 @@ class DublinCoreElementsExtractor
     path = "//foxml:datastream[@ID='DC']/foxml:datastreamVersion[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc/dc:" + element_name + "/text()"
     @doc.xpath(path,@ns).each do |s|
       element_array.push(s.to_s)
-      puts "found this " + s.to_s
 		end
     if element_array.size > 0
       keyname = element_name + "s"
@@ -53,7 +52,6 @@ class DublinCoreElementsExtractor
     element = ""
     path = "//foxml:datastream[@ID='DC']/foxml:datastreamVersion[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc/dc:" + element_name + "/text()"
     element = @doc.xpath(path,@ns).to_s
-    puts "found this " +element
     if element.length > 0
       keyname = element_name.to_sym
       @key_metadata[keyname] = element
