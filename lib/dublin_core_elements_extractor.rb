@@ -42,11 +42,10 @@ class DublinCoreElementsExtractor
     @doc.xpath(path, @ns).each do |s|
       element_array.push(s.to_s)
     end
-    if element_array.size > 0
-      keyname = element_name + 's'
-      keyname = keyname.to_sym
-      @key_metadata[keyname] = element_array
-    end
+    return if element_array.empty?
+    keyname = element_name + 's'
+    keyname = keyname.to_sym
+    @key_metadata[keyname] = element_array
   end
 
   # generic method to return single value where element is a simple text value
@@ -56,9 +55,8 @@ class DublinCoreElementsExtractor
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/"\
     "oai_dc:dc/dc:" + element_name + "/text()"
     element = @doc.xpath(path, @ns).to_s
-    if element.length > 0
-      keyname = element_name.to_sym
-      @key_metadata[keyname] = element
-    end
+    return if element.empty?
+    keyname = element_name.to_sym
+    @key_metadata[keyname] = element
   end
 end

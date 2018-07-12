@@ -22,7 +22,7 @@ class RelsExtElementsExtractor
     # extract rest of key metadata
     extract_single_valued_element('rel', 'isMemberOf') # immediate parent coll
     # possible relevance, not sure if needed
-    extract_multivalued_element('fedora-model','hasModel')
+    extract_multivalued_element('fedora-model', 'hasModel')
     return @key_metadata
   end
 
@@ -35,22 +35,20 @@ class RelsExtElementsExtractor
     @doc.xpath(path, @ns).each do |s|
       element_array.push(s.to_s)
     end
-    if element_array.size > 0
-      keyname = element_name + 's'
-      keyname = keyname.to_sym
-      @key_metadata[keyname] = element_array
-    end
+    return if element_array.empty?
+    keyname = element_name + 's'
+    keyname = keyname.to_sym
+    @key_metadata[keyname] = element_array
   end
 
   # generic method to return single value where value is an element which may occur  0:1 times in a single rels-ext version
-  def extract_single_valued_element(element_prefix,element_name)
+  def extract_single_valued_element(element_prefix, element_name)
     path = "//foxml:datastream[@ID='RELS-EXT']/foxml:datastreamVersion"\
     "[@ID='#{@current_rels_ext_version}']/foxml:xmlContent/rdf:RDF/"\
     "rdf:Description/#{element_prefix}:#{element_name}/@rdf:resource"
     element = @doc.xpath(path, @ns).to_s
-    if element.length > 0
-      keyname = element_name.to_sym
-      @key_metadata[keyname] = element
-    end
+    return if element.empty?
+    keyname = element_name.to_sym
+    @key_metadata[keyname] = element
   end
 end
