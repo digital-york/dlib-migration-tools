@@ -4,6 +4,7 @@ require 'csv'
 require_relative 'dublin_core_elements_extractor.rb'
 require_relative 'rels_ext_elements_extractor.rb'
 require_relative 'acl_elements_extractor.rb'
+require_relative 'content_location_extractor.rb'
 # coordinate the collection of metadata + creation of csv
 class CsvHelper
   def initialize(output_location)
@@ -61,6 +62,8 @@ class CsvHelper
       extractor = RelsExtElementsExtractor.new(doc)
     when 'acl'
       extractor = AclElementsExtractor.new(doc)
+    when 'content_location'
+      extractor = ContentLocationExtractor.new(doc)
     end
     extractor
   end
@@ -68,7 +71,8 @@ class CsvHelper
   def get_datastream_scope(ds_scope)
     case ds_scope
     when 'full'
-      ds_to_collect  = %w[dc rels_ext acl]
+      ds_to_collect  = %w[dc rels_ext acl content_location]
+      #ds_to_collect  = %w[dc rels_ext acl]
     when 'dc'
       ds_to_collect  = %w[dc]
     else

@@ -8,6 +8,11 @@ require_relative '../../lib/csv_helper.rb'
     puts 'greetings from the new dc_metadata_extraction_tasks'
   end
 
+  task :test do |t, args|
+		cle = ContentLocationExtractor.new
+    bla = cle.extract_key_metadata
+	end
+
   # rake metadata_extraction_tasks:run_metadata_collection[<"/path/to/file">,<"/path_to_output_location">]
   task :run_metadata_collection, [:foxml_name,:scope,:output_location] do |t, args|
     args.with_defaults(:output_location => 'tmp')

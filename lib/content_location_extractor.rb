@@ -10,47 +10,26 @@ class ContentLocationExtractor
     @ns = ''
   end
 
-  # this will do the meat of extracting the metadata values and putting them into a hash
+  # this will do the meat of extracting the content locations. there should be
+  # one main resource and 0:n others
   def extract_key_metadata
     # nokogiri out of box doesnt resolve nested namespaces, this fixes that
     @ns = @doc.collect_namespaces
-    # estabish current dc version to use before extracting any further values
-    nums = @doc.xpath("//foxml:datastream[@ID='EXAM_PAPER']/foxml:datastreamVersion/@ID", @ns)
-    all = nums.to_s
-    current = all.rpartition('.').last
-    @current_exam_paper_version = 'EXAM_PAPER.' + current
-    idstate = doc.xpath("//foxml:datastream[@ID='EXAM_PAPER']/@STATE",@ns)   #TODO
-    # extract rest of key metadata
-    extract_single_valued_element('rel', 'isMemberOf') # immediate parent coll
-    extract_multivalued_element('fedora-model', 'hasModel') # possible relevance
+    # estabish current ds version to use before extracting any further values
+    extract_main_resource_location('EXAM_PAPER')
     @key_metadata
   end
 
-  # generic method to return array of values where value is an element which may
-  # occur  0:n times in a single rels-ext version
-  def extract_multivalued_element(element_prefix, element_name)
-    element_array = []
-    path = "//foxml:datastream[@ID='RELS-EXT']/foxml:datastreamVersion"\
-    "[@ID='#{@current_rels_ext_version}']/foxml:xmlContent/rdf:RDF"\
-    "/rdf:Description/#{element_prefix}:#{element_name}/@rdf:resource"
-    @doc.xpath(path, @ns).each do |s|
-      element_array.push(s.to_s)
-    end
-    return if element_array.empty?
-    keyname = element_name + 's'
-    keyname = keyname.to_sym
-    @key_metadata[keyname] = element_array
-  end
-
-  # generic method to return single value where value is an element
-  # which may occur  0:1 times in a single rels-ext version
-  def extract_single_valued_element(element_prefix, element_name)
-    path = "//foxml:datastream[@ID='RELS-EXT']/foxml:datastreamVersion"\
-    "[@ID='#{@current_rels_ext_version}']/foxml:xmlContent/rdf:RDF"\
-    "/rdf:Description/#{element_prefix}:#{element_name}/@rdf:resource"
-    element = @doc.xpath(path, @ns).to_s
-    return if element.empty?
-    keyname = element_name.to_sym
-    @key_metadata[keyname] = element
+  def extract_main_resource_location(main_resource_id)
+    nums = @doc.xpath("//foxml:datastream[@ID='#{main_resource_id}']"\
+      "[@STATE='A']/foxml:datastreamVersion/@ID", @ns)
+    all = nums.to_s
+    current = all.rpartition('.').last
+    @current_exam_paper_version = 'EXAM_PAPER.' + current
+    path = "//foxml:datastream[@ID='EXAM_PAPER']/foxml:datastreamVersion"\
+    "[@ID='#{@current_exam_paper_version}']/foxml:contentLocation/@REF"
+    content_location = @doc.xpath(path, @ns).to_s
+    return if content_location.length.zero?
+    @key_metadata[:main_resource_location] = content_location
   end
 end

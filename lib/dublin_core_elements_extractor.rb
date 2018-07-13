@@ -14,11 +14,11 @@ class DublinCoreElementsExtractor
   def extract_key_metadata
     @ns = @doc.collect_namespaces # nokogiri cant resolve nested namespaces, this fixes
     pid = @doc.xpath('//foxml:digitalObject/@PID', @ns).to_s
-    #remove the 'york:' prefix as its always the same
+    # remove  'york:' prefix; its always 'york:' and complicates choice of separators
     pid = pid.gsub 'york:', ''
     @key_metadata[:pid] = pid
     # estabish current dc version to use before extracting any further values
-    nums = @doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion/@ID",@ns)
+    nums = @doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion/@ID", @ns)
     all = nums.to_s
     current = all.rpartition('.').last
     @current_dc_version = 'DC.' + current
