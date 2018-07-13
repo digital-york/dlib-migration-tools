@@ -10,15 +10,15 @@ class CsvHelper
     @output_location = output_location
   end
 
-  def collect_metadata(filename)
+  def collect_metadata1(filename)
     # open a foxml file and pass to ExtractDublinCoreMetadata
     doc = File.open(filename) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
     dc_metadata_extractor = DublinCoreElementsExtractor.new(doc)
     dc_values_hash = dc_metadata_extractor.extract_key_metadata
-    create_csv(dc_values_hash)
+    create_csv([dc_values_hash])
   end
 
-  def collect_full_metadata(filename)
+  def collect_full_metadata1(filename)
     # open a foxml file and pass to ExtractDublinCoreMetadata
     doc = File.open(filename) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
     dc_metadata_extractor = DublinCoreElementsExtractor.new(doc)
@@ -26,69 +26,75 @@ class CsvHelper
     rels_ext_metadata_extractor = RelsExtElementsExtractor.new(doc)
     rels_ext_values_hash = rels_ext_metadata_extractor.extract_key_metadata
     acl_metadata_extractor = AclElementsExtractor.new(doc)
-    acl_hash = acl_metadata_extractor.extract_key_metadata
-    # pass returned hash to csv creation
-    create_csv_full(dc_values_hash, rels_ext_values_hash, acl_hash)
+    acl_values_hash = acl_metadata_extractor.extract_key_metadata
+    # pass returned hashes to csv creation
+    create_csv([dc_values_hash, rels_ext_values_hash, acl_values_hash])
   end
 
-  # TODO: elements also need extraction from rels-ext (parent collection )
-  # also various content locations - may not be just EXAM_PAPER
-  # and THUMBNAIL_IMAGE
-  # Possibly also ACL data to get access permissions
+  # make the datastreams to collect metadata from specifiable
+  def collect_metadata(filename, ds_scope)
+    ds_to_collect = get_datastream_scope(ds_scope)
+    values_hash_array = []
+    # open a foxml file and pass to ExtractDublinCoreMetadata
+    doc = File.open(filename) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
+    ds_to_collect.each do |ds|
+      extractor = extractor_factory(ds, doc)
+      values_hash = extractor.extract_key_metadata
+      values_hash_array.push(values_hash)
+    end
+    # pass returned hashes to csv creation
+    create_csv(values_hash_array)
+  end
 
-  # This method will create a single csv file from a single foxml file
-  def create_csv_full(dc_hash, rels_ext_hash, acl_hash)
-    pid = dc_hash.fetch(:pid)
-    outfile_name = pid.sub ':', '_'
+  def extractor_factory(ds_name, doc)
+    case ds_name
+    when 'dc'
+      extractor = DublinCoreElementsExtractor.new(doc)
+    when 'rels_ext'
+      extractor = RelsExtElementsExtractor.new(doc)
+    when 'acl'
+      extractor = AclElementsExtractor.new(doc)
+    end
+    extractor
+  end
+
+  def get_datastream_scope(ds_scope)
+    case ds_scope
+    when 'full'
+      ds_to_collect  = %w[dc rels_ext acl]
+    when 'dc'
+      ds_to_collect  = %w[dc]
+    else
+      ds_to_collect  = %w[dc]
+    end
+    ds_to_collect
+  end
+
+  # This method  creates a single csv file from a single foxml file
+  # ds_to_include is an array containing a hash of  key:value pairs for each
+  # datastream whose key metadata we want to include
+  # TODO make append rather than write so will ultimately support batch task
+  def create_csv(ds_to_include)
+    outfile_name = 'exam_papers_key_metadata'
     outfile_path = @output_location + '/' + outfile_name + '.csv'
     CSV.open(outfile_path, 'wb') do |csv|
-      csv_row = get_csv_row_full(dc_hash, rels_ext_hash, acl_hash)
+      csv_row = get_csv_row(ds_to_include)
       # adds another set of quotes but it appears this is valid
       # https://stackoverflow.com/questions/40166811/writing-to-csv-is-adding-quotes
       csv << csv_row
     end
   end
 
-  # This method will create a single csv file from a single foxml file
-  def create_csv(dc_hash)
-    pid = dc_hash.fetch(:pid)
-    outfile_name = pid.sub ':', '_'
-    outfile_path = @output_location + '/' + outfile_name + '.csv'
-    CSV.open(outfile_path, 'wb') do |csv|
-      csv_row = get_csv_row(dc_hash)
-      # adds another set of quotes but it appears this is valid
-      # https://stackoverflow.com/questions/40166811/writing-to-csv-is-adding-quotes
-      csv << csv_row
-    end
-  end
-
-  def get_csv_row(dc_hash)
+  # construct a csv row. ds_hashes_to_include is an array containing a hash of
+  # key:value pairs for each datastream whose key metadata we want to include
+  def get_csv_row(ds_hashes_to_include)
     csv_row = []
-    dc_hash.each do |key, value|
-      # use :: as separator - pid uses colon, as may parts of some values
-      item = "#{key}::#{value}"
-      # adds another set of quotes but it appears this is valid
-      # https://stackoverflow.com/questions/40166811/writing-to-csv-is-adding-quotes
-      csv_row.push(item)
+    ds_hashes_to_include.each do |ds_hash|
+      ds_hash.each do |key, value|
+        item = "#{key}:#{value}" # revert to ':' as separator
+        csv_row.push(item)
+      end
     end
-    return csv_row # lint lies! not redundant! doesnt return csv_row without it!
-  end
-
-  def get_csv_row_full(dc_hash, rels_ext_hash, acl_hash)
-    csv_row = []
-    dc_hash.each do |key, value|
-      # use :: as separator - pid uses colon, as may parts of some values
-      item = "#{key}::#{value}"
-      csv_row.push(item)
-    end
-    rels_ext_hash.each do |key, value|
-      item = "#{key}::#{value}"
-      csv_row.push(item)
-    end
-    acl_hash.each do |key, value|
-      item = "#{key}::#{value}"
-      csv_row.push(item)
-    end
-    return csv_row
+    csv_row
   end
 end
