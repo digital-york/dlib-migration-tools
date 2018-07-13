@@ -29,7 +29,7 @@ class DublinCoreElementsExtractor
     extract_multivalued_element('type') # can be model types, resource types (eg Exam paper) exam levels, Qualification names
     extract_multivalued_element('rights') # can be copyright holder, rights statement, rights url
     extract_multivalued_element('identifier') # can be pid,but also module code
-    return @key_metadata
+    @key_metadata
   end
 
   # generic method to return array of values where element is a simple text

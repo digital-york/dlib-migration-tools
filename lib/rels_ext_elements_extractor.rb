@@ -23,10 +23,11 @@ class RelsExtElementsExtractor
     extract_single_valued_element('rel', 'isMemberOf') # immediate parent coll
     # possible relevance, not sure if needed
     extract_multivalued_element('fedora-model', 'hasModel')
-    return @key_metadata
+    @key_metadata
   end
 
-  #generic method to return array of values where value is an element which may occur  0:n times in a single rels-ext version
+  # generic method to return array of values where value is an element which may
+  # occur  0:n times in a single rels-ext version
   def extract_multivalued_element(element_prefix, element_name)
     element_array = []
     path = "//foxml:datastream[@ID='RELS-EXT']/foxml:datastreamVersion"\

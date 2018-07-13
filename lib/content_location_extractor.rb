@@ -21,9 +21,9 @@ class ContentLocationExtractor
     @current_exam_paper_version = 'EXAM_PAPER.' + current
     idstate = doc.xpath("//foxml:datastream[@ID='EXAM_PAPER']/@STATE",@ns)   #TODO
     # extract rest of key metadata
-    extract_single_valued_element('rel','isMemberOf') # immediate parent collction
-    extract_multivalued_element('fedora-model','hasModel') # possible relevance, not sure if needed
-    return @key_metadata
+    extract_single_valued_element('rel', 'isMemberOf') # immediate parent coll
+    extract_multivalued_element('fedora-model', 'hasModel') # possible relevance
+    @key_metadata
   end
 
   # generic method to return array of values where value is an element which may

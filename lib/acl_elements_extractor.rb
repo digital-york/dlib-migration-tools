@@ -27,6 +27,6 @@ class AclElementsExtractor
       key = r.to_sym
       @key_metadata[key] = value
     end
-    return @key_metadata # needs to be explicit
+    @key_metadata 
   end
 end
