@@ -27,6 +27,6 @@ class AclElementsExtractor
       key = r.to_sym
       @key_metadata[key] = value
     end
-    @key_metadata 
+    @key_metadata
   end
 end

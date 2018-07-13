@@ -10,27 +10,6 @@ class CsvHelper
     @output_location = output_location
   end
 
-  def collect_metadata1(filename)
-    # open a foxml file and pass to ExtractDublinCoreMetadata
-    doc = File.open(filename) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
-    dc_metadata_extractor = DublinCoreElementsExtractor.new(doc)
-    dc_values_hash = dc_metadata_extractor.extract_key_metadata
-    create_csv([dc_values_hash])
-  end
-
-  def collect_full_metadata1(filename)
-    # open a foxml file and pass to ExtractDublinCoreMetadata
-    doc = File.open(filename) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
-    dc_metadata_extractor = DublinCoreElementsExtractor.new(doc)
-    dc_values_hash = dc_metadata_extractor.extract_key_metadata
-    rels_ext_metadata_extractor = RelsExtElementsExtractor.new(doc)
-    rels_ext_values_hash = rels_ext_metadata_extractor.extract_key_metadata
-    acl_metadata_extractor = AclElementsExtractor.new(doc)
-    acl_values_hash = acl_metadata_extractor.extract_key_metadata
-    # pass returned hashes to csv creation
-    create_csv([dc_values_hash, rels_ext_values_hash, acl_values_hash])
-  end
-
   # make the datastreams to collect metadata from specifiable
   def collect_metadata(filename, ds_scope)
     ds_to_collect = get_datastream_scope(ds_scope)
@@ -44,30 +23,6 @@ class CsvHelper
     end
     # pass returned hashes to csv creation
     create_csv(values_hash_array)
-  end
-
-  def extractor_factory(ds_name, doc)
-    case ds_name
-    when 'dc'
-      extractor = DublinCoreElementsExtractor.new(doc)
-    when 'rels_ext'
-      extractor = RelsExtElementsExtractor.new(doc)
-    when 'acl'
-      extractor = AclElementsExtractor.new(doc)
-    end
-    extractor
-  end
-
-  def get_datastream_scope(ds_scope)
-    case ds_scope
-    when 'full'
-      ds_to_collect  = %w[dc rels_ext acl]
-    when 'dc'
-      ds_to_collect  = %w[dc]
-    else
-      ds_to_collect  = %w[dc]
-    end
-    ds_to_collect
   end
 
   # This method  creates a single csv file from a single foxml file
@@ -96,5 +51,29 @@ class CsvHelper
       end
     end
     csv_row
+  end
+
+  def extractor_factory(ds_name, doc)
+    case ds_name
+    when 'dc'
+      extractor = DublinCoreElementsExtractor.new(doc)
+    when 'rels_ext'
+      extractor = RelsExtElementsExtractor.new(doc)
+    when 'acl'
+      extractor = AclElementsExtractor.new(doc)
+    end
+    extractor
+  end
+
+  def get_datastream_scope(ds_scope)
+    case ds_scope
+    when 'full'
+      ds_to_collect  = %w[dc rels_ext acl]
+    when 'dc'
+      ds_to_collect  = %w[dc]
+    else
+      ds_to_collect  = %w[dc]
+    end
+    ds_to_collect
   end
 end

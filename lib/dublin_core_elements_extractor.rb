@@ -12,23 +12,24 @@ class DublinCoreElementsExtractor
 
   #  extract the metadata values and putting them into a hash
   def extract_key_metadata
-    @ns = @doc.collect_namespaces # nokogiri doesnt resolve nested namespaces, this fixes
-    pid = @doc.xpath("//foxml:digitalObject/@PID",@ns).to_s
+    @ns = @doc.collect_namespaces # nokogiri cant resolve nested namespaces, this fixes
+    pid = @doc.xpath('//foxml:digitalObject/@PID', @ns).to_s
+    #remove the 'york:' prefix as its always the same
+    pid = pid.gsub 'york:', ''
     @key_metadata[:pid] = pid
     # estabish current dc version to use before extracting any further values
-    nums = @doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion/@ID",@ns) #unique path structure
-		all = nums.to_s
-		current = all.rpartition('.').last
+    nums = @doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion/@ID",@ns)
+    all = nums.to_s
+    current = all.rpartition('.').last
     @current_dc_version = 'DC.' + current
-    extract_single_valued_element('title')
-    extract_multivalued_element('creator') # may be department or personal name
-    extract_multivalued_element('publisher') # alternate  location of department
-    extract_multivalued_element('subject')
-    extract_multivalued_element('description')
-    extract_single_valued_element('date')
-    extract_multivalued_element('type') # can be model types, resource types (eg Exam paper) exam levels, Qualification names
-    extract_multivalued_element('rights') # can be copyright holder, rights statement, rights url
-    extract_multivalued_element('identifier') # can be pid,but also module code
+    single_value_elements = %w[creator publisher subject description type rights identifier]
+    multi_value_elements = %w[title date]
+    single_value_elements.each do |sve|
+      extract_single_valued_element(sve)
+    end
+    multi_value_elements.each do |mve|
+      extract_multivalued_element(mve)
+    end
     @key_metadata
   end
 
