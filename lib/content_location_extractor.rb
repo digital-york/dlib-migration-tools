@@ -16,20 +16,28 @@ class ContentLocationExtractor
     # nokogiri out of box doesnt resolve nested namespaces, this fixes that
     @ns = @doc.collect_namespaces
     # estabish current ds version to use before extracting any further values
-    extract_main_resource_location('EXAM_PAPER')
+    extract_resource_locations
     @key_metadata
   end
 
-  def extract_main_resource_location(main_resource_id)
-    nums = @doc.xpath("//foxml:datastream[@ID='#{main_resource_id}']"\
-      "[@STATE='A']/foxml:datastreamVersion/@ID", @ns)
-    all = nums.to_s
-    current = all.rpartition('.').last
-    @current_exam_paper_version = 'EXAM_PAPER.' + current
-    path = "//foxml:datastream[@ID='EXAM_PAPER']/foxml:datastreamVersion"\
-    "[@ID='#{@current_exam_paper_version}']/foxml:contentLocation/@REF"
-    content_location = @doc.xpath(path, @ns).to_s
-    return if content_location.length.zero?
-    @key_metadata[:main_resource_location] = content_location
+  def extract_resource_locations
+    #  get all the ids for paths with content locations
+    # then extract the ids
+    # then run the paths for just the ids to get the content locations
+    content_ids = []
+    #get all the ids of ds with contentLocation
+    path = "//foxml:datastream[@STATE='A']/foxml:datastreamVersion"\
+    "/foxml:contentLocation/../../@ID"
+      @doc.xpath(path, @ns).each do |id|
+        content_ids.push(id)
+      end
+
+    # now use them to construct a path to get the ref
+    content_ids.each do |cid|
+      path2 = "//foxml:datastream[@STATE='A'][@ID='#{cid}']/foxml:datastreamVersion"\
+      "/foxml:contentLocation/@REF"
+      content_location = @doc.xpath(path2, @ns).to_s
+      @key_metadata[cid] = content_location
+    end
   end
 end
