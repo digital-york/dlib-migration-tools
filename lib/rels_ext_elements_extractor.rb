@@ -26,23 +26,24 @@ class RelsExtElementsExtractor
     @key_metadata
   end
 
-  # generic method to return array of values where value is an element which may
+  # generic method to  values where value is an element which may
   # occur  0:n times in a single rels-ext version
   def extract_multivalued_element(element_prefix, element_name)
-    element_array = []
+    i = 0
     path = "//foxml:datastream[@ID='RELS-EXT']/foxml:datastreamVersion"\
     "[@ID='#{@current_rels_ext_version}']/foxml:xmlContent/rdf:RDF/"\
     "rdf:Description/#{element_prefix}:#{element_name}/@rdf:resource"
     @doc.xpath(path, @ns).each do |s|
-      element_array.push(s.to_s)
+      i += 1
+      keyname = element_name
+      keyname += i.to_s
+      keyname = keyname.to_sym
+      @key_metadata[keyname] = s.to_s
     end
-    return if element_array.empty?
-    keyname = element_name + 's'
-    keyname = keyname.to_sym
-    @key_metadata[keyname] = element_array
   end
 
-  # generic method to return single value where value is an element which may occur  0:1 times in a single rels-ext version
+  # generic method to return single value where value is an element which may
+  # occur  0:1 times in a single rels-ext version
   def extract_single_valued_element(element_prefix, element_name)
     path = "//foxml:datastream[@ID='RELS-EXT']/foxml:datastreamVersion"\
     "[@ID='#{@current_rels_ext_version}']/foxml:xmlContent/rdf:RDF/"\

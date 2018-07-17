@@ -12,9 +12,9 @@ class DublinCoreElementsExtractor
 
   #  extract the metadata values and putting them into a hash
   def extract_key_metadata
-    @ns = @doc.collect_namespaces # nokogiri cant resolve nested namespaces, this fixes
+    @ns = @doc.collect_namespaces # nokogiri cant resolve nested namespaces, fixes
     pid = @doc.xpath('//foxml:digitalObject/@PID', @ns).to_s
-    # remove  'york:' prefix; its always 'york:' and complicates choice of separators
+    # remove  'york:' prefix; is always 'york:' complicates choice of separators
     pid = pid.gsub 'york:', ''
     @key_metadata[:pid] = pid
     # estabish current dc version to use before extracting any further values
@@ -22,8 +22,8 @@ class DublinCoreElementsExtractor
     all = nums.to_s
     current = all.rpartition('.').last
     @current_dc_version = 'DC.' + current
-    single_value_elements = %w[creator publisher subject description type rights identifier]
-    multi_value_elements = %w[title date]
+    multi_value_elements = %w[creator publisher subject description type rights identifier]
+    single_value_elements = %w[title date]
     single_value_elements.each do |sve|
       extract_single_valued_element(sve)
     end
@@ -36,17 +36,17 @@ class DublinCoreElementsExtractor
   # generic method to return array of values where element is a simple text
   # value which may occur  0:n times in a single dc version
   def extract_multivalued_element(element_name)
-    element_array = []
+    i = 0
     path = "//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
     '/dc:' + element_name + '/text()'
     @doc.xpath(path, @ns).each do |s|
-      element_array.push(s.to_s)
+      keyname = element_name
+      i += 1
+      keyname += i.to_s
+      keyname = keyname.to_sym
+      @key_metadata[keyname] = s.to_s
     end
-    return if element_array.empty?
-    keyname = element_name + 's'
-    keyname = keyname.to_sym
-    @key_metadata[keyname] = element_array
   end
 
   # generic method to return single value where element is a simple text value
