@@ -33,7 +33,8 @@ class CsvHelper
   def create_csv(ds_to_include)
     outfile_name = 'exam_papers_key_metadata'
     outfile_path = @output_location + '/' + outfile_name + '.csv'
-    CSV.open(outfile_path, 'wb') do |csv|
+    CSV.open(outfile_path, 'a+') do |csv|
+    # CSV.open(outfile_path, 'wb') do |csv|
       csv_row = get_csv_row(ds_to_include)
       # adds another set of quotes but it appears this is valid
       # https://stackoverflow.com/questions/40166811/writing-to-csv-is-adding-quotes

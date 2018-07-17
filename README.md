@@ -62,11 +62,13 @@ Outputs:
   *where SCOPE OF DS EXTRACTION will be either 'full' or 'ds'.
   'full' returns essential metadata for dublin core, acl, rels ext and the location of the main exam paper file. 'ds' return the dublin core metadata only
   the output is in the form of a csv file. the path_to_output_location is an optional parameter which defaults to dlib-migration-tools/tmp  the name of the file is not at present configurable and is exam_papers_key_metadata.csv.
-  there is still much to be done! 
+  there is still much to be done!
 
 
+TODO
 
+make it a batch task
 
-Further Work needed
-
-1)Similar checks could be applied to other data elements which need to be in a standard format - possibly institution names, qualification names, qualification levels. Note that in some cases not all the data elements are present, and in my existing ingest scripts their value is in this case inferred from the value of other data elements. In other cases the data value is present but has been added into a different data element. This adds complexity.
+NICE tos
+ It may be possible to make some of the other datastream elements where an element such as dc:tpe has been used as a dumping
+ ground for various pieces of un or loosely related information more precise in a similar manner to how I have treated the dc:rights elements
