@@ -22,7 +22,7 @@ class DublinCoreElementsExtractor
     all = nums.to_s
     current = all.rpartition('.').last
     @current_dc_version = 'DC.' + current
-    multi_value_elements = %w[creator publisher subject description type rights identifier]
+    multi_value_elements = %w[creator publisher subject description type identifier]
     single_value_elements = %w[title date]
     single_value_elements.each do |sve|
       extract_single_valued_element(sve)
@@ -30,10 +30,11 @@ class DublinCoreElementsExtractor
     multi_value_elements.each do |mve|
       extract_multivalued_element(mve)
     end
+    extract_rights
     @key_metadata
   end
 
-  # generic method to return array of values where element is a simple text
+  # generic method to return  values where element is a simple text
   # value which may occur  0:n times in a single dc version
   def extract_multivalued_element(element_name)
     i = 0
@@ -59,5 +60,25 @@ class DublinCoreElementsExtractor
     return if element.empty?
     keyname = element_name.to_sym
     @key_metadata[keyname] = element
+  end
+
+  # have made this different because we can distinguish the 3 distinct elements
+  def extract_rights
+    rights_link = @doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
+    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
+    "/dc:rights/text()[starts-with(.,'http')]", @ns).to_s
+    keyname = 'rights_link'.to_sym
+    @key_metadata[keyname] = rights_link.to_s
+    rights_holder = @doc.xpath("//foxml:datastream[@ID='DC']/"\
+      "foxml:datastreamVersion[@ID='#{@current_dc_version}']/foxml:xmlContent/"\
+      "oai_dc:dc/dc:rights/text()[not(contains(.,'http')) and not "\
+      "(contains(.,'licenses'))]", @ns).to_s
+    keyname = 'rights_holder'.to_sym
+    @key_metadata[keyname] = rights_holder.to_s
+    rights_statement = @doc.xpath("//foxml:datastream[@ID='DC']/"\
+      "foxml:datastreamVersion[@ID='#{@current_dc_version}']/foxml:xmlContent/"\
+      "oai_dc:dc/dc:rights/text()[contains(.,'licenses')]", @ns).to_s
+    keyname = 'rights_statement'.to_sym
+    @key_metadata[keyname] = rights_statement.to_s
   end
 end
