@@ -11,6 +11,18 @@ class CsvHelper
     @output_location = output_location
   end
 
+  # batch csv extraction from a single flat folder containing foxml files only
+  def collect_metadata_for_whole_folder(folderpath, ds_scope)
+    puts "hi"
+    ds_to_collect = get_datastream_scope(ds_scope.strip)
+    directory_to_check = folderpath.strip
+    Dir.foreach(directory_to_check) do |item|
+      next if item == '.' or item == '..'
+      filepath= directory_to_check + '/' + item
+      collect_metadata(filepath, ds_to_collect)
+    end
+  end
+
   # make the datastreams to collect metadata from specifiable
   def collect_metadata(filename, ds_scope)
     ds_to_collect = get_datastream_scope(ds_scope)
@@ -34,7 +46,6 @@ class CsvHelper
     outfile_name = 'exam_papers_key_metadata'
     outfile_path = @output_location + '/' + outfile_name + '.csv'
     CSV.open(outfile_path, 'a+') do |csv|
-    # CSV.open(outfile_path, 'wb') do |csv|
       csv_row = get_csv_row(ds_to_include)
       # adds another set of quotes but it appears this is valid
       # https://stackoverflow.com/questions/40166811/writing-to-csv-is-adding-quotes
