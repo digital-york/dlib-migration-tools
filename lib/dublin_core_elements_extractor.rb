@@ -22,7 +22,8 @@ class DublinCoreElementsExtractor
     all = nums.to_s
     current = all.rpartition('.').last
     @current_dc_version = 'DC.' + current
-    multi_value_elements = %w[creator publisher subject description type]
+    # multi_value_elements = %w[creator publisher subject description type]
+    multi_value_elements = %w[creator publisher subject description]
     single_value_elements = %w[title date]
     single_value_elements.each do |sve|
       extract_single_valued_element(sve)
@@ -30,8 +31,9 @@ class DublinCoreElementsExtractor
     multi_value_elements.each do |mve|
       extract_multivalued_element(mve)
     end
-    extract_rights
+    extract_types
     extract_modules
+    extract_rights
     @key_metadata
   end
 
@@ -68,9 +70,20 @@ class DublinCoreElementsExtractor
     @key_metadata[element_name.to_sym] = element
   end
 
-  # extract only those dc:type values we are interested in, and allocate to their
-  # distinct types
-  def extract_types
+  # extract only  dc:type values relating to exam names or levels
+  def extract_qualification_name_or_level
+    i = 0
+    path = "//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
+    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
+    "/dc:type/text()[not(contains(.,'Text')) and not (contains(.,'Exam'))"\
+    "and not (contains(.,'Collection'))]"
+    @doc.xpath(path, @ns).each do |s|
+      keyname = 'goodtype'
+      puts 'this passes: ' + s.to_s
+      i += 1
+      keyname += i.to_s
+      @key_metadata[keyname.to_sym] = s.to_s
+    end
   end
 
   # extract only the dc:identifier values which identify modules, discard pids
