@@ -22,7 +22,7 @@ class DublinCoreElementsExtractor
     all = nums.to_s
     current = all.rpartition('.').last
     @current_dc_version = 'DC.' + current
-    multi_value_elements = %w[creator publisher subject description type identifier]
+    multi_value_elements = %w[creator publisher subject description type]
     single_value_elements = %w[title date]
     single_value_elements.each do |sve|
       extract_single_valued_element(sve)
@@ -31,6 +31,7 @@ class DublinCoreElementsExtractor
       extract_multivalued_element(mve)
     end
     extract_rights
+    extract_modules
     @key_metadata
   end
 
@@ -45,12 +46,10 @@ class DublinCoreElementsExtractor
       keyname = element_name
       i += 1
       keyname += i.to_s
-      keyname = keyname.to_sym
-      @key_metadata[keyname] = s.to_s
+      @key_metadata[keyname.to_sym] = s.to_s
     end
     if i.zero?
-      keyname = element_name
-      keyname = keyname.to_sym
+      keyname = element_name.to_sym
       @key_metadata[keyname] = ''
     end
   end
@@ -66,27 +65,44 @@ class DublinCoreElementsExtractor
     if element.empty?
       element = ''
     end
-    keyname = element_name.to_sym
-    @key_metadata[keyname] = element
+    @key_metadata[element_name.to_sym] = element
   end
+
+  # extract only those dc:type values we are interested in, and allocate to their
+  # distinct types
+  def extract_types
+  end
+
+  # extract only the dc:identifier values which identify modules, discard pids
+  def extract_modules
+    i = 0
+    path = "//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
+    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
+    "/dc:identifier/text()[not(starts-with(.,'york')) ]"
+    @doc.xpath(path, @ns).each do |s|
+      keyname = 'module'
+      i += 1
+      keyname += i.to_s
+      @key_metadata[keyname.to_sym] = s.to_s
+    end
+  end
+
 
   # have made this different because we can distinguish the 3 distinct elements
   def extract_rights
     rights_link = @doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
     "/dc:rights/text()[starts-with(.,'http')]", @ns).to_s
-    keyname = 'rights_link'.to_sym
-    @key_metadata[keyname] = rights_link.to_s
+    @key_metadata['rights_link'.to_sym] = rights_link.to_s
     rights_holder = @doc.xpath("//foxml:datastream[@ID='DC']/"\
       "foxml:datastreamVersion[@ID='#{@current_dc_version}']/foxml:xmlContent/"\
       "oai_dc:dc/dc:rights/text()[not(contains(.,'http')) and not "\
       "(contains(.,'licenses'))]", @ns).to_s
-    keyname = 'rights_holder'.to_sym
-    @key_metadata[keyname] = rights_holder.to_s
+    @key_metadata['rights_holder'.to_sym] = rights_holder.to_s
     rights_statement = @doc.xpath("//foxml:datastream[@ID='DC']/"\
       "foxml:datastreamVersion[@ID='#{@current_dc_version}']/foxml:xmlContent/"\
       "oai_dc:dc/dc:rights/text()[contains(.,'licenses')]", @ns).to_s
-    keyname = 'rights_statement'.to_sym
-    @key_metadata[keyname] = rights_statement.to_s
+    @key_metadata['rights_statement'.to_sym] = rights_statement.to_s
   end
+
 end

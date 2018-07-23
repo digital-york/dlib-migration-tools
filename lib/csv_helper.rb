@@ -35,7 +35,6 @@ class CsvHelper
       values_hash_array.push(values_hash)
     end
     # pass returned hashes to csv creation
-    doc.close
     create_csv(values_hash_array)
   end
 
