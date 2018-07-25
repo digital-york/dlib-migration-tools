@@ -23,6 +23,7 @@ class CsvHelper
     Dir.foreach(directory_to_check) do |item|
       next if item == '.' or item == '..'
       filepath= directory_to_check + '/' + item
+      puts " at line 26 " + ds_to_collect.to_s
       collect_metadata(filepath, ds_to_collect)
     end
   end
@@ -44,12 +45,14 @@ class CsvHelper
   end
 
   # make the datastreams to collect metadata from specifiable
-  def collect_metadata(filename, ds_scope)
-    ds_to_collect = get_datastream_scope(ds_scope)
+  def collect_metadata(filename, ds_to_collect)
+    #ds_to_collect = get_datastream_scope(ds_scope)
+    puts "ds listed were " + ds_to_collect.to_s
     values_hash_array = []
     # open a foxml file and pass to ExtractDublinCoreMetadata
     doc = File.open(filename) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
     ds_to_collect.each do |ds|
+      puts "extracting data from " + ds
       extractor = extractor_factory(ds, doc)
       values_hash = extractor.extract_key_metadata
       values_hash_array.push(values_hash)
@@ -103,9 +106,12 @@ class CsvHelper
       ds_to_collect  = %w[dc rels_ext acl content_location]
     when 'dc'
       ds_to_collect  = %w[dc]
+    when 'dc_plus'
+      ds_to_collect  = %w[dc rels_ext]
     else
       ds_to_collect  = %w[dc]
     end
+    puts "ds_to_collect at line 114" + ds_to_collect.to_s
     ds_to_collect
   end
 end
