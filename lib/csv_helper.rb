@@ -21,15 +21,15 @@ class CsvHelper
     # collect, headers first, as we need a complete list of columns in advance
     get_headers(directory_to_check, ds_to_collect)
     Dir.foreach(directory_to_check) do |item|
-      next if item == '.' or item == '..'
-      filepath= directory_to_check + '/' + item
+      next if item == '.' || item == '..'
+      filepath = directory_to_check + '/' + item
       collect_metadata(filepath, ds_to_collect)
     end
   end
-# TODO: acl_elements, content locations
+# TODO:  content locations
   def get_headers(directory_to_check, ds_to_collect)
     Dir.foreach(directory_to_check) do |item|
-      next if item == '.' or item == '..'
+    next if item == '.' || item == '..'
       filepath = directory_to_check + '/' + item
       doc = File.open(filepath) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
       ds_to_collect.each do |ds|
@@ -103,7 +103,7 @@ class CsvHelper
     when 'dc'
       ds_to_collect  = %w[dc]
     when 'dc_plus'
-      ds_to_collect  = %w[dc rels_ext acl]
+      ds_to_collect  = %w[dc rels_ext acl content_location]
     else
       ds_to_collect  = %w[dc]
     end

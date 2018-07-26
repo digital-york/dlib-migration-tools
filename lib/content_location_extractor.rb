@@ -8,6 +8,7 @@ class ContentLocationExtractor
     @key_metadata = {}
     @current_exam_paper_version = ''
     @ns = ''
+    @headers = []
   end
 
   # this will do the meat of extracting the content locations. there should be
@@ -20,22 +21,31 @@ class ContentLocationExtractor
     @key_metadata
   end
 
-  def extract_resource_locations
-    #  get all the ids for paths with content locations
-    # then extract the ids
-    # then run the paths for just the ids to get the content locations
-    content_ids = []
-    #get all the ids of ds with contentLocation
+  def collect_headers
+    @ns = @doc.collect_namespaces
     path = "//foxml:datastream[@STATE='A']/foxml:datastreamVersion"\
     "/foxml:contentLocation/../../@ID"
-      @doc.xpath(path, @ns).each do |id|
-        content_ids.push(id)
-      end
+    @doc.xpath(path, @ns).each do |id|
+      @headers.push(id.to_s)
+    end
+    @headers
+  end
+
+  def extract_resource_locations
+    #  get all  ids for paths with content locations then extract the ids
+    # then run the paths for just the ids to get the content locations
+    content_ids = []
+    # get all the ids of ds with contentLocation
+    path = "//foxml:datastream[@STATE='A']/foxml:datastreamVersion"\
+    "/foxml:contentLocation/../../@ID"
+    @doc.xpath(path, @ns).each do |id|
+      content_ids.push(id)
+    end
 
     # now use them to construct a path to get the ref
     content_ids.each do |cid|
-      path2 = "//foxml:datastream[@STATE='A'][@ID='#{cid}']/foxml:datastreamVersion"\
-      "/foxml:contentLocation/@REF"
+      path2 = "//foxml:datastream[@STATE='A'][@ID='#{cid}']"\
+      "/foxml:datastreamVersion/foxml:contentLocation/@REF"
       content_location = @doc.xpath(path2, @ns).to_s
       @key_metadata[cid] = content_location
     end
