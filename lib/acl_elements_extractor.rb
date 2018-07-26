@@ -7,6 +7,12 @@ class AclElementsExtractor
     @doc = doc
     @key_metadata = {}
     @ns = ''
+    @headers = %w[itsStaff administrator iris york public libarchStaff infoStaff]
+  end
+
+  def collect_headers
+    #dont need to read original file, this wont vary    
+    @headers
   end
 
   # does the meat of extracting the metadata values and inserting into  hash
