@@ -15,6 +15,9 @@ class CsvHelper
   end
 
   # batch csv extraction from a single flat folder containing foxml files only
+  # command line call syntax: rake metadata_extraction_tasks:
+  # run_metadata_collection_for _folder[<"/path/to/folder">
+  # <full|dc|dc_plus_content_location>,<"/path_to_output_location">]
   def collect_metadata_for_whole_folder(folderpath, ds_scope)
     ds_to_collect = get_datastream_scope(ds_scope.strip)
     directory_to_check = folderpath.strip
@@ -26,20 +29,20 @@ class CsvHelper
       collect_metadata(filepath, ds_to_collect)
     end
   end
-# TODO:  content locations
+
   def get_headers(directory_to_check, ds_to_collect)
     Dir.foreach(directory_to_check) do |item|
     next if item == '.' || item == '..'
-      filepath = directory_to_check + '/' + item
-      doc = File.open(filepath) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
-      ds_to_collect.each do |ds|
-        extractor = extractor_factory(ds, doc)
-        new_headers = extractor.collect_headers
-        new_headers.each do |h|
-          next if @headers.include?(h.to_s)
-          @headers.push(h.to_s)
-        end
+    filepath = directory_to_check + '/' + item
+    doc = File.open(filepath) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
+    ds_to_collect.each do |ds|
+      extractor = extractor_factory(ds, doc)
+      new_headers = extractor.collect_headers
+      new_headers.each do |h|
+        next if @headers.include?(h.to_s)
+        @headers.push(h.to_s)
       end
+    end
     end
   end
 
@@ -102,8 +105,8 @@ class CsvHelper
       ds_to_collect  = %w[dc rels_ext acl content_location]
     when 'dc'
       ds_to_collect  = %w[dc]
-    when 'dc_plus'
-      ds_to_collect  = %w[dc rels_ext acl content_location]
+    when 'dc_plus_content_location'
+      ds_to_collect  = %w[dc content_location]
     else
       ds_to_collect  = %w[dc]
     end

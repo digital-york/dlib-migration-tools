@@ -1,6 +1,47 @@
 # README
 
-This repository is a minimised non samvera/fedora app - just rake tasks to get metadata text out of foxml and put it into text/csv files.  No models, dlibhydra, authorities etc.
+
+This repository is a minimised non samvera/fedora app - just rake tasks to get metadata text out of foxml and put it into text/csv files.  No models, dlibhydra, authorities etc. Seperate normalisation tasks for dates and department names included in here, they are not at this point used in the main metadata extraction function.
+
+METADATA EXTRACTION TASK
+Aims: abstract out foxml metadata extraction
+Outputs:
+CSV file containing key metadata from all the foxml files in a specified folderr. one per line. Folder must contain foxml files only and no subfolders.
+
+No normalisation at this point, although some data elements - for example the various dc:rights
+elements - have been filtered into  distinct elements according to their content, or in some cases excluded as irrelevant (dc:type ="Text" being one such case)
+
+In order to make the data more readable header names have been allocated to the columns
+based on the element names. This makes it easier to cross check the data types and values present across files.
+
+Where a data element may have multiple values each has been allocated to a different header eg creator1, creator2. Because of the way the headers are created these may not appear next to each other in the csv output.
+
+You must specify which datastreams to include metadata from as a parameter in the command line call.
+In the simplest case, dublin core output only is output. This may be the main information the content team will require. use 'dc'
+A second simplified variant provides Dublin Core metadata plus the present locations of all associated content files (ie the actual pdfs, wavs, jpgs ) use 'dc_plus_content_location'
+The final variant outputs all key metadata from the Dublin Core, content locations,
+ACL (user role permissions) and RELS-EXT (collection membership and object model information). use 'full'
+
+The csv file output location is also specifiable by an optional  parameter to the command line call. If not specified, it will default to <application-root-dir>/tmp. The csv file name is not specifiable, it is exam_papers_key_metadata.csv
+
+
+TO RUN METADATA EXTRACTION
+to run as a batch task on a flat folder containing foxml files only. This must be
+on a location on the machine running the application or a mapped drive accessible to it
+command line call as follows:  
+rake metadata_extraction_tasks:run_metadata_collection_for_folder[<"/path/to/folder"><full|dc|dc_plus_content_location>,<"/path_to_output_location">]
+eg for example rake metadata_extraction_tasks:run_metadata_collection_for_folder["../all_exams_latest","dc_plus_content_location","tmp"]
+
+note final output path parameter is optional
+
+
+
+
+
+
+Normalisation tasks: see below
+
+These are completely separate from the main metadata extraction task. I have left them in here as they may be in part or whole useful for the data normalisation phase of the migration process.
 
 1)date quality checking.
 this  takes as its  input parameter the path of a directory containing foxml. All the foxml should be at this level as the script will not recurse through subdirecties. The script will read the date and normalise it into a standard format : yyyy-mm-dd. A list of all those normalised dates which have been changed from their original format will then be output to a text file (DATE OUT :), corrected_dates_list.txt (by default at the root level, this could be changed). An additional parameter "more" can be supplied which will output the names of those foxml files with non standard date formats and the original, unnormalised dates in addition to the normalised dates (FILE: DATE IN: DATE OUT:2013). Not all dates can be normalised - for example typos where extra digits have been added, these will be listed in both output file versions, but only identifiable in the extended information by eyeballing the DATE IN: entry.
@@ -66,12 +107,3 @@ Outputs:
 
   to run as a batch task on a flat folder containing foxml files only
   rake metadata_extraction_tasks:run_metadata_collection_for_folder[<"/path/to/folder">,<"/path/to/file">,<full|dc>,<"/path_to_output_location">]
-
-
-TODO
-
-make it a batch task
-
-NICE tos
- It may be possible to make some of the other datastream elements where an element such as dc:tpe has been used as a dumping
- ground for various pieces of un or loosely related information more precise in a similar manner to how I have treated the dc:rights elements
