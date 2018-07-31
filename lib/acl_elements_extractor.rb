@@ -11,7 +11,7 @@ class AclElementsExtractor
   end
 
   def collect_headers
-    #dont need to read original file, this wont vary    
+    # dont need to read  file, all records  have identical headers for this DS
     @headers
   end
 

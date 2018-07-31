@@ -23,6 +23,8 @@ class CsvHelper
     directory_to_check = folderpath.strip
     # collect, headers first, as we need a complete list of columns in advance
     get_headers(directory_to_check, ds_to_collect)
+    #this is where to change the header order
+    @headers =  reorder_headers
     Dir.foreach(directory_to_check) do |item|
       next if item == '.' || item == '..'
       filepath = directory_to_check + '/' + item
@@ -32,18 +34,54 @@ class CsvHelper
 
   def get_headers(directory_to_check, ds_to_collect)
     Dir.foreach(directory_to_check) do |item|
-    next if item == '.' || item == '..'
-    filepath = directory_to_check + '/' + item
-    doc = File.open(filepath) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
-    ds_to_collect.each do |ds|
-      extractor = extractor_factory(ds, doc)
-      new_headers = extractor.collect_headers
-      new_headers.each do |h|
-        next if @headers.include?(h.to_s)
-        @headers.push(h.to_s)
+      next if item == '.' || item == '..'
+      filepath = directory_to_check + '/' + item
+      doc = File.open(filepath) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
+      ds_to_collect.each do |ds|
+        extractor = extractor_factory(ds, doc)
+        new_headers = extractor.collect_headers
+        new_headers.each do |h|
+          next if @headers.include?(h.to_s)
+          @headers.push(h.to_s)
+        end
       end
     end
+  end
+
+  # headers are added to the initial array in the order in which the elements
+  # they refer to  are encountered in the records. So at this point multiple
+  # values may not appear in sequence. This reorders them, for readibility
+  def reorder_headers
+    ordered_array = %w[pid title date]
+    creators, publishers, qualifications, modules,
+    descriptions, subjects, others = Array.new(7) { [] }
+    @headers.each do |t|
+      if t.start_with? 'creator'
+        creators.push(t)
+      elsif t.start_with? 'publisher'
+        publishers.push(t)
+      elsif t.start_with? 'subject'
+        subjects.push(t)
+      elsif t.start_with? 'qualification'
+        qualifications.push(t)
+      elsif t.start_with? 'module'
+        modules.push(t)
+      elsif t.start_with? 'description'
+        descriptions.push(t)
+      else
+        unless %w(pid title date).any? { |s| t.include? s }
+          others.push(t)
+        end
+      end
     end
+    header_arrays = [creators, publishers, subjects, qualifications, modules,
+                     descriptions, others]
+    header_arrays.each do |h|
+      h.each do |each_header_name|
+        ordered_array.push(each_header_name)
+      end
+    end
+    ordered_array
   end
 
   # make the datastreams to collect metadata from specifiable
