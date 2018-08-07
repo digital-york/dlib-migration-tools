@@ -25,7 +25,7 @@ class ContentLocationExtractor
     path = "//foxml:datastream[@STATE='A']/foxml:datastreamVersion"\
     "/foxml:contentLocation/../../@ID"
     @doc.xpath(path, @ns).each do |id|
-      @headers.push(id.to_s)
+      @headers.push(id.to_s.downcase)
     end
     @headers
   end

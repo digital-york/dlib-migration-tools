@@ -32,7 +32,7 @@ command line call as follows:
 rake metadata_extraction_tasks:run_metadata_collection_for_folder[<"/path/to/folder"><full|dc|dc_plus_content_location>,<"/path_to_output_location">]
 eg for example rake metadata_extraction_tasks:run_metadata_collection_for_folder["../all_exams_latest","dc_plus_content_location","tmp"]
 
-note final output path parameter is optional
+(reminder: final output path parameter is optional)
 
 
 
@@ -97,13 +97,10 @@ Outputs:
   *class to take hash from the above and create csv output from unnormalised data (could maybe do this as name:value pairs). Takes file_doc as input parameter to specify where to write csv file.
   *overall task tying the above together.  task takes an output location as a parameter, and sets a default if no parameter set. Then calls the metadata extraction task and feeds the output hash to the csv creator
 
-  TO RUN METADATA EXTRACTION    
-  to run on a single file
-  call rake metadata_extraction_tasks:run_metadata_collection[<"/path/to/file">,<SCOPE OF DS EXTRACTION*>,<"/path_to_output_location">]
-  *where SCOPE OF DS EXTRACTION will be either 'full' or 'ds'.
-  'full' returns essential metadata for dublin core, acl, rels ext and the location of the main exam paper file. 'ds' return the dublin core metadata only
-  the output is in the form of a csv file. the path_to_output_location is an optional parameter which defaults to dlib-migration-tools/tmp  the name of the file is not at present configurable and is exam_papers_key_metadata.csv.
-  there is still much to be done!
+  TO RUN METADATA EXTRACTION  
+  to run as a batch task on a flat folder containing foxml files only  
 
-  to run as a batch task on a flat folder containing foxml files only
-  rake metadata_extraction_tasks:run_metadata_collection_for_folder[<"/path/to/folder">,<"/path/to/file">,<full|dc>,<"/path_to_output_location">]
+rake metadata_extraction_tasks:run_metadata_collection_for_folder[</path/to/folder>,<full|dc|dc_plus_content_location>,</path_to_output_location>]
+  *where SCOPE OF DS EXTRACTION will be either 'full' or 'ds'.
+  'full' returns essential metadata for dublin core, acl, rels ext and the location of the main exam paper file. 'ds' return the dublin core metadata only, dc_plus_content_location returns dublin core plus all the content locations (ie the actual exam paper pdfs plus associated files)
+  the output is in the form of a csv file. the path_to_output_location is an optional parameter which defaults to dlib-migration-tools/tmp  the name of the file is not at present configurable and is exam_papers_key_metadata.csv.

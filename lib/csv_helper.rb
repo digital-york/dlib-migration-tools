@@ -23,8 +23,7 @@ class CsvHelper
     directory_to_check = folderpath.strip
     # collect, headers first, as we need a complete list of columns in advance
     get_headers(directory_to_check, ds_to_collect)
-    #this is where to change the header order
-    @headers =  reorder_headers
+    @headers = reorder_headers
     Dir.foreach(directory_to_check) do |item|
       next if item == '.' || item == '..'
       filepath = directory_to_check + '/' + item
@@ -50,7 +49,8 @@ class CsvHelper
 
   # headers are added to the initial array in the order in which the elements
   # they refer to  are encountered in the records. So at this point multiple
-  # values may not appear in sequence. This reorders them, for readibility
+  # values may not appear in sequence. This reorders them, for readibility. do
+  # this way rather than using alphabetical sort as allows more logical ordering
   def reorder_headers
     ordered_array = %w[pid title date]
     creators, publishers, qualifications, modules,
@@ -69,7 +69,7 @@ class CsvHelper
       elsif t.start_with? 'description'
         descriptions.push(t)
       else
-        unless %w(pid title date).any? { |s| t.include? s }
+        unless %w[pid title date].any? { |s| t.include? s }
           others.push(t)
         end
       end
@@ -126,28 +126,26 @@ class CsvHelper
   def extractor_factory(ds_name, doc)
     case ds_name
     when 'dc'
-      extractor = DublinCoreElementsExtractor.new(doc)
+      DublinCoreElementsExtractor.new(doc)
     when 'rels_ext'
-      extractor = RelsExtElementsExtractor.new(doc)
+      RelsExtElementsExtractor.new(doc)
     when 'acl'
-      extractor = AclElementsExtractor.new(doc)
+      AclElementsExtractor.new(doc)
     when 'content_location'
-      extractor = ContentLocationExtractor.new(doc)
+      ContentLocationExtractor.new(doc)
     end
-    extractor
   end
 
   def get_datastream_scope(ds_scope)
     case ds_scope
     when 'full'
-      ds_to_collect  = %w[dc rels_ext acl content_location]
+      %w[dc rels_ext acl content_location]
     when 'dc'
-      ds_to_collect  = %w[dc]
+      %w[dc]
     when 'dc_plus_content_location'
-      ds_to_collect  = %w[dc content_location]
+      %w[dc content_location]
     else
-      ds_to_collect  = %w[dc]
+      %w[dc]
     end
-    ds_to_collect
   end
 end
