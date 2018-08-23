@@ -12,9 +12,9 @@ OUTPUTS: CSV file containing key metadata from all the foxml records found in th
 
 #### TO RUN METADATA EXTRACTION
 command line call as follows from within the project folder:  
-``` rake metadata_extraction_tasks:run_metadata_collection_for_folder[<"/path/to/folder"><full|dc|dc_plus_content_location>,<"/path_to_output_location">] ```
+```rake metadata_extraction_tasks:run_metadata_collection_for_folder[<"/path/to/folder"><full|dc|dc_plus_content_location>,<"/path_to_output_location">]```
 for example
-``` rake metadata_extraction_tasks:run_metadata_collection_for_folder["../all_exams_latest","dc_plus_content_location","tmp"] ```
+`rake metadata_extraction_tasks:run_metadata_collection_for_folder["../all_exams_latest","dc_plus_content_location","tmp"]`
 
 #### INPUT PARAMETERS
 The first input parameter is the path to the folder containing the foxml files
