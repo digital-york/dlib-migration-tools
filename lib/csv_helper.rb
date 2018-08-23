@@ -117,6 +117,7 @@ class CsvHelper
     csv_row = CSV::Row.new(@headers, [])
     ds_hashes_to_include.each do |ds_hash|
       ds_hash.each do |key, value|
+        key = key.to_s.downcase
         csv_row[key.to_s] = value
       end
     end
