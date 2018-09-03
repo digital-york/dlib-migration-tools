@@ -8,7 +8,7 @@ OUTPUTS: CSV file containing key metadata from all the foxml records found in th
 REQUIRES
 ruby
 rake
-nokogiri (if not already present, run bundle install )
+nokogiri (if nokogiri not already present, run bundle install )
 
 TO RUN METADATA EXTRACTION
 command line call as follows from within the project folder:  
