@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require 'nokogiri'
+require_relative '../cleaners/date_cleaner.rb'
 
 # extract the key metadata elements from the dublin core datastream
 class DublinCoreElementsExtractor
@@ -32,6 +33,17 @@ class DublinCoreElementsExtractor
     @current_dc_version = 'DC.' + current
   end
 
+  def clean_data
+    if @key_metadata.has_key?(:date)
+      cleaner = DateCleaner.new
+      date = @key_metadata.fetch(:date)
+      clean_date = cleaner.clean(date)
+      puts 'found date' + clean_date
+    else
+      puts 'date not found'
+    end
+  end
+
   #  extract the metadata values and putting them into a hash
   def extract_key_metadata
     @ns = @doc.collect_namespaces # nokogiri cant resolve nested namespaces, fixes
@@ -51,6 +63,7 @@ class DublinCoreElementsExtractor
     extract_qualification_types
     extract_modules
     extract_rights
+    clean_data
     @key_metadata
   end
 
@@ -169,5 +182,4 @@ class DublinCoreElementsExtractor
       "oai_dc:dc/dc:rights/text()[contains(.,'licenses')]", @ns).to_s
     @key_metadata['rights_statement'.to_sym] = rights_statement.to_s
   end
-
 end

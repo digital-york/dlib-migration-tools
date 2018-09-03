@@ -1,0 +1,70 @@
+#!/usr/bin/env ruby
+
+class DateCleaner
+  def clean(date)
+    puts "was given date" + date
+    year = get_year(date)
+    month = get_month(date)
+    puts "got month " + month
+    day = get_day(date)
+    puts 'day was ' + day
+    year
+  end
+
+  # this looks for 4 digit groups, and expects either one or two. There will be
+  # two in the case of a date range, in which case we use only the second date
+  def get_year(date)
+    normalised = ''
+    matches = []
+    # though if a year has two many digits, this will just truncate
+    date.scan(/([\d]{4})/) { matches << $~ }
+    if matches.size == 1
+      normalised = matches[0].to_s
+    elsif matches.size == 2
+      normalised = matches[1].to_s
+    else
+      normalised = 'no match'
+    end
+    normalised
+  end
+
+  # Take the entire date and  return just the month  if it is specified.
+  # Zero pad if single digit
+  def get_month(unnormalised_date)
+    month = ''
+    # if its a year range dont proceed further
+    return month if /[\d]{4}[\s\-\.\/\\\\][\d]{4}/.match(unnormalised_date.strip)
+    # year is at start so month will be first pair of digits  if present
+    # needs a total of 4 backslashes to escape \ used as a date delimiter!
+    if /^[0-9]{4}[\s\-\.\/\\\\]([\d]{1,2})/.match(unnormalised_date.strip)
+      month = $1
+      # year is at end so month will immediately precede the year
+      # needs a total of 4 backslashes to escape \ used as a date delimiter!
+    elsif /([\d]{1,2})[\s\-\.\/\\\\][0-9]{4}\Z/.match(unnormalised_date.strip)
+      month = $1
+    end
+    month = '0' + clean_month if month.length == 1
+    month
+  end
+
+  # take the string for the entire date, return the month if it is specified.
+  # zero pad if single digit
+  def get_day(unnormalised_date)
+    day = ''
+    # if its a year range dont proceed further
+    return day if /[\d]{4}[\s\-\.\/\\\\][\d]{4}/.match(unnormalised_date.strip)
+    # year is at start so day will be a second pair of digits if present.
+    # it wont be present without a month
+    # needs a total of 4 backslashes to escape \ used as a date delimiter!
+		if /^[0-9]{4}[\s\-\.\/\\\\][\d]{1,2}[\s\-\.\/\\\\]([\d]{1,2})/.match(unnormalised_date.strip)
+      day = $1
+      # year is at end so day will be first of two pairs of digits if present.
+      # it wont be present without a month.
+      # needs a total of 4 backslashes to escape \ used as a date delimiter!
+    elsif /([\d]{1,2})[\s\-\.\/\\\\][\d]{1,2}[\s\-\.\/\\\\][0-9]{4}\Z/.match(unnormalised_date.strip)
+      day = $1
+    end
+    day = '0' + day if day.length == 1
+    day
+  end
+end
