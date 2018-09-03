@@ -19,7 +19,7 @@ class RelsExtElementsExtractor
     # extract rest of key metadata
     extract_single_valued_element('rel', 'isMemberOf') # immediate parent coll
     # possible relevance, not sure if needed
-    extract_multivalued_element('fedora-model', 'hasModel')
+    #extract_multivalued_element('fedora-model', 'hasModel')
     @key_metadata
   end
 
