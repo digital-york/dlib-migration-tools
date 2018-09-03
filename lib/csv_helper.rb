@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 require 'nokogiri'
 require 'csv'
-require_relative 'dublin_core_elements_extractor.rb'
-require_relative 'rels_ext_elements_extractor.rb'
-require_relative 'acl_elements_extractor.rb'
-require_relative 'content_location_extractor.rb'
+require_relative 'extractors/dublin_core_elements_extractor.rb'
+require_relative 'extractors/rels_ext_elements_extractor.rb'
+require_relative 'extractors/acl_elements_extractor.rb'
+require_relative 'extractors/content_location_extractor.rb'
 # coordinate the collection of metadata + creation of csv
 class CsvHelper
   def initialize(output_location)
@@ -145,6 +145,10 @@ class CsvHelper
       %w[dc]
     when 'dc_plus_content_location'
       %w[dc content_location]
+    when 'dc_plus_acl'
+      %w[dc acl]
+    when 'dc_plus_rels_ext'
+      %w[dc rels_ext]
     else
       %w[dc]
     end
