@@ -9,7 +9,7 @@ class DublinCoreElementsExtractor
     @key_metadata = {}
     @current_dc_version = ''
     @ns = ''
-    @headers = ['pid','title', 'date', 'rights_link', 'rights_holder', 'rights_statement']
+    @headers = %w[pid title date rights_link rights_holder rights_statement]
   end
 
   # we just want to get the column headers for this
@@ -26,21 +26,19 @@ class DublinCoreElementsExtractor
   end
 
   def get_current_dc_version
-    nums = @doc.xpath("//foxml:datastream[@ID='DC']/"\
-      "foxml:datastreamVersion/@ID", @ns)
+    nums = @doc.xpath('//foxml:datastream[@ID="DC"]/'\
+      'foxml:datastreamVersion/@ID', @ns)
     all = nums.to_s
     current = all.rpartition('.').last
     @current_dc_version = 'DC.' + current
   end
 
-  def clean_data
-    if @key_metadata.has_key?(:date)
+  def clean_date
+    if @key_metadata.key?(:date)
       cleaner = DateCleaner.new
       date = @key_metadata.fetch(:date)
       clean_date = cleaner.clean(date)
-      puts 'found date' + clean_date
-    else
-      puts 'date not found'
+      @key_metadata[:date] = clean_date unless clean_date.to_s.empty?
     end
   end
 
@@ -63,7 +61,7 @@ class DublinCoreElementsExtractor
     extract_qualification_types
     extract_modules
     extract_rights
-    clean_data
+    clean_date
     @key_metadata
   end
 
@@ -71,7 +69,7 @@ class DublinCoreElementsExtractor
   # value which may occur  0:n times in a single dc version
   def extract_multivalued_element(element_name)
     i = 0
-    path = "//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
     '/dc:' + element_name + '/text()'
     @doc.xpath(path, @ns).each do |s|
@@ -88,7 +86,7 @@ class DublinCoreElementsExtractor
 
   def extract_multivalued_element_headers(element_name)
     i = 0
-    path = "//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
     '/dc:' + element_name + '/text()'
     @doc.xpath(path, @ns).each do
@@ -100,23 +98,21 @@ class DublinCoreElementsExtractor
   # generic method to return single value where element is a simple text value
   # which may occur  0:1 times in a single dc version
   def extract_single_valued_element(element_name)
-    path = "//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/"\
-    "oai_dc:dc/dc:" + element_name + "/text()"
+    'oai_dc:dc/dc:' + element_name + '/text()'
     element = @doc.xpath(path, @ns).to_s
-    if element.empty?
-      element = ''
-    end
+    element = '' if element.empty?
     @key_metadata[element_name.to_sym] = element
   end
 
   # extract only  dc:type values relating to exam names or levels
   def extract_qualification_types
     i = 0
-    path = "//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
-    "/dc:type/text()[not(contains(.,'Text')) and not (contains(.,'Exam'))"\
-    "and not (contains(.,'Collection'))]"
+    '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
+    'and not (contains(.,"Collection"))]'
     @doc.xpath(path, @ns).each do |s|
       keyname = 'qualification_type'
       i += 1
@@ -127,10 +123,10 @@ class DublinCoreElementsExtractor
 
   def extract_qualification_headers
     i = 0
-    path = "//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
-    "/dc:type/text()[not(contains(.,'Text')) and not (contains(.,'Exam'))"\
-    "and not (contains(.,'Collection'))]"
+    '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
+    'and not (contains(.,"Collection"))]'
     @doc.xpath(path, @ns).each do
       header_name = 'qualification_type'
       i += 1
@@ -155,9 +151,9 @@ class DublinCoreElementsExtractor
 
   def extract_module_headers
     i = 0
-    path = "//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
-    "/dc:identifier/text()[not(starts-with(.,'york')) ]"
+    '/dc:identifier/text()[not(starts-with(.,"york")) ]'
     @doc.xpath(path, @ns).each do
       header_name = 'module'
       i += 1
@@ -166,20 +162,20 @@ class DublinCoreElementsExtractor
     end
   end
 
-  # have made this different because we can distinguish the 3 distinct elements
+  # within dc:rights we can distinguish the 3 distinct elements
   def extract_rights
-    rights_link = @doc.xpath("//foxml:datastream[@ID='DC']/foxml:datastreamVersion"\
+    rights_link = @doc.xpath('//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
-    "/dc:rights/text()[starts-with(.,'http')]", @ns).to_s
+    '/dc:rights/text()[starts-with(.,"http")]', @ns).to_s
     @key_metadata['rights_link'.to_sym] = rights_link.to_s
-    rights_holder = @doc.xpath("//foxml:datastream[@ID='DC']/"\
+    rights_holder = @doc.xpath('//foxml:datastream[@ID="DC"]/'\
       "foxml:datastreamVersion[@ID='#{@current_dc_version}']/foxml:xmlContent/"\
-      "oai_dc:dc/dc:rights/text()[not(contains(.,'http')) and not "\
-      "(contains(.,'licenses'))]", @ns).to_s
+      'oai_dc:dc/dc:rights/text()[not(contains(.,"http")) and not '\
+      '(contains(.,"licenses"))]', @ns).to_s
     @key_metadata['rights_holder'.to_sym] = rights_holder.to_s
-    rights_statement = @doc.xpath("//foxml:datastream[@ID='DC']/"\
+    rights_statement = @doc.xpath('//foxml:datastream[@ID="DC"]/'\
       "foxml:datastreamVersion[@ID='#{@current_dc_version}']/foxml:xmlContent/"\
-      "oai_dc:dc/dc:rights/text()[contains(.,'licenses')]", @ns).to_s
+      'oai_dc:dc/dc:rights/text()[contains(.,"licenses")]', @ns).to_s
     @key_metadata['rights_statement'.to_sym] = rights_statement.to_s
   end
 end

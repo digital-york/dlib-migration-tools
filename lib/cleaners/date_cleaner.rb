@@ -1,31 +1,48 @@
 #!/usr/bin/env ruby
 
+# method to put various date variants found in yodl into standard international
+# date format yyyy-mm-dd. However month or day may not be provided in which
+# case just supply elements which are there  runs against a single string
+# representing a date. Known variants to normalise as follows:
+# yyyy
+# yyyy-mm
+# yyyy mm
+# mm yyyy
+# mm-yyyy
+# yyyy-yyyy
+# dd-mm-yyyy
+# yyyy-mm-dd
 class DateCleaner
+  # this works correctly but if the csv is opened it excel, excel displays
+  # dates in format yyyy-mm-dd as dd/mm/yyyy. however opening in text editor
+  # shows the date format to be correctly cleaned
   def clean(date)
-    puts "was given date" + date
+    clean = ''
     year = get_year(date)
+    clean = year unless year.empty?
+    return if clean.empty?
     month = get_month(date)
-    puts "got month " + month
     day = get_day(date)
-    puts 'day was ' + day
-    year
+    unless month.empty?
+      clean = clean + '-' + month # there may also be a day
+      clean = clean + '-' + day unless day.empty?
+    end
+    clean
   end
 
   # this looks for 4 digit groups, and expects either one or two. There will be
   # two in the case of a date range, in which case we use only the second date
   def get_year(date)
-    normalised = ''
+    year = ''
     matches = []
     # though if a year has two many digits, this will just truncate
     date.scan(/([\d]{4})/) { matches << $~ }
     if matches.size == 1
-      normalised = matches[0].to_s
+      year = matches[0].to_s
     elsif matches.size == 2
-      normalised = matches[1].to_s
-    else
-      normalised = 'no match'
+      year = matches[1].to_s
     end
-    normalised
+    year
   end
 
   # Take the entire date and  return just the month  if it is specified.
@@ -33,13 +50,12 @@ class DateCleaner
   def get_month(unnormalised_date)
     month = ''
     # if its a year range dont proceed further
+    # needs a total of 4 backslashes to escape \ used as a date delimiter!
     return month if /[\d]{4}[\s\-\.\/\\\\][\d]{4}/.match(unnormalised_date.strip)
     # year is at start so month will be first pair of digits  if present
-    # needs a total of 4 backslashes to escape \ used as a date delimiter!
     if /^[0-9]{4}[\s\-\.\/\\\\]([\d]{1,2})/.match(unnormalised_date.strip)
       month = $1
       # year is at end so month will immediately precede the year
-      # needs a total of 4 backslashes to escape \ used as a date delimiter!
     elsif /([\d]{1,2})[\s\-\.\/\\\\][0-9]{4}\Z/.match(unnormalised_date.strip)
       month = $1
     end
@@ -52,15 +68,14 @@ class DateCleaner
   def get_day(unnormalised_date)
     day = ''
     # if its a year range dont proceed further
-    return day if /[\d]{4}[\s\-\.\/\\\\][\d]{4}/.match(unnormalised_date.strip)
-    # year is at start so day will be a second pair of digits if present.
-    # it wont be present without a month
     # needs a total of 4 backslashes to escape \ used as a date delimiter!
+    return day if /[\d]{4}[\s\-\.\/\\\\][\d]{4}/.match(unnormalised_date.strip)
+    # year at start so day will be a second pair of digits if present.
+    # it wont be present without a month
 		if /^[0-9]{4}[\s\-\.\/\\\\][\d]{1,2}[\s\-\.\/\\\\]([\d]{1,2})/.match(unnormalised_date.strip)
       day = $1
       # year is at end so day will be first of two pairs of digits if present.
       # it wont be present without a month.
-      # needs a total of 4 backslashes to escape \ used as a date delimiter!
     elsif /([\d]{1,2})[\s\-\.\/\\\\][\d]{1,2}[\s\-\.\/\\\\][0-9]{4}\Z/.match(unnormalised_date.strip)
       day = $1
     end
