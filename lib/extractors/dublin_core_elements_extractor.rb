@@ -33,15 +33,6 @@ class DublinCoreElementsExtractor
     @current_dc_version = 'DC.' + current
   end
 
-  def clean_date
-    if @key_metadata.key?(:date)
-      cleaner = DateCleaner.new
-      date = @key_metadata.fetch(:date)
-      clean_date = cleaner.clean(date)
-      @key_metadata[:date] = clean_date unless clean_date.to_s.empty?
-    end
-  end
-
   #  extract the metadata values and putting them into a hash
   def extract_key_metadata
     cleaner = MetadataCleaner.new
