@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'nokogiri'
-require_relative '../cleaners/date_cleaner.rb'
+require_relative '../cleaners/metadata_cleaner.rb'
 
 # extract the key metadata elements from the dublin core datastream
 class DublinCoreElementsExtractor
@@ -44,6 +44,7 @@ class DublinCoreElementsExtractor
 
   #  extract the metadata values and putting them into a hash
   def extract_key_metadata
+    cleaner = MetadataCleaner.new
     @ns = @doc.collect_namespaces # nokogiri cant resolve nested namespaces, fixes
     pid = @doc.xpath('//foxml:digitalObject/@PID', @ns).to_s
     # remove  'york:' prefix; is always 'york:' complicates choice of separators
@@ -61,7 +62,7 @@ class DublinCoreElementsExtractor
     extract_qualification_types
     extract_modules
     extract_rights
-    clean_date
+    @key_metadata = cleaner.clean_metadata(@key_metadata)
     @key_metadata
   end
 
