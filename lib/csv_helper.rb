@@ -5,7 +5,8 @@ require_relative 'extractors/dublin_core_elements_extractor.rb'
 require_relative 'extractors/rels_ext_elements_extractor.rb'
 require_relative 'extractors/acl_elements_extractor.rb'
 require_relative 'extractors/content_location_extractor.rb'
-# coordinate the collection of metadata + creation of csv
+require_relative 'cleaners/metadata_cleaner.rb' # possible
+# coordinate the collection of metadata, any cleaning, + creation of csv
 class CsvHelper
   def initialize(output_location)
     @output_location = output_location
@@ -87,14 +88,16 @@ class CsvHelper
   # make the datastreams to collect metadata from specifiable
   def collect_metadata(filename, ds_to_collect)
     values_hash_array = []
+    cleaner = MetadataCleaner.new
     # open a foxml file and pass to ExtractDublinCoreMetadata
     doc = File.open(filename) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
     ds_to_collect.each do |ds|
       extractor = extractor_factory(ds, doc)
       values_hash = extractor.extract_key_metadata
+      # do any cleaning of  metadata values before adding to main array
+      cleaner.clean_metadata(values_hash)
       values_hash_array.push(values_hash)
     end
-    # pass returned hashes to csv creation
     create_csv(values_hash_array)
   end
 
