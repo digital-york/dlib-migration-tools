@@ -24,9 +24,8 @@ class MetadataCleaner
     dept_cleaner = DepartmentCleaner.new unless dept_keys_array.empty?
     dept_keys_array.each do |k|
       name = key_metadata.fetch(k)
-      standard_name = dept_cleaner.clean_name(name)
-      puts 'standard_name ' + standard_name
-      key_metadata[k] = standard_name unless standard_name.to_s.empty?
+      standard_name = dept_cleaner.clean_name(name) unless name.empty?
+      unless standard_name.nil? puts 'standard_name ' + standard_name
     end
     key_metadata
   end
