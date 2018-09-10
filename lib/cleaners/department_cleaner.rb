@@ -1,109 +1,112 @@
-#!/usr/bin/env ruby
+# !/usr/bin/env ruby
 require 'English'
 
-# class to put department values into agreed standard form
+#  class to put department values into agreed standard form
 class DepartmentCleaner
   def clean_name(name)
     standard_name = match_to_preflabel(name)
     standard_name
   end
 
+  # use mimimum match pattern to find preferred name. Match order is important
   def match_to_preflabel(name)
-    name = name.downcase  #get rid of case inconsistencies
-	if name.include? 'reconstruction'
-	name ='University of York. Post-war Reconstruction and Development Unit'
-	elsif name.include? 'applied human rights' #at top so looks for single subjects later
-	name ='University of York. Centre for Applied Human Rights'
-	elsif name.include? 'health economics' #at top so looks for single subjects later
-	name ='University of York. Centre for Health Economics'
-	elsif name.include? 'lifelong learning' #at top so looks for single subjects later
-	name ='University of York. Centre for Lifelong Learning'
-	elsif name.include? 'medieval studies' #at top so looks for single subjects later
-	name ='University of York. Centre for Medieval Studies'
-	elsif name.include? 'renaissance' #at top so looks for single subjects later
-	name ='University of York. Centre for Renaissance and Early Modern Studies'
-	elsif name.include? 'reviews' #at top so looks for single subjects later
-	name ='University of York. Centre for Reviews and Disseminations'
-	elsif name.include? 'women' #at top so looks for single subjects later
-	name ="University of York. Centre for Women's Studies"
-	elsif name.include? 'languages for all'
-	name = 'University of York. Languages for All'
-	elsif name.include? 'school of social and political science'#at top so looks for single subjects later
-	    name = 'University of York. School of Social and Political Science'
-	elsif name.include? 'school of politics economics and philosophy' #at top so looks for single subjects later
-	    name = 'University of York. School of Politics Economics and Philosophy'
-	elsif name.include? 'economics and related' #at top so looks for single subjects later
-	    name =  'University of York. Department of Economics and Related Studies'
-	elsif name.include? 'economics and philosophy' #at top so looks for single subjects later
-	name ='University of York. School of Politics Economics and Philosophy'
-	#elsif name.include? 'departments of english and history of art'   #damn! two departments to return! MUST precede history of art
-	 #   name =  'University of York. Department of English and Related Literature'
-	# name ='University of York. Department of History of Art'
-	elsif name.include? 'history of art' #at top so looks for history later. but below english and history of art!
-	    name = 'University of York. Department of History of Art'
-	elsif name.include? 'electronic'
-	   name ='University of York. Department of Electronic Engineering'
-	elsif name.include? 'theatre'
-	   name ='University of York. Department of Theatre, Film and Television'
-	elsif name.include? 'physics'
-	   name ='University of York. Department of Physics'
-	elsif name.include? 'computer'
-	   name ='University of York. Department of Computer Science'
-	elsif name.include? 'psychology'
-	   name ='University of York. Department of Psychology'
-	elsif name.include? 'law'
-	   name ='University of York. York Law School'
-	elsif name.include? 'mathematics'
-	   name ='University of York. Department of Mathematics'
-	elsif name.include? 'advanced architectural'
-	    name = 'University of York. Institute of Advanced Architectural Studies'
-	elsif name.include? 'conservation'
-	    name = 'University of York. Centre for Conservation Studies'
-	elsif name.include? 'eighteenth century'
-	    name = 'University of York. Centre for Eighteenth Century Studies'
-	elsif name.include? 'chemistry'
-	    name = 'University of York. Department of Chemistry'
-	elsif name.include? 'history'   #ok because of order
-	    name = 'University of York. Department of History'
-	elsif name.include? 'sociology'
-	    name =  'University of York. Department of Sociology'
-	elsif name.include? 'education'
-	    name = 'University of York. Department of Education'
-	elsif name.include? 'music'
-	    name =  'University of York. Department of Music'
-	elsif name.include? 'archaeology'
-	    name =  'University of York. Department of Archaeology'
-	elsif name.include? 'biology'
-	    name =  'University of York. Department of Biology'
-	elsif name.include? 'biochemistry'
-	    name =  'University of York. Department of Biology' #confirmed with metadata team
-	elsif name.include? 'english and related literature'
-	    name =  'University of York. Department of English and Related Literature'
-	elsif name.include? 'health sciences'
-	    name =  'University of York. Department of Health Sciences'
-	elsif name.include? 'politics'
-	    name = 'University of York. Department of Politics'
-	elsif name.include? 'philosophy'
-	    name =  'University of York. Department of Philosophy'
-	elsif name.include? 'social policy and social work'
-	    name =  'University of York. Department of Social Policy and Social Work'
-	elsif name.include? 'management'
-	    name =  'University of York. The York Management School'
-	elsif name.include? 'language and linguistic science'
-	    name = 'University of York. Department of Language and Linguistic Science'
-	elsif name.include? 'hull'
-	    name = 'Hull York Medical School'
-	elsif name.include? 'international pathway'
-	    name = 'University of York. International Pathway College'
-	elsif name.include? 'school of criminology'
-	    name = 'University of York. School of Criminology'
-	elsif name.include? 'natural sciences'
-	    name = 'University of York. School of Natural Sciences'
-	elsif name.include? 'environment'
-	    name = 'University of York. Environment'
-  else
-     name = 'COULD NOT MATCH ' + name
-	end
-    name
+    name = name.downcase
+    case name
+    when /reconstruction/
+      standard_name = 'University of York. Post-war Reconstruction and Development Unit'
+    when /applied human rights/
+      standard_name = 'University of York. Centre for Applied Human Rights'
+    when /health economics/
+      standard_name = 'University of York. Centre for Health Economics'
+    when /health sciences/
+      standard_name = 'University of York. Department of Health Sciences'
+    when /lifelong learning/
+      standard_name = 'University of York. Centre for Lifelong Learning'
+    when /medieval studies/
+      standard_name = 'University of York. Centre for Medieval Studies'
+    when /renaissance/
+      standard_name = 'University of York. Centre for Renaissance and Early Modern Studies'
+    when /reviews/
+      standard_name = 'University of York. Centre for Reviews and Disseminations'
+    when /women/
+      standard_name = "University of York. Centre for Women's Studies"
+    when /languages for all/
+      standard_name = 'University of York. Languages for All'
+    when /school of social and political science/
+      standard_name = 'University of York. School of Social and Political Science'
+    when /social policy and social work/
+      standard_name =  'University of York. Department of Social Policy and Social Work'
+    when /school of politics economics and philosophy/
+      standard_name = 'University of York. School of Politics Economics and Philosophy'
+    when /politics/
+      standard_name = 'University of York. Department of Politics'
+    when /economics and related/
+      standard_name = 'University of York. Department of Economics and Related Studies'
+    when /economics and philosophy/
+      standard_name = 'University of York. School of Politics Economics and Philosophy'
+      # elsif name.include? 'departments of english and history of art'   # damn! two departments to return! MUST precede history of art
+      # name =  'University of York. Department of English and Related Literature'
+      # name = 'University of York. Department of History of Art'
+      # at top so looks for history later. but below english and history of art!
+    when /history of art/
+      standard_name = 'University of York. Department of History of Art'
+    when /history/
+      standard_name = 'University of York. Department of History'
+    when /electronic/
+      standard_name = 'University of York. Department of Electronic Engineering'
+    when /theatre/
+      standard_name = 'University of York. Department of Theatre, Film and Television'
+    when /physics/
+      standard_name = 'University of York. Department of Physics'
+    when /computer/
+      standard_name = 'University of York. Department of Computer Science'
+    when /psychology/
+      standard_name = 'University of York. Department of Psychology'
+    when /law/
+      standard_name = 'University of York. York Law School'
+    when /mathematics/
+      standard_name = 'University of York. Department of Mathematics'
+    when /advanced architectural/
+      standard_name = 'University of York. Institute of Advanced Architectural Studies'
+    when /conservation/
+      standard_name = 'University of York. Centre for Conservation Studies'
+    when /eighteenth century/
+      standard_name = 'University of York. Centre for Eighteenth Century Studies'
+    when /chemistry/
+      standard_name = 'University of York. Department of Chemistry'
+    when /sociology/
+      standard_name = 'University of York. Department of Sociology'
+    when /education/
+      standard_name = 'University of York. Department of Education'
+    when /music/
+      standard_name =  'University of York. Department of Music'
+    when /archaeology/
+      standard_name =  'University of York. Department of Archaeology'
+    when /biology/
+      standard_name =  'University of York. Department of Biology'
+    when /biochemistry/ # confirmed with metadata team - recheck?
+      standard_name =  'University of York. Department of Biology'
+    when /english and related literature/
+      standard_name =  'University of York. Department of English and Related Literature'
+    when /philosophy/
+      standard_name =  'University of York. Department of Philosophy'
+    when /management/
+      standard_name =  'University of York. The York Management School'
+    when /language and linguistic science/
+      standard_name = 'University of York. Department of Language and Linguistic Science'
+    when /hull/
+      standard_name = 'Hull York Medical School'
+    when /international pathway/
+      standard_name = 'University of York. International Pathway College'
+    when /school of criminology/
+      standard_name = 'University of York. School of Criminology'
+    when /natural sciences/
+      standard_name = 'University of York. School of Natural Sciences'
+    when /environment/
+      standard_name = 'University of York. Environment'
+    else
+    standard_name = 'COULD NOT MATCH ' + name
+    end
+    standard_name
   end
 end
