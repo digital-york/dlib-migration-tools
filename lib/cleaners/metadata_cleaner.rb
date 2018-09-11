@@ -26,7 +26,6 @@ class MetadataCleaner
       name = key_metadata.fetch(k)
       standard_name = dept_cleaner.clean_name(name) unless name.empty?
       key_metadata[k] = standard_name unless standard_name.nil?
-      puts 'standard_name ' + standard_name unless standard_name.nil?
     end
     key_metadata
   end
