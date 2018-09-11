@@ -34,7 +34,7 @@ class DepartmentCleaner
       standard_name = 'University of York. Languages for All'
     when /school of social and political science/
       standard_name = 'University of York. School of Social and Political Science'
-    when /social policy and social work/
+    when /social policy/
       standard_name =  'University of York. Department of Social Policy and Social Work'
     when /school of politics economics and philosophy/
       standard_name = 'University of York. School of Politics Economics and Philosophy'
