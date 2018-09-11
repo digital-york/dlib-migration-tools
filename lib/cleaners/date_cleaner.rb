@@ -17,6 +17,7 @@ class DateCleaner
   # this works correctly but if the csv is opened it excel, excel displays
   # dates in format yyyy-mm-dd as dd/mm/yyyy. however opening in text editor
   # shows the date format to be correctly cleaned
+
   def clean(date)
     puts 'initial date ' + date
     clean = ''
@@ -38,7 +39,7 @@ class DateCleaner
   def get_year(date)
     year = ''
     matches = []
-    # though if a year has two many digits, this will just truncate
+    # though if a year has two many digits, this will just truncate to last 4
     date.scan(/([\d]{4})/) { matches << $LAST_MATCH_INFO }
     if matches.size == 1
       year = matches[0].to_s
