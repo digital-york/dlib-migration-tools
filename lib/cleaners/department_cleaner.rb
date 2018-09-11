@@ -91,7 +91,7 @@ class DepartmentCleaner
     when /philosophy/
       standard_name =  'University of York. Department of Philosophy'
     when /management/
-      standard_name =  'University of York. The York Management School'
+      standard_name =  'University of York. Department of Management Studies'
     when /language and linguistic science/
       standard_name = 'University of York. Department of Language and Linguistic Science'
     when /hull/
