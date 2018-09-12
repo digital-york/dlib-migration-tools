@@ -6,5 +6,6 @@ require 'English'
 # in the same element. In addition, the qualification level is not always
 # present, in which case it should be inferred from the qualification name and
 # added
-def DublinCoreTypesCleaner
+def QualificationsCleaner
+
 end
