@@ -1,12 +1,14 @@
 #!/usr/bin/env ruby
 require_relative 'date_cleaner.rb'
-require_relative 'department_cleaner'
+require_relative 'department_cleaner.rb'
+require_relative 'qualification_cleaner.rb'
 
 # class to co-ordinate data cleaning
 class MetadataCleaner
   def clean_metadata(key_metadata)
     clean_date(key_metadata)
     clean_department_names(key_metadata)
+    # clean_qualifications(key_metadata)
   end
 
   def clean_date(key_metadata)
@@ -30,6 +32,17 @@ class MetadataCleaner
     key_metadata
   end
 
+  def clean_qualifications(key_metadata)
+    quals_keys_array = get_qualification_keys(key_metadata)
+    quals_cleaner = QualificationCleaner.new unless quals_keys_array.empty?
+    quals_keys_array.each do |q|
+      qual_inf = key_metadata.fetch(q)
+      standard_qname = quals_cleaner.clean(qual_inf) unless qual_inf.empty?
+      key_metadata[q] = standard_qname unless standard_qname.nil?
+    end
+    key_metadata
+  end
+
   def get_department_keys(key_metadata)
     # identify keys for both possible sets of sources (creatorX,publisherX)
     # return as array
@@ -38,5 +51,11 @@ class MetadataCleaner
     publishers_hash = key_metadata.select { |k, _| k.to_s.include? 'publisher' }
     depts_hash = creators_hash.merge(publishers_hash)
     depts_hash.keys
+  end
+
+  def get_qualification_keys(key_metadata)
+    # identify  keys relating to qualification names and levels, return as array
+    quals_hash = key_metadata.select { |k, _| k.to_s.include? 'qualification' }
+    quals_hash.keys
   end
 end
