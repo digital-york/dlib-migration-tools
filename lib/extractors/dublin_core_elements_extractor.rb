@@ -95,7 +95,10 @@ class DublinCoreElementsExtractor
     @key_metadata[element_name.to_sym] = element
   end
 
+  # might want to refactor this to filter out levels and qual names
   # extract only  dc:type values relating to exam names or levels
+  # TODO may want to refactor this further to distinguish levels and namespaces
+  #perhaps even exclude other elements
   def extract_qualification_types
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
@@ -116,7 +119,8 @@ class DublinCoreElementsExtractor
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
     '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
     'and not (contains(.,"Collection"))]'
-    @doc.xpath(path, @ns).each do
+    @doc.xpath(path, @ns).each do |p|
+      puts 'found a header name: ' + p.to_s
       header_name = 'qualification_type'
       i += 1
       header_name += i.to_s

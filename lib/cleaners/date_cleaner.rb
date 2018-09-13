@@ -19,7 +19,6 @@ class DateCleaner
   # shows the date format to be correctly cleaned
 
   def clean(date)
-    puts 'initial date ' + date
     clean = ''
     year = get_year(date)
     clean = year unless year.empty?
@@ -30,7 +29,6 @@ class DateCleaner
       clean = clean + '-' + month # there may also be a day
       clean = clean + '-' + day unless day.empty?
     end
-    puts 'cleaned date ' + clean
     clean
   end
 
