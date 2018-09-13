@@ -129,14 +129,16 @@ class DublinCoreElementsExtractor
     end
   end
 
-  # TODO make case insensitive
+  # remove initial letter from words to match as  Nokogiri xpath does not support
+  # case insensitivity well
   def extract_qualification_level_headers
+    puts
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
-    '/dc:type/text()[(contains(.,"bachelors")) or (contains(.,"masters"))'\
-    'or (contains(.,"diplomas")) or (contains(.,"doctoral")) or'\
-    ' (contains(.,"cefr")) or (contains(.,"foundation")) ]'
+    '/dc:type/text()[(contains(.,"achelors")) or (contains(.,"asters"))'\
+    'or (contains(.,"iplomas")) or (contains(.,"octoral")) or'\
+    ' (contains(.,"efr")) or (contains(.,"oundation")) ]'
     @doc.xpath(path, @ns).each do
       header_name = 'qualification_level'
       i += 1
@@ -145,14 +147,15 @@ class DublinCoreElementsExtractor
     end
   end
 
-  #TODO make case insensitive
+  # remove initial letter from matches as  Nokogiri xpath does not support
+  # case insensitivity well
   def extract_qualification_levels
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
-    '/dc:type/text()[(contains(.,"bachelors")) or (contains(.,"masters"))'\
-    'or (contains(.,"diplomas")) or (contains(.,"doctoral")) or'\
-    ' (contains(.,"cefr")) or (contains(.,"foundation")) ]'
+    '/dc:type/text()[(contains(.,"achelors")) or (contains(.,"asters"))'\
+    'or (contains(.,"iplomas")) or (contains(.,"octoral")) or'\
+    ' (contains(.,"efr")) or (contains(.,"oundation")) ]'
     @doc.xpath(path, @ns).each do |s|
       keyname = 'qualification_level'
       i += 1
