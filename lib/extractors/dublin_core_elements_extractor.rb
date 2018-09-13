@@ -99,7 +99,7 @@ class DublinCoreElementsExtractor
   # extract only  dc:type values relating to exam names or levels
   # TODO may want to refactor this further to distinguish levels and namespaces
   #perhaps even exclude other elements
-  def extract_qualification_types
+  def extract_qualification_types1
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
@@ -113,7 +113,25 @@ class DublinCoreElementsExtractor
     end
   end
 
-  def extract_qualification_headers
+  # might want to refactor this to filter out levels and qual names
+  # extract only  dc:type values relating to exam names or levels
+  # TODO may want to refactor this further to distinguish levels and namespaces
+  #perhaps even exclude other elements
+  def extract_qualification_types
+    i = 0
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
+    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
+    '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
+    'and not (contains(.,"Collection"))and not (contains(.,"exam paper")) ]'
+    @doc.xpath(path, @ns).each do |s|
+      keyname = 'qualification_type'
+      i += 1
+      keyname += i.to_s
+      @key_metadata[keyname.to_sym] = s.to_s
+    end
+  end
+
+  def extract_qualification_headers1
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
@@ -121,6 +139,20 @@ class DublinCoreElementsExtractor
     'and not (contains(.,"Collection"))]'
     @doc.xpath(path, @ns).each do |p|
       puts 'found a header name: ' + p.to_s
+      header_name = 'qualification_type'
+      i += 1
+      header_name += i.to_s
+      @headers.push(header_name)
+    end
+  end
+
+  def extract_qualification_headers
+    i = 0
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
+    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
+    '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
+    'and not (contains(.,"Collection"))and not (contains(.,"exam paper")) ]'
+    @doc.xpath(path, @ns).each do
       header_name = 'qualification_type'
       i += 1
       header_name += i.to_s
