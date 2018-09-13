@@ -19,7 +19,8 @@ class DublinCoreElementsExtractor
     multi_value_elements.each do |mve|
       extract_multivalued_element_headers(mve)
     end
-    extract_qualification_headers
+    extract_qualification_headers # TODO refine to remove levels
+    extract_qualification_level_headers
     extract_module_headers
     @headers
   end
@@ -48,7 +49,8 @@ class DublinCoreElementsExtractor
     multi_value_elements.each do |mve|
       extract_multivalued_element(mve)
     end
-    extract_qualification_types
+    extract_qualification_types # TODO refine to remove levels
+    extract_qualification_levels
     extract_modules
     extract_rights
     @key_metadata
@@ -97,26 +99,7 @@ class DublinCoreElementsExtractor
 
   # might want to refactor this to filter out levels and qual names
   # extract only  dc:type values relating to exam names or levels
-  # TODO may want to refactor this further to distinguish levels and namespaces
-  #perhaps even exclude other elements
-  def extract_qualification_types1
-    i = 0
-    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
-    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
-    '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
-    'and not (contains(.,"Collection"))]'
-    @doc.xpath(path, @ns).each do |s|
-      keyname = 'qualification_type'
-      i += 1
-      keyname += i.to_s
-      @key_metadata[keyname.to_sym] = s.to_s
-    end
-  end
-
-  # might want to refactor this to filter out levels and qual names
-  # extract only  dc:type values relating to exam names or levels
-  # TODO may want to refactor this further to distinguish levels and namespaces
-  #perhaps even exclude other elements
+  # TODO filter out levels
   def extract_qualification_types
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
@@ -131,21 +114,7 @@ class DublinCoreElementsExtractor
     end
   end
 
-  def extract_qualification_headers1
-    i = 0
-    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
-    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
-    '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
-    'and not (contains(.,"Collection"))]'
-    @doc.xpath(path, @ns).each do |p|
-      puts 'found a header name: ' + p.to_s
-      header_name = 'qualification_type'
-      i += 1
-      header_name += i.to_s
-      @headers.push(header_name)
-    end
-  end
-
+  # TODO filter out levels
   def extract_qualification_headers
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
@@ -157,6 +126,38 @@ class DublinCoreElementsExtractor
       i += 1
       header_name += i.to_s
       @headers.push(header_name)
+    end
+  end
+
+  # TODO make case insensitive
+  def extract_qualification_level_headers
+    i = 0
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
+    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
+    '/dc:type/text()[(contains(.,"bachelors")) or (contains(.,"masters"))'\
+    'or (contains(.,"diplomas")) or (contains(.,"doctoral")) or'\
+    ' (contains(.,"cefr")) or (contains(.,"foundation")) ]'
+    @doc.xpath(path, @ns).each do
+      header_name = 'qualification_level'
+      i += 1
+      header_name += i.to_s
+      @headers.push(header_name)
+    end
+  end
+
+  #TODO make case insensitive
+  def extract_qualification_levels
+    i = 0
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
+    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
+    '/dc:type/text()[(contains(.,"bachelors")) or (contains(.,"masters"))'\
+    'or (contains(.,"diplomas")) or (contains(.,"doctoral")) or'\
+    ' (contains(.,"cefr")) or (contains(.,"foundation")) ]'
+    @doc.xpath(path, @ns).each do |s|
+      keyname = 'qualification_level'
+      i += 1
+      keyname += i.to_s
+      @key_metadata[keyname.to_sym] = s.to_s
     end
   end
 
