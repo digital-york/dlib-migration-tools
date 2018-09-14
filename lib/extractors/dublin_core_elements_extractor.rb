@@ -20,7 +20,7 @@ class DublinCoreElementsExtractor
     multi_value_elements.each do |mve|
       extract_multivalued_element_headers(mve)
     end
-    extract_qualification_headers # TODO refine to remove levels
+    extract_qualification_name_headers
     extract_qualification_level_headers
     extract_module_headers
     @headers
@@ -50,7 +50,7 @@ class DublinCoreElementsExtractor
     multi_value_elements.each do |mve|
       extract_multivalued_element(mve)
     end
-    extract_qualification_types # TODO refine to remove levels
+    extract_qualification_names
     extract_qualification_levels
     extract_modules
     extract_rights
@@ -98,24 +98,7 @@ class DublinCoreElementsExtractor
     @key_metadata[element_name.to_sym] = element
   end
 
-  # might want to refactor this to filter out levels and qual names
-  # extract only  dc:type values relating to exam names or levels
-  # TODO filter out levels
-  def extract_qualification_types1
-    i = 0
-    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
-    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
-    '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
-    'and not (contains(.,"Collection"))and not (contains(.,"exam paper")) ]'
-    @doc.xpath(path, @ns).each do |s|
-      keyname = 'qualification_type'
-      i += 1
-      keyname += i.to_s
-      @key_metadata[keyname.to_sym] = s.to_s
-    end
-  end
-
-  def extract_qualification_types
+  def extract_qualification_names
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
@@ -132,22 +115,7 @@ class DublinCoreElementsExtractor
     end
   end
 
-  # TODO filter out levels
-  def extract_qualification_headers1
-    i = 0
-    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
-    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
-    '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
-    'and not (contains(.,"Collection"))and not (contains(.,"exam paper")) ]'
-    @doc.xpath(path, @ns).each do
-      header_name = 'qualification_type'
-      i += 1
-      header_name += i.to_s
-      @headers.push(header_name)
-    end
-  end
-
-  def extract_qualification_headers
+  def extract_qualification_name_headers
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
