@@ -8,6 +8,7 @@ class DublinCoreElementsExtractor
     @key_metadata = {}
     @current_dc_version = ''
     @ns = ''
+    # we already know these should always be present
     @headers = %w[pid title date rights_link rights_holder rights_statement]
   end
 
@@ -100,7 +101,7 @@ class DublinCoreElementsExtractor
   # might want to refactor this to filter out levels and qual names
   # extract only  dc:type values relating to exam names or levels
   # TODO filter out levels
-  def extract_qualification_types
+  def extract_qualification_types1
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
@@ -114,8 +115,25 @@ class DublinCoreElementsExtractor
     end
   end
 
+  def extract_qualification_types
+    i = 0
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
+    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
+    '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
+    'and not (contains(.,"Collection"))and not (contains(.,"exam paper"))'\
+    'and not (contains(.,"achelors"))and not (contains(.,"asters"))'\
+    'and not (contains(.,"iplomas")) and not (contains(.,"octoral"))'\
+    'and not (contains(.,"CEFR")) and not (contains(.,"oundation"))]'
+    @doc.xpath(path, @ns).each do |s|
+      keyname = 'qualification_type'
+      i += 1
+      keyname += i.to_s
+      @key_metadata[keyname.to_sym] = s.to_s
+    end
+  end
+
   # TODO filter out levels
-  def extract_qualification_headers
+  def extract_qualification_headers1
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
@@ -129,8 +147,29 @@ class DublinCoreElementsExtractor
     end
   end
 
-  # remove initial letter from words to match as  Nokogiri xpath does not support
-  # case insensitivity well
+  def extract_qualification_headers
+    i = 0
+    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
+    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
+    '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
+    'and not (contains(.,"Collection"))and not (contains(.,"exam paper"))'\
+    'and not (contains(.,"achelors"))and not (contains(.,"asters"))'\
+    'and not (contains(.,"iplomas")) and not (contains(.,"octoral"))'\
+    'and not (contains(.,"CEFR")) and not (contains(.,"oundation"))]'
+    @doc.xpath(path, @ns).each do
+      header_name = 'qualification_type'
+      i += 1
+      header_name += i.to_s
+      @headers.push(header_name)
+    end
+  end
+
+  # remove initial letter from words to match as Nokogiri xpath does not support
+  # case insensitivity well - suggested solution is to use
+  # [contains(translate(TITLE,'ABCDEFGHIJKLMNOPURSTUWXYZ',
+  # 'abcdefghijklmnopurstuwxyz') - very unwieldy for multiple clauses
+  # see https://stackoverflow.com/questions
+  # /41914979/how-do-i-make-my-nokogiri-contains-case-insensitive
   def extract_qualification_level_headers
     puts
     i = 0
@@ -138,7 +177,7 @@ class DublinCoreElementsExtractor
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
     '/dc:type/text()[(contains(.,"achelors")) or (contains(.,"asters"))'\
     'or (contains(.,"iplomas")) or (contains(.,"octoral")) or'\
-    ' (contains(.,"efr")) or (contains(.,"oundation")) ]'
+    ' (contains(.,"CEFR")) or (contains(.,"oundation")) ]'
     @doc.xpath(path, @ns).each do
       header_name = 'qualification_level'
       i += 1
@@ -155,7 +194,7 @@ class DublinCoreElementsExtractor
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
     '/dc:type/text()[(contains(.,"achelors")) or (contains(.,"asters"))'\
     'or (contains(.,"iplomas")) or (contains(.,"octoral")) or'\
-    ' (contains(.,"efr")) or (contains(.,"oundation")) ]'
+    ' (contains(.,"CEFR")) or (contains(.,"oundation")) ]'
     @doc.xpath(path, @ns).each do |s|
       keyname = 'qualification_level'
       i += 1
