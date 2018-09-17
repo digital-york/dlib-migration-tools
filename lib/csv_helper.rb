@@ -58,7 +58,8 @@ class CsvHelper
     # descriptions, subjects, others = Array.new(8) { [] }
     creators, publishers, qualification_names, qualification_levels, modules,
     descriptions, subjects = Array.new(7) { [] } # create arrays for all these
-    @headers.each do |t|  #for multivalued elements
+    # for multivalued elements
+    @headers.each do |t|
       if t.start_with? 'creator'
         creators.push(t)
       elsif t.start_with? 'publisher'
@@ -75,12 +76,12 @@ class CsvHelper
         descriptions.push(t)
       else
         unless ordered_array.any? { |s| t.include? s }
-          puts "unexpected header! t was " + t.to_s
+          puts 'unexpected header! t was ' + t.to_s
         end
       end
     end
-    header_arrays = [creators, publishers, subjects, qualification_names, qualification_levels, modules,
-                     descriptions]
+    header_arrays = [creators, publishers, subjects, qualification_names,
+                     qualification_levels, modules, descriptions]
     header_arrays.each do |h|
       h.each do |each_header_name|
         ordered_array.push(each_header_name)

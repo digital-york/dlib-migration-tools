@@ -1,14 +1,14 @@
 #!/usr/bin/env ruby
 require_relative 'date_cleaner.rb'
 require_relative 'department_cleaner.rb'
-require_relative 'qualification_cleaner.rb'
+require_relative 'qualification_name_cleaner.rb'
 
 # class to co-ordinate data cleaning
 class MetadataCleaner
   def clean_metadata(key_metadata)
     clean_date(key_metadata)
     clean_department_names(key_metadata)
-    # clean_qualifications(key_metadata)
+    clean_qualifications(key_metadata)
   end
 
   def clean_date(key_metadata)
@@ -33,11 +33,11 @@ class MetadataCleaner
   end
 
   def clean_qualifications(key_metadata)
-    quals_keys_array = get_qualification_keys(key_metadata)
-    quals_cleaner = QualificationCleaner.new unless quals_keys_array.empty?
-    quals_keys_array.each do |q|
-      qual_inf = key_metadata.fetch(q)
-      standard_qname = quals_cleaner.clean(qual_inf) unless qual_inf.empty?
+    quals_name_keys_array = get_qualification_name_keys(key_metadata)
+    quals_name_cleaner = QualificationNameCleaner.new unless quals_name_keys_array.empty?
+    quals_name_keys_array.each do |q|
+      qual_name = key_metadata.fetch(q)
+      standard_qname = quals_name_cleaner.clean(qual_name) unless qual_name.empty?
       key_metadata[q] = standard_qname unless standard_qname.nil?
     end
     key_metadata
@@ -53,9 +53,9 @@ class MetadataCleaner
     depts_hash.keys
   end
 
-  def get_qualification_keys(key_metadata)
+  def get_qualification_name_keys(key_metadata)
     # identify  keys relating to qualification names and levels, return as array
-    quals_hash = key_metadata.select { |k, _| k.to_s.include? 'qualification' }
+    quals_hash = key_metadata.select { |k, _| k.to_s.include? 'qualification_name' }
     quals_hash.keys
   end
 end
