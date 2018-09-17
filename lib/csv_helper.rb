@@ -53,30 +53,34 @@ class CsvHelper
   # values may not appear in sequence. This reorders them, for readibility. do
   # this way rather than using alphabetical sort as allows more logical ordering
   def reorder_headers
-    ordered_array = %w[pid title date]
-    creators, publishers, qualifications, modules,
-    descriptions, subjects, others = Array.new(7) { [] }
-    @headers.each do |t|
+    ordered_array = %w[pid title date rights_holder rights_link rights_statement]
+    # creators, publishers, qualification_names, qualification_levels, modules,
+    # descriptions, subjects, others = Array.new(8) { [] }
+    creators, publishers, qualification_names, qualification_levels, modules,
+    descriptions, subjects = Array.new(7) { [] } # create arrays for all these
+    @headers.each do |t|  #for multivalued elements
       if t.start_with? 'creator'
         creators.push(t)
       elsif t.start_with? 'publisher'
         publishers.push(t)
       elsif t.start_with? 'subject'
         subjects.push(t)
-      elsif t.start_with? 'qualification'
-        qualifications.push(t)
+      elsif t.start_with? 'qualification_name'
+        qualification_names.push(t)
+      elsif t.start_with? 'qualification_level'
+        qualification_levels.push(t)
       elsif t.start_with? 'module'
         modules.push(t)
       elsif t.start_with? 'description'
         descriptions.push(t)
       else
-        unless %w[pid title date].any? { |s| t.include? s }
-          others.push(t)
+        unless ordered_array.any? { |s| t.include? s }
+          puts "unexpected header! t was " + t.to_s
         end
       end
     end
-    header_arrays = [creators, publishers, subjects, qualifications, modules,
-                     descriptions, others]
+    header_arrays = [creators, publishers, subjects, qualification_names, qualification_levels, modules,
+                     descriptions]
     header_arrays.each do |h|
       h.each do |each_header_name|
         ordered_array.push(each_header_name)

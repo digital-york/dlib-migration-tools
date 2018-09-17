@@ -108,7 +108,7 @@ class DublinCoreElementsExtractor
     'and not (contains(.,"iplomas")) and not (contains(.,"octoral"))'\
     'and not (contains(.,"CEFR")) and not (contains(.,"oundation"))]'
     @doc.xpath(path, @ns).each do |s|
-      keyname = 'qualification_type'
+      keyname = 'qualification_name'
       i += 1
       keyname += i.to_s
       @key_metadata[keyname.to_sym] = s.to_s
@@ -125,7 +125,7 @@ class DublinCoreElementsExtractor
     'and not (contains(.,"iplomas")) and not (contains(.,"octoral"))'\
     'and not (contains(.,"CEFR")) and not (contains(.,"oundation"))]'
     @doc.xpath(path, @ns).each do
-      header_name = 'qualification_type'
+      header_name = 'qualification_name'
       i += 1
       header_name += i.to_s
       @headers.push(header_name)
