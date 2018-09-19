@@ -12,24 +12,64 @@ class QualificationNameCleaner
                                  'bachelor of surgery',
                                  'mbbs']
   @med_sci_bachelors = ['bachelor of medical science (bmedsci)',
-                        'bachelor of medical science','bmedsci']
+                        'bachelor of medical science', 'bmedsci']
   @science_bachelors = ['batchelor of science (bsc)',
-                        'bachelor of science (bsc)',
-                        '"bachelor of science (bsc)"', 'bsc',
-                        'bachelor of science (ba)',
+                        'bachelor of science (bsc)', 'bsc',
                         'bachelor of science (bsc )',
                         'bachelor of science', 'bachelor of science (bsc)',
                         'bachelor of science (msc)']
-  @art_bachelors = ['batchelor of arts (ba)', '"bachelor of arts (ba),"', 'ba',
-                    'bachelor of arts (ba)', 'bachelor of art (ba)',
-                    'bachelor of arts', 'bachelor of arts (ma)']
+  @art_bachelors = ['ba', 'bachelor of arts (ba)',
+                    'bachelor of art (ba)', 'bachelor of arts',]
   @philosophy_bachelors = ['bachelor of philosophy (bphil)',
                            'bachelor of philosophy', 'bphil']
   @engineering_bachelors = ['bachelor of engineering (beng)',
                             'bachelor of engineering', 'beng']
   @law_bachelors = ['bachelor of laws (llb)', 'bachelor of laws', 'llb']
 
-  # TODO populate  other arrays later
+  # Masters
+  @philosophy_masters_by_pubs = ['master of philosophy by publications (mphil)',
+                                 'master of philosophy by publications']
+  @philosophy_masters = ['master of philosophy (mphil)', 'mphil']
+  @art_masters_by_research = ['master of arts (by research) (ma (by research)',
+                              'master of arts (by research)',
+                              'master of arts by research (mres)']
+  @art_masters = ['master of arts (ma)', 'master of arts', 'master of art (ma)',
+                  'ma (master of arts)', 'masters of arts (ma)', 'ma']
+  @science_masters_by_research = ['master of science (by research)']
+  @science_masters_by_thesis = ['master of science (by thesis)',
+                                'msc (by thesis)']
+  @science_masters = ['"master of science (msc),"',"'master of science (msc)",
+                      'master of science (msc)', 'msc', 'master of science']
+  @laws_masters = ['master of laws (llm)', 'master of laws', 'llm']
+  @law_masters = ['master of law (mlaw)', 'master of law', 'mlaw'] # not typo!
+  @public_admin_masters = ['master of public administration (mpa)',
+                           'master of public administration', 'mpa']
+  @biology_masters = ['master of biology (mbiol)', 'master of biology', 'mbiol']
+  @biochem_masters = ['master of biochemistry (mbiochem)',
+                      'master of biochemistry', 'mbiochem']
+  @biomed_masters = ['master of biomedical science (mbiomedsci)',
+                     'master of biomedical science', 'mbiomedsci']
+  @chemistry_masters = ['master of chemistry (mchem)','master of chemistry',
+                        'mchem']
+  @engineering_masters = ['master of engineering (meng)',
+                          'master of engineering','meng']
+  @math_masters = ['master of mathematics (mmath)',
+                   'master of mathematics (mmath)', 'master of mathematics',
+                   'mmath']
+  @physics_masters = ['master of physics (mphys)', 'master of physics', 'mphys']
+  @psych_masters = ['master of psychology (mpsych)', 'master of psychology',
+                    'mpsych']
+  @env_masters = ['master of environment (menv)', 'master of environment',
+                  'menv']
+  @nursing_masters = ['master of nursing', 'master of nursing (mnursing)',
+                      '(mnursing)']
+  @public_health_masters = ['master of public health (mph)',
+                            'master of public health', 'mph']
+  @social_work_masters = ['master of social work and social science (mswss)',
+                          'master of social work and social science', '(mswss)']
+  @research_masters = ['master of research (mres)','master of research (mres)',
+                       'mres', 'mres']
+  # TODO: populate  other arrays later
   end
 
   def clean(name)
@@ -41,6 +81,7 @@ class QualificationNameCleaner
   # TODO bachelors now populated according to old code, need to check latest docs
   # TODO other xams not yet added
   def get_standard_name(name)
+    # BACHELORS
     if @medicine_surgery_bachelors.include? name
       standard_name = 'Bachelor of Medicine, Bachelor of Surgery (MBBS)'
     elsif @med_sci_bachelors.include? name
@@ -55,7 +96,53 @@ class QualificationNameCleaner
       standard_name = 'Bachelor of Engineering (BEng)'
     elsif @law_bachelors.include? name
       standard_name = 'Bachelor of Laws (LLB)'
+    # MASTERS
+    elsif @philosophy_masters_by_pubs.include? name
+      standard_name = 'Master of Philosophy by publications (MPhil)'
+    elsif @philosophy_masters.include? name
+      standard_name = 'Master of Philosophy (MPhil)'
+    elsif @art_masters_by_research.include? name
+      standard_name = 'Master of Arts (by research) (MA (by research))'
+    elsif @art_masters.include? name
+      standard_name = 'Master of Arts (MA)'
+    elsif @science_masters_by_research.include? name
+      standard_name = 'Master of Science (by research) (MSc (by research))'
+    elsif @science_masters_by_thesis.include? name
+      standard_name = 'Master of Science (by thesis) (MSc (by thesis))'
+    elsif @science_masters.include? name
+      standard_name = 'Master of Science (MSc)'
+    elsif @laws_masters.include? name
+      standard_name = 'Master of Laws (LLM)'
+    elsif @law_masters.include? name
+      standard_name = 'Master of Law (MLaw)'
+    elsif @public_admin_masters.include? name
+      standard_name = 'Master of Public Administration (MPA)'
+    elsif @biology_masters.include? name
+      standard_name = 'Master of Biology (MBiol)'
+    elsif @bio_chem_masters.include? name
+      standard_name = 'Master of Biochemistry (MBiochem)'
+    elsif @bio_med_masters.include? name
+      standard_name = 'Master of Biomedical Science (MBiomedsci)'
+    elsif @chemistry_masters.include? name
+      standard_name = 'Master of Chemistry (MChem)'
+    elsif @engineering_masters.include? name
+      standard_name = 'Master of Engineering (MEng)'
+    elsif @math_masters.include? name
+      standard_name = 'Master of Mathematics (MMath)'
+    elsif @physics_masters.include? name
+      standard_name = 'Master of Physics (MPhys)'
+    elsif @psych_masters.include? name
+      standard_name = 'Master of Psychology (MPsych)'
+    elsif @env_masters.include? name
+      standard_name = 'Master of Environment (MEnv)'
+    elsif @nursing_masters.include? name
+      standard_name = 'Master of Nursing (MNursing)'
+    elsif @public_health_masters.include? name
+      standard_name = 'Master of Public Health (MPH)'
+    elsif @social_work_masters.include? name
+      standard_name = 'Master of Social Work and Social Science (MSWSS)'
     else
+      # UNMATCHED
       standard_name = 'COULD NOT MATCH ' + name
     end
     standard_name
