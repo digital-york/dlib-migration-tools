@@ -33,30 +33,33 @@ class QualificationNameCleaner
     @art_masters_by_research = ['master of arts (by research) (ma (by research)',
                                 'master of arts (by research)',
                                 'master of arts by research (mres)']
-    @art_masters = ['master of arts (ma)', 'master of arts', 'master of art (ma)',
-                    'ma (master of arts)', 'masters of arts (ma)', 'ma']
+    @art_masters = ['master of arts (ma)', 'master of arts',
+                    'master of art (ma)', 'ma (master of arts)',
+                    'masters of arts (ma)', 'ma']
     @science_masters_by_research = ['master of science (by research)']
     @science_masters_by_thesis = ['master of science (by thesis)',
                                   'msc (by thesis)']
-    @science_masters = ['"master of science (msc),"',"'master of science (msc)",
+    @science_masters = ['master of science (msc)', 'master of science (msc)',
                         'master of science (msc)', 'msc', 'master of science']
     @laws_masters = ['master of laws (llm)', 'master of laws', 'llm']
     @law_masters = ['master of law (mlaw)', 'master of law', 'mlaw'] # not typo!
     @public_admin_masters = ['master of public administration (mpa)',
                              'master of public administration', 'mpa']
-    @biology_masters = ['master of biology (mbiol)', 'master of biology', 'mbiol']
+    @biology_masters = ['master of biology (mbiol)', 'master of biology',
+                        'mbiol']
     @bio_chem_masters = ['master of biochemistry (mbiochem)',
                          'master of biochemistry', 'mbiochem']
     @bio_med_masters = ['master of biomedical science (mbiomedsci)',
                         'master of biomedical science', 'mbiomedsci']
-    @chemistry_masters = ['master of chemistry (mchem)','master of chemistry',
+    @chemistry_masters = ['master of chemistry (mchem)', 'master of chemistry',
                           'mchem']
     @engineering_masters = ['master of engineering (meng)',
-                            'master of engineering','meng']
+                            'master of engineering', 'meng']
     @math_masters = ['master of mathematics (mmath)',
                      'master of mathematics (mmath)', 'master of mathematics',
                      'mmath']
-    @physics_masters = ['master of physics (mphys)', 'master of physics', 'mphys']
+    @physics_masters = ['master of physics (mphys)', 'master of physics',
+                        'mphys']
     @psych_masters = ['master of psychology (mpsych)', 'master of psychology',
                       'mpsych']
     @env_masters = ['master of environment (menv)', 'master of environment',
@@ -68,8 +71,8 @@ class QualificationNameCleaner
     @social_work_masters = ['master of social work and social science (mswss)',
                             'master of social work and social science',
                             '(mswss)']
-    @research_masters = ['master of research (mres)', 'master of research (mres)',
-                         'mres', 'mres']
+    @research_masters = ['master of research (mres)',
+                         'master of research (mres)', 'mres', 'mres']
     # TODO: populate  other arrays later
 
     # doctorates
@@ -79,12 +82,45 @@ class QualificationNameCleaner
     @science_docts = ['doctor of science (scd)', 'doctor of science', 'scd']
     @engineering_docts = ['doctor of engineering (engd)',
                           'doctor of engineering', 'engd']
-    @medical_docts_by_pubs = ['doctor of Medicine by publications (md)',
+    @medical_docts_by_pubs = ['doctor of medicine by publications (md)',
                               'doctor of medicine by publications']
     @medical_docts = ['doctor of Medicine (md)', 'md']
     @philosophy_docts_by_pubs = ['doctor of philosophy by publications (phd)',
                                  'doctor of philosophy by publications']
     @philosophy_docts = ['doctor of philosophy (phd)', 'phd']
+
+    # others
+    @foundation_degrees = ['foundation degree (fd)', 'foundation degree', 'fd']
+    @cert_hes = ['certificate of higher education (certhe)',
+                 'certificate of higher education', 'CertHE']
+    @dip_hes = ['diploma of higher education (diphe)',
+                'diploma of higher education', 'diphe']
+    @grad_certs = ['graduate certificate (gradcert)', 'graduate certificate',
+                   'gradcert']
+    @grad_diplomas = ['graduate diploma (graddip)', 'graduate diploma',
+                      'graddip']
+    @uni_certs = ['university certificate']
+    @foundation_certs = ['foundation certificate (f cert)',
+                         'foundation certificate', 'f cert']
+    @foundation = ['foundation year', 'foundation year stage 0']
+    @pre_masters = ['Pre-Masters']
+    @pg_diplomas = ['pgdip', 'diploma', 'dip', 'diploma (dip)']
+    @medieval_diplomas = ['postgraduate diploma in medieval studies (pgdip)']
+    @conservation_diplomas = ['diploma in conservation studies',
+                              'postgraduate diploma in conservation studies \
+                              ( pgdip)',
+                              'postgraduate diploma in conservation \
+                               studies(pgdip)']
+    @cpds = ['continuing professional development (cpd)',
+             'continuing professional development', 'cpd']
+    @pgces = ['postgraduate certificate in education (pgce)']
+    @pg_medical_certs = ['postgraduate certificate in medical \
+                          education (pgcert)']
+    @pg_certs = ['postgraduate certificate (pgcert)']
+    @cefrs = ['a1 of the cefr', 'a1 of cefr', 'a1/a2 of the cefr',
+              'a2 of the cefr', 'a2/b1 of the cefr', 'b1/b2 of the cefr',
+              'b2 of the cefr', 'b2/c1 of the cefr', 'c1 of the cefr',
+              'c2 of the cefr', 'c1/c2 of cefr', 'c1/c2 of the cefr']
   end
 
   def clean(name)
@@ -173,6 +209,43 @@ class QualificationNameCleaner
       standard_name = 'Doctor of Philosophy by publications (PhD)'
     elsif @philosophy_docts.include? name
       standard_name = 'Doctor of Philosophy (PhD)'
+
+    #  OTHER EXAMS
+    elsif @foundation_degrees.include? name
+      standard_name = 'Foundation Degree (FD)'
+    elsif @cert_hes.include? name
+      standard_name = 'Certificate of Higher Education (CertHE)'
+    elsif @dip_hes.include? name
+      standard_name = 'Diploma of Higher Education (DipHE)'
+    elsif @grad_certs.include? name
+      standard_name = 'Graduate Certificate (GradCert)'
+    elsif @grad_diplomas.include? name
+      standard_name = 'Graduate Diploma (GradDip)'
+    elsif @uni_certs.include? name
+      standard_name = 'University Certificate'
+    elsif @foundation_certs.include? name
+      standard_name = 'Foundation Certificate (F Cert)'
+    elsif @foundation.include? name
+      standard_name = 'Foundation'
+    elsif @pre_masters.include? name
+      standard_name = 'Pre-Masters'
+    elsif @conservation_diplomas.include? name
+      standard_name = 'Postgraduate Diploma in Conservation Studies (PGDip)'
+    elsif @medieval_diplomas.include? name
+      standard_name = 'Postgraduate Diploma in Medieval Studies (PGDip)'
+    # this is more general so crucial it is tested AFTER more specific diplomas
+    elsif @pg_diplomas.include? name
+      standard_name = 'Postgraduate Diploma (PGDip)'
+    elsif @pgces.include? name
+      standard_name = 'Postgraduate Certificate in Education (PGCE)'
+    elsif @pg_medical_certs.include? name
+      standard_name = 'Postgraduate Certificate in Medical Education (PGCert)'
+    elsif @cpds.include? name
+      standard_name = 'Continuing Professional Development (CPD)'
+    elsif @pg_certs.include? name
+      standard_name = 'Postgraduate Certificate (PgCert)'
+    elsif @cefrs.include? name
+      standard_name = 'CEFR Module'
     else
       # UNMATCHED
       standard_name = 'COULD NOT MATCH ' + name
