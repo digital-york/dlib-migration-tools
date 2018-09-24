@@ -97,6 +97,8 @@ class DepartmentCleaner
       standard_name =  'University of York. The York Management School'
     when /language and linguistic science/
       standard_name = 'University of York. Department of Language and Linguistic Science'
+    when /language and lingusitic science/ # deal with common typo
+      standard_name = 'University of York. Department of Language and Linguistic Science' 
     when /hull/
       standard_name = 'Hull York Medical School'
     when /international pathway/
