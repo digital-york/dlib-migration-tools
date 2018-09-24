@@ -192,6 +192,8 @@ class QualificationNameCleaner
       standard_name = 'Master of Public Health (MPH)'
     elsif @social_work_masters.include? name
       standard_name = 'Master of Social Work and Social Science (MSWSS)'
+    elsif @research_masters.include? name
+      standard_name = 'Master of Research (MRes)'
     # DOCTORATES
     elsif @letters_docts.include? name
       standard_name = 'Doctor of Letters (DLitt)'
