@@ -87,4 +87,10 @@ class DateCleaner
     day = '0' + day if day.length == 1
     day
   end
+
+  # if date element missing try to extract it from the title of the paper
+  def try_to_extract_date_from_title(title)
+    date = title.match(/(20\d{2}$)/)
+    date
+  end
 end

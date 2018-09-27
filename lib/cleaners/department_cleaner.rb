@@ -93,7 +93,7 @@ class DepartmentCleaner
       standard_name =  'University of York. Department of Biology'
     when /biochemistry/ # confirmed with metadata team - recheck?
       standard_name =  'University of York. Department of Biology'
-    when /english and related literature/
+    when /english and related/ # confirmed directly with English department
       standard_name =  'University of York. Department of English and Related
        Literature'
     when /philosophy/
@@ -109,6 +109,9 @@ class DepartmentCleaner
     when /language and lingusitic science/ # deal with common typo
       standard_name = 'University of York. Department of Language and
        Linguistic Science'
+     when /for all/ # this is 'languages for all' but in some records 'language'
+       standard_name = 'University of York. Department of Language and
+        Linguistic Science'
     when /hull/
       standard_name = 'Hull York Medical School'
     when /international pathway/

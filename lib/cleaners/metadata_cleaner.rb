@@ -16,6 +16,10 @@ class MetadataCleaner
       cleaner = DateCleaner.new
       date = key_metadata.fetch(:date)
       clean_date = cleaner.clean(date)
+      if clean_date.to_s.empty?
+        title = key_metadata.fetch(:title)
+        clean_date = cleaner.try_to_extract_date_from_title(title)
+      end
       key_metadata[:date] = clean_date unless clean_date.to_s.empty?
     end
     key_metadata
