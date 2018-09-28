@@ -33,8 +33,6 @@ class DepartmentCleaner
        ' Disseminations'
     when /women/
       standard_name = "University of York. Centre for Women's Studies"
-    when /languages for all/
-      standard_name = 'University of York. Languages for All'
     when /school of social and political science/
       standard_name = 'University of York. School of Social and Political'\
        ' Science'
