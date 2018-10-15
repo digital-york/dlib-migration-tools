@@ -109,7 +109,7 @@ class DepartmentCleaner
        ' Linguistic Science'
     when /for all/ # this is 'languages for all' but in some records 'language'
       standard_name = 'University of York. Department of Language and'\
-       ' Linguistic Science: Languages for All'
+       ' Linguistic Science. Languages for All'
     when /hull/
       standard_name = 'Hull York Medical School'
     when /international pathway/
