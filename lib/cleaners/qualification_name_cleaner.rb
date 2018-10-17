@@ -73,9 +73,8 @@ class QualificationNameCleaner
     @soc_work_and_sci_masters = ['master of social work and social science (mswss)',
                                  'master of social work and social science',
                                  '(mswss)']
-    @soc_work_and_sci_masters = ['master of social work (msocw)',
-                                 'master of social work',
-                                 '(msocw)']
+    @social_work_masters = ['master of social work (msocw)',
+                            'master of social work', '(msocw)']
     @research_masters = ['master of research (mres)',
                          'master of research (mres)', 'mres', 'mres']
     # TODO: populate  other arrays later
