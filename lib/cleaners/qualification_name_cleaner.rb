@@ -70,9 +70,12 @@ class QualificationNameCleaner
                         '(mnursing)']
     @public_health_masters = ['master of public health (mph)',
                               'master of public health', 'mph']
-    @social_work_masters = ['master of social work and social science (mswss)',
-                            'master of social work and social science',
-                            '(mswss)']
+    @soc_work_and_sci_masters = ['master of social work and social science (mswss)',
+                                 'master of social work and social science',
+                                 '(mswss)']
+    @soc_work_and_sci_masters = ['master of social work (msocw)',
+                                 'master of social work',
+                                 '(msocw)']
     @research_masters = ['master of research (mres)',
                          'master of research (mres)', 'mres', 'mres']
     # TODO: populate  other arrays later
@@ -194,8 +197,11 @@ class QualificationNameCleaner
       standard_name = 'Master of Nursing (MNursing)'
     elsif @public_health_masters.include? name
       standard_name = 'Master of Public Health (MPH)'
-    elsif @social_work_masters.include? name
+    elsif @soc_work_and_sci_masters.include? name
       standard_name = 'Master of Social Work and Social Science (MSWSS)'
+    # order crucial so more specific name above is searched for first
+    elsif @social_work_masters.include? name
+      standard_name = 'Master in Social Work (MSocW)'
     elsif @research_masters.include? name
       standard_name = 'Master of Research (MRes)'
     # DOCTORATES
