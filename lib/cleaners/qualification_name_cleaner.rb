@@ -39,8 +39,10 @@ class QualificationNameCleaner
     @science_masters_by_research = ['master of science (by research)']
     @science_masters_by_thesis = ['master of science (by thesis)',
                                   'msc (by thesis)']
-    @science_masters = ['master of science (msc)', 'master of science (msc)',
-                        'master of science (msc)', 'msc', 'master of science']
+    @science_masters_msc = ['master of science (msc)', 'msc',
+                            'master of science']
+    @science_masters_msci = ['master of science (msci)',
+                             'master in science (msci)', 'msci']
     @laws_masters = ['master of laws (llm)', 'master of laws', 'llm']
     @law_masters = ['master of law (mlaw)', 'master of law', 'mlaw'] # not typo!
     @public_admin_masters = ['master of public administration (mpa)',
@@ -160,8 +162,10 @@ class QualificationNameCleaner
       standard_name = 'Master of Science (by research) (MSc (by research))'
     elsif @science_masters_by_thesis.include? name
       standard_name = 'Master of Science (by thesis) (MSc (by thesis))'
-    elsif @science_masters.include? name
+    elsif @science_masters_msc.include? name
       standard_name = 'Master of Science (MSc)'
+    elsif @science_masters_msci.include? name
+      standard_name = 'Master of Science (MSci)'
     elsif @laws_masters.include? name
       standard_name = 'Master of Laws (LLM)'
     elsif @law_masters.include? name
