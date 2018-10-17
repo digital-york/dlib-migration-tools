@@ -21,7 +21,6 @@ class DublinCoreElementsExtractor
       extract_multivalued_element_headers(mve)
     end
     extract_qualification_name_headers
-    extract_qualification_level_headers
     extract_module_headers
     @headers
   end
@@ -51,7 +50,7 @@ class DublinCoreElementsExtractor
       extract_multivalued_element(mve)
     end
     extract_qualification_names
-    extract_qualification_levels
+    # extract_qualification_levels
     extract_modules
     extract_rights
     @key_metadata
@@ -131,30 +130,6 @@ class DublinCoreElementsExtractor
     ' and not (contains(.,"issertations")) and not (contains(.,"oject"))]'
     @doc.xpath(path, @ns).each do
       header_name = 'qualification_name'
-      i += 1
-      header_name += i.to_s
-      @headers.push(header_name)
-    end
-  end
-
-  # remove initial letter from words to match as Nokogiri xpath does not support
-  # case insensitivity well - suggested solution is to use
-  # [contains(translate(TITLE,'ABCDEFGHIJKLMNOPURSTUWXYZ',
-  # 'abcdefghijklmnopurstuwxyz') - very unwieldy for multiple clauses
-  # see https://stackoverflow.com/questions
-  # /41914979/how-do-i-make-my-nokogiri-contains-case-insensitive
-  # TODO: filter theses/Theses
-  def extract_qualification_level_headers
-    puts
-    i = 0
-    path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
-    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
-    '/dc:type/text()[(contains(.,"achelors")) or (contains(.,"asters"))'\
-    'or (contains(.,"iplomas")) or (contains(.,"octoral")) or'\
-    ' (contains(.,"CEFR")) or (contains(.,"oundation")) or'\
-    ' (contains(.,"eses")) ]'
-    @doc.xpath(path, @ns).each do
-      header_name = 'qualification_level'
       i += 1
       header_name += i.to_s
       @headers.push(header_name)

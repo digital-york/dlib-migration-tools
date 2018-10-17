@@ -54,10 +54,8 @@ class CsvHelper
   # this way rather than using alphabetical sort as allows more logical ordering
   def reorder_headers
     ordered_array = %w[pid title date rights_holder rights_link rights_statement]
-    # creators, publishers, qualification_names, qualification_levels, modules,
-    # descriptions, subjects, others = Array.new(8) { [] }
-    creators, publishers, qualification_names, qualification_levels, modules,
-    descriptions, subjects = Array.new(7) { [] } # create arrays for all these
+    creators, publishers, qualification_names, modules,
+    descriptions, subjects = Array.new(6) { [] } # create arrays for all these
     # for multivalued elements
     @headers.each do |t|
       if t.start_with? 'creator'
@@ -68,8 +66,6 @@ class CsvHelper
         subjects.push(t)
       elsif t.start_with? 'qualification_name'
         qualification_names.push(t)
-      elsif t.start_with? 'qualification_level'
-        qualification_levels.push(t)
       elsif t.start_with? 'module'
         modules.push(t)
       elsif t.start_with? 'description'
@@ -80,8 +76,9 @@ class CsvHelper
         end
       end
     end
+
     header_arrays = [creators, publishers, subjects, qualification_names,
-                     qualification_levels, modules, descriptions]
+                     modules, descriptions]
     header_arrays.each do |h|
       h.each do |each_header_name|
         ordered_array.push(each_header_name)
