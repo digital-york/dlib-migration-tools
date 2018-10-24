@@ -65,7 +65,8 @@ class QualificationNameCleaner
     @psych_masters = ['master of psychology (mpsych)', 'master of psychology',
                       'mpsych']
     @env_masters = ['master of environment (menv)', 'master of environment',
-                    'menv']
+                    'menv', 'master of environmental science (menv)']
+    # ? @environmental_science_masters = ['master of environmental science (menv)']
     @nursing_masters = ['master of nursing', 'master of nursing (mnursing)',
                         '(mnursing)']
     @public_health_masters = ['master of public health (mph)',
@@ -77,7 +78,6 @@ class QualificationNameCleaner
                             'master of social work', '(msocw)']
     @research_masters = ['master of research (mres)',
                          'master of research (mres)', 'mres', 'mres']
-    # TODO: populate  other arrays later
 
     # doctorates
     @letters_docts = ['doctor of letters (dLitt)', 'doctor of Letters',
@@ -144,7 +144,7 @@ class QualificationNameCleaner
     elsif @science_bachelors.include? name
       standard_name = 'Bachelor of Science (BSc)'
     elsif @art_bachelors.include? name
-      standard_name = 'Bachelor of Arts (Ba)'
+      standard_name = 'Bachelor of Arts (BA)'
     elsif @philosophy_bachelors.include? name
       standard_name = 'Bachelor of Philosophy (BPhil)'
     elsif @engineering_bachelors.include? name
