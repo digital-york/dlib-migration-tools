@@ -119,7 +119,7 @@ class DepartmentCleaner
     when /natural sciences/
       standard_name = 'University of York. School of Natural Sciences'
     when /environment/
-      standard_name = 'University of York. Environment'
+      standard_name = 'University of York. Environment Department'
     else
     standard_name = 'COULD NOT MATCH ' + name
     end
