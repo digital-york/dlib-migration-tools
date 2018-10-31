@@ -1,0 +1,26 @@
+exportFoxml.bat and exportExamFoxmlBatch.bat are template batch files which can
+be run from within a fedora 3.6 client using the fedora API to perform bulk
+exports of foxml files from a fedora 3.6 repository when provided with a list
+of pids in a text file, one per line, in the following format:
+york:1234
+york:5678
+
+to use: edit the files as indicated below
+- in  exportFoxml.bat  replace <fully
+qualified name of folder to export files into> with the actual path of the
+folder to export to.
+- <host>:<port>
+- in exportExamFoxmlBatch.bat replace the following:
+  <path to tee.exe> with the actual path to your tee.exe file
+  <fully qualified path to  text file containing pids> with the actual path
+  <fully qualified name of error file to write> path to write an error file to
+
+  The files must be put into the fedora clients bin directory on the machine you
+   are exporting into, and run from the command line, passing the user name and
+   password as parameters thus:> exportExamBatch_LogTest.bat USER PWD
+
+   On one occasion not all files were exported, so be careful to compare the
+   number of lines in your pid list with the number of export files. the fedora
+   api export function called by the scripts does not provide logging output, so
+   I have piped the error output to an error file using tee - hopefully if
+   future export errors occur this will allow missing files to be identified
