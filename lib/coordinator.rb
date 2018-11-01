@@ -7,7 +7,7 @@ require_relative 'extractors/acl_elements_extractor.rb'
 require_relative 'extractors/content_location_extractor.rb'
 require_relative 'normalisers/metadata_normaliser.rb' # possible
 # coordinate the collection of metadata, any normalisation, + creation of csv
-class CsvHelper
+class Coordinator
   def initialize(output_location)
     @output_location = output_location
     @unique_keys_to_use_as_headers = []
