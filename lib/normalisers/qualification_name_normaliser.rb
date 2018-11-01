@@ -1,7 +1,7 @@
 # !/usr/bin/env ruby
 
 # class to return standardised qualification names
-class QualificationNameCleaner
+class QualificationNameNormaliser
 
   # a lot of variation so need to refer against arrays of possible variants
   # TODO: add other exams, check against additional docs
@@ -127,7 +127,7 @@ class QualificationNameCleaner
               'c2 of the cefr', 'c1/c2 of cefr', 'c1/c2 of the cefr']
   end
 
-  def clean(name)
+  def normalise(name)
     name = name.downcase
     name = get_standard_name(name)
     name

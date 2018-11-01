@@ -13,23 +13,23 @@ require 'English'
 # yyyy-yyyy
 # dd-mm-yyyy
 # yyyy-mm-dd
-class DateCleaner
+class DateNormaliser
   # this works correctly but if the csv is opened it excel, excel displays
   # dates in format yyyy-mm-dd as dd/mm/yyyy. however opening in text editor
-  # shows the date format to be correctly cleaned
+  # shows the date format to be correctly normalised
 
-  def clean(date)
-    clean = ''
+  def normalise(date)
+    normalised = ''
     year = get_year(date)
-    clean = year unless year.empty?
-    return if clean.empty?
+    normalised = year unless year.empty?
+    return if normalised.empty?
     month = get_month(date)
     day = get_day(date)
     unless month.empty?
-      clean = clean + '-' + month # there may also be a day
-      clean = clean + '-' + day unless day.empty?
+      normalised = normalised + '-' + month # there may also be a day
+      normalised = normalised + '-' + day unless day.empty?
     end
-    clean
+    normalised
   end
 
   # this looks for 4 digit groups, and expects either one or two. There will be
@@ -62,7 +62,8 @@ class DateCleaner
     elsif /([\d]{1,2})[\s\-\.\/\\\\][0-9]{4}\Z/.match(date.strip)
       month = $1
     end
-    month = '0' + clean_month if month.length == 1
+    # month = '0' + normalised_month if month.length == 1
+    month = '0' + month if month.length == 1
     month
   end
 

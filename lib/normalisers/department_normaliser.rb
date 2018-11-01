@@ -2,8 +2,8 @@
 require 'English'
 
 #  class to put department values into agreed standard form
-class DepartmentCleaner
-  def clean_name(name)
+class DepartmentNormaliser
+  def normalise_name(name)
     standard_name = match_to_preflabel(name)
     standard_name
   end

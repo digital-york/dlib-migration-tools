@@ -1,47 +1,47 @@
 #!/usr/bin/env ruby
-require_relative 'date_cleaner.rb'
-require_relative 'department_cleaner.rb'
-require_relative 'qualification_name_cleaner.rb'
+require_relative 'date_normaliser.rb'
+require_relative 'department_normaliser.rb'
+require_relative 'qualification_name_normaliser.rb'
 
-# class to co-ordinate data cleaning
-class MetadataCleaner
-  def clean_metadata(key_metadata)
-    clean_date(key_metadata)
-    clean_department_names(key_metadata)
-    clean_qualifications(key_metadata)
+# class to co-ordinate data normalisation
+class MetadataNormaliser
+  def normalise_metadata(key_metadata)
+    normalise_date(key_metadata)
+    normalise_department_names(key_metadata)
+    normalise_qualifications(key_metadata)
   end
 
-  def clean_date(key_metadata)
+  def normalise_date(key_metadata)
     if key_metadata.key?(:date)
-      cleaner = DateCleaner.new
+      normaliser = DateNormaliser.new
       date = key_metadata.fetch(:date)
-      clean_date = cleaner.clean(date)
-      if clean_date.to_s.empty?
+      normalise_date = normaliser.normalise(date)
+      if normalise_date.to_s.empty?
         title = key_metadata.fetch(:title)
-        clean_date = cleaner.try_to_extract_date_from_title(title)
+        normalise_date = normaliser.try_to_extract_date_from_title(title)
       end
-      key_metadata[:date] = clean_date unless clean_date.to_s.empty?
+      key_metadata[:date] = normalise_date unless normalise_date.to_s.empty?
     end
     key_metadata
   end
 
-  def clean_department_names(key_metadata)
+  def normalise_department_names(key_metadata)
     dept_keys_array = get_department_keys(key_metadata)
-    dept_cleaner = DepartmentCleaner.new unless dept_keys_array.empty?
+    dept_normaliser = DepartmentNormaliser.new unless dept_keys_array.empty?
     dept_keys_array.each do |k|
       name = key_metadata.fetch(k)
-      standard_name = dept_cleaner.clean_name(name) unless name.empty?
+      standard_name = dept_normaliser.normalise_name(name) unless name.empty?
       key_metadata[k] = standard_name unless standard_name.nil?
     end
     key_metadata
   end
 
-  def clean_qualifications(key_metadata)
+  def normalise_qualifications(key_metadata)
     quals_name_keys_array = get_qualification_name_keys(key_metadata)
-    quals_name_cleaner = QualificationNameCleaner.new unless quals_name_keys_array.empty?
+    quals_name_normaliser = QualificationNameNormaliser.new unless quals_name_keys_array.empty?
     quals_name_keys_array.each do |q|
       qual_name = key_metadata.fetch(q)
-      standard_qname = quals_name_cleaner.clean(qual_name) unless qual_name.empty?
+      standard_qname = quals_name_normaliser.normalise(qual_name) unless qual_name.empty?
       key_metadata[q] = standard_qname unless standard_qname.nil?
     end
     key_metadata
