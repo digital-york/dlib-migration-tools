@@ -118,6 +118,8 @@ class DepartmentNormaliser
       standard_name = 'University of York. School of Criminology'
     when /natural sciences/
       standard_name = 'University of York. School of Natural Sciences'
+    when /environment and geography/  # order important, more precise must be first
+      standard_name = 'University of York. Department of Environment and Geography'
     when /environment/
       standard_name = 'University of York. Environment Department'
     else
