@@ -41,7 +41,7 @@ class DublinCoreElementsExtractor
     pid = pid.gsub 'york:', ''
     @key_metadata[:pid] = pid
     get_current_dc_version
-    multi_value_elements = %w[creator publisher subject description]
+    multi_value_elements = %w[creator publisher subject description contributor]
     single_value_elements = %w[title date]
     single_value_elements.each do |sve|
       extract_single_valued_element(sve)
