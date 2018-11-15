@@ -16,7 +16,7 @@ class DublinCoreElementsExtractor
   def collect_headers
     @ns = @doc.collect_namespaces
     get_current_dc_version
-    multi_value_elements = %w[creator publisher subject description]
+    multi_value_elements = %w[creator publisher subject description contributor]
     multi_value_elements.each do |mve|
       extract_multivalued_element_headers(mve)
     end

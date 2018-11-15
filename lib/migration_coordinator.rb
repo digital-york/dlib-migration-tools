@@ -42,7 +42,10 @@ class MigrationCoordinator
         new_headers = extractor.collect_headers
         new_headers.each do |h|
           next if @headers.include?(h.to_s)
-          @headers.push(h.to_s)
+          # only push header arrays with non zero content
+          if h.size > 0
+            @headers.push(h.to_s)
+          end
         end
       end
     end
@@ -55,7 +58,7 @@ class MigrationCoordinator
   def reorder_headers
     ordered_array = %w[pid title date rights_holder rights_link rights_statement]
     creators, publishers, qualification_names, modules,
-    descriptions, subjects = Array.new(6) { [] } # create arrays for all these
+    descriptions, subjects, contributors = Array.new(7) { [] } # create arrays for all these
     # for multivalued elements
     @headers.each do |t|
       if t.start_with? 'creator'
@@ -70,15 +73,16 @@ class MigrationCoordinator
         modules.push(t)
       elsif t.start_with? 'description'
         descriptions.push(t)
+      elsif t.start_with? 'contributor'
+        contributors.push(t)
       else
         unless ordered_array.any? { |s| t.include? s }
           puts 'unexpected header! t was ' + t.to_s
         end
       end
     end
-
     header_arrays = [creators, publishers, subjects, qualification_names,
-                     modules, descriptions]
+                     modules, descriptions, contributors]
     header_arrays.each do |h|
       h.each do |each_header_name|
         ordered_array.push(each_header_name)
@@ -158,4 +162,5 @@ class MigrationCoordinator
       %w[dc]
     end
   end
+
 end
