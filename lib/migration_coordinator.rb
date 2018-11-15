@@ -28,7 +28,7 @@ class MigrationCoordinator
     Dir.foreach(directory_to_check) do |item|
       next if item == '.' || item == '..'
       filepath = directory_to_check + '/' + item
-      collect_metadata(filepath, ds_to_collect)
+      collect_metadata(filepath, ds_to_collect, record_type)
     end
   end
 
@@ -92,9 +92,9 @@ class MigrationCoordinator
   end
 
   # make the datastreams to collect metadata from specifiable
-  def collect_metadata(filename, ds_to_collect)
+  def collect_metadata(filename, ds_to_collect, record_type)
     values_hash_array = []
-    normaliser = MetadataNormaliser.new
+    normaliser = MetadataNormaliser.new(record_type)
     # open a foxml file and pass to ExtractDublinCoreMetadata
     doc = File.open(filename) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
     ds_to_collect.each do |ds|

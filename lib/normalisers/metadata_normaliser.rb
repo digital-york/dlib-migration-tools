@@ -5,6 +5,11 @@ require_relative 'qualification_name_normaliser.rb'
 
 # class to co-ordinate data normalisation
 class MetadataNormaliser
+
+  def initialize(record_type)
+    @record_type = record_type
+  end
+
   def normalise_metadata(key_metadata)
     normalise_date(key_metadata)
     normalise_department_names(key_metadata)
