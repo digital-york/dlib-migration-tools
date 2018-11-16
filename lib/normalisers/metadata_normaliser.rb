@@ -56,9 +56,15 @@ class MetadataNormaliser
     # identify keys for both possible sets of sources (creatorX,publisherX)
     # return as array
     # https://www.safaribooksonline.com/library/view/ruby-cookbook/0596523696/ch05s15.html
-    creators_hash = key_metadata.select { |k, _| k.to_s.include? 'creator' }
-    publishers_hash = key_metadata.select { |k, _| k.to_s.include? 'publisher' }
-    depts_hash = creators_hash.merge(publishers_hash)
+    # here is where to treat differently
+    case @record_type
+    when 'exam_paper'
+      creators_hash = key_metadata.select { |k, _| k.to_s.include? 'creator' }
+      publishers_hash = key_metadata.select { |k, _| k.to_s.include? 'publisher' }
+      depts_hash = creators_hash.merge(publishers_hash)
+    when 'thesis'
+      depts_hash = key_metadata.select { |k, _| k.to_s.include? 'publisher' }
+    end
     depts_hash.keys
   end
 
