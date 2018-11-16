@@ -11,8 +11,8 @@ require_relative '../../lib/migration_coordinator.rb'
   # [<"/path/to/folder">,<full|dc|dc_plus_content_location>,<"/path_to_output_location">]
   task :run_exam_metadata_collection_for_folder, [:path_to_folder,:scope,:output_location] do |t, args|
     args.with_defaults(:output_location => 'tmp')
-    c = MigrationCoordinator.new(args[:output_location])
-    c.collect_metadata_for_whole_folder(args[:path_to_folder], args[:scope], 'exam_paper')
+    c = MigrationCoordinator.new(args[:output_location], 'exam_paper')
+    c.collect_metadata_for_whole_folder(args[:path_to_folder], args[:scope])
   end
 
   # rake metadata_extraction_tasks:run_thesis_metadata_collection_for_folder
@@ -20,7 +20,7 @@ require_relative '../../lib/migration_coordinator.rb'
   # at present does exactly the same as for exams - but this will be changed
   task :run_thesis_metadata_collection_for_folder, [:path_to_folder,:scope,:output_location] do |t, args|
     args.with_defaults(:output_location => 'tmp')
-    c = MigrationCoordinator.new(args[:output_location])
-    c.collect_metadata_for_whole_folder(args[:path_to_folder], args[:scope], 'thesis')
+    c = MigrationCoordinator.new(args[:output_location], 'thesis')
+    c.collect_metadata_for_whole_folder(args[:path_to_folder], args[:scope])
   end
 end

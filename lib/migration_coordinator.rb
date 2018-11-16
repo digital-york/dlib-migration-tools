@@ -8,7 +8,8 @@ require_relative 'extractors/content_location_extractor.rb'
 require_relative 'normalisers/metadata_normaliser.rb' # possible
 # coordinate the collection of metadata, any normalisation, + creation of csv
 class MigrationCoordinator
-  def initialize(output_location)
+  def initialize(output_location, record_type)
+    @record_type = record_type
     @output_location = output_location
     @unique_keys_to_use_as_headers = []
     @column_headers = []
@@ -19,7 +20,7 @@ class MigrationCoordinator
   # command line call syntax: rake metadata_extraction_tasks:
   # run_<exam_paper|thesis>_metadata_collection_for _folder[<"/path/to/folder">
   # <full|dc|dc_plus_content_location>,<"/path_to_output_location">]
-  def collect_metadata_for_whole_folder(folderpath, ds_scope, record_type)
+  def collect_metadata_for_whole_folder(folderpath, ds_scope)
     ds_to_collect = get_datastream_scope(ds_scope.strip)
     directory_to_check = folderpath.strip
     # collect, headers first, as we need a complete list of columns in advance
@@ -28,7 +29,7 @@ class MigrationCoordinator
     Dir.foreach(directory_to_check) do |item|
       next if item == '.' || item == '..'
       filepath = directory_to_check + '/' + item
-      collect_metadata(filepath, ds_to_collect, record_type)
+      collect_metadata(filepath, ds_to_collect)
     end
   end
 
@@ -92,9 +93,9 @@ class MigrationCoordinator
   end
 
   # make the datastreams to collect metadata from specifiable
-  def collect_metadata(filename, ds_to_collect, record_type)
+  def collect_metadata(filename, ds_to_collect)
     values_hash_array = []
-    normaliser = MetadataNormaliser.new(record_type)
+    normaliser = MetadataNormaliser.new(@record_type)
     # open a foxml file and pass to ExtractDublinCoreMetadata
     doc = File.open(filename) { |f| Nokogiri::XML(f, Encoding::UTF_8.to_s) }
     ds_to_collect.each do |ds|
@@ -162,5 +163,4 @@ class MigrationCoordinator
       %w[dc]
     end
   end
-
 end
