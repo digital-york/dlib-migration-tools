@@ -103,11 +103,12 @@ class DublinCoreElementsExtractor
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
     "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
     '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
-    'and not (contains(.,"Collection"))and not (contains(.,"exam paper"))'\
-    'and not (contains(.,"achelors"))and not (contains(.,"asters"))'\
-    'and not (contains(.,"iplomas")) and not (contains(.,"octoral"))'\
-    'and not (contains(.,"CEFR")) and not (contains(.,"oundation"))'\
-    ' and not (contains(.,"eses")) and not (contains(.,"http"))'\
+    ' and not (contains(.,"Collection"))and not (contains(.,"exam paper"))'\
+    ' and not (contains(.,"achelors"))and not (contains(.,"asters"))'\
+    ' and not (contains(.,"iplomas")) and not (contains(.,"octoral"))'\
+    ' and not (contains(.,"CEFR")) and not (contains(.,"oundation"))'\
+    ' and not (contains(.,"eses")) and not (contains(.,"esis"))'\
+    ' and not (contains(.,"http"))'\
     ' and not (contains(.,"issertations")) and not (contains(.,"oject"))]'
     @doc.xpath(path, @ns).each do |s|
       keyname = 'qualification_name'

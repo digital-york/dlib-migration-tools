@@ -68,7 +68,7 @@ class QualificationNameNormaliser
                     'menv', 'master of environmental science (menv)']
     # ? @environmental_science_masters = ['master of environmental science (menv)']
     @nursing_masters = ['master of nursing', 'master of nursing (mnursing)',
-                        '(mnursing)']
+                        'master of nursing(mnursing)','(mnursing)','mnursing']
     @public_health_masters = ['master of public health (mph)',
                               'master of public health', 'mph']
     @soc_work_and_sci_masters = ['master of social work and social science (mswss)',
