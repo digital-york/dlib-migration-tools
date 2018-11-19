@@ -112,14 +112,7 @@ class MigrationCoordinator
   # ds_to_include is an array containing a hash of  key:value pairs for each
   # datastream whose key metadata we want to include
   def create_csv(ds_to_include)
-    case @record_type
-    when 'exam_paper'
-      outfile_name = 'exam_papers_key_metadata'
-    when 'thesis'
-      outfile_name = 'theses_key_metadata'
-    else
-      outfile_name = 'key_metadata'
-    end
+    outfile_name = 'exam_papers_key_metadata'
     outfile_path = @output_location + '/' + outfile_name + '.csv'
     CSV.open(outfile_path, 'a+') do |csv|
       csv << @headers if csv.count.eql? 0
