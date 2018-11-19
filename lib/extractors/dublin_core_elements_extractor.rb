@@ -121,6 +121,7 @@ class DublinCoreElementsExtractor
   def extract_qualification_name_headers
     i = 0
     path = '//foxml:datastream[@ID="DC"]/foxml:datastreamVersion'\
+    "[@ID='#{@current_dc_version}']/foxml:xmlContent/oai_dc:dc"\
     '/dc:type/text()[not(contains(.,"Text")) and not (contains(.,"Exam"))'\
     ' and not (contains(.,"Collection"))and not (contains(.,"exam paper"))'\
     ' and not (contains(.,"achelors"))and not (contains(.,"asters"))'\

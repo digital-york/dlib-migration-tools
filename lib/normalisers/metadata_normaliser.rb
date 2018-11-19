@@ -47,7 +47,15 @@ class MetadataNormaliser
     quals_name_keys_array.each do |q|
       qual_name = key_metadata.fetch(q)
       standard_qname = quals_name_normaliser.normalise(qual_name) unless qual_name.empty?
-      key_metadata[q] = standard_qname unless standard_qname.nil?
+      # can we filter out duplicates?
+      possible_new_qual = standard_qname unless standard_qname.nil?
+    #  if (key_metadata.values.include?(possible_new_qual))
+        # if normalised value  already in there remove delete the key:value pair
+        # may happen where an abbrviated name has been provided in addition
+  #      key_metadata.delete(q)
+#      else
+        key_metadata[q] = standard_qname unless standard_qname.nil?
+  #    end
     end
     key_metadata
   end
