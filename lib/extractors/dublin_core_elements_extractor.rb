@@ -109,7 +109,7 @@ class DublinCoreElementsExtractor
     ' and not (contains(.,"CEFR")) and not (contains(.,"oundation"))'\
     ' and not (contains(.,"eses")) and not (contains(.,"esis"))'\
     ' and not (contains(.,"http"))'\
-    ' and not (contains(.,"issertations")) and not (contains(.,"oject"))]'
+    ' and not (contains(.,"issertation")) and not (contains(.,"oject"))]'
     @doc.xpath(path, @ns).each do |s|
       keyname = 'qualification_name'
       i += 1
@@ -129,7 +129,7 @@ class DublinCoreElementsExtractor
     ' and not (contains(.,"CEFR")) and not (contains(.,"oundation"))'\
     ' and not (contains(.,"eses")) and not (contains(.,"esis"))'\
     ' and not (contains(.,"http"))'\
-    ' and not (contains(.,"issertations")) and not (contains(.,"oject"))]'
+    ' and not (contains(.,"issertation")) and not (contains(.,"oject"))]'
     @doc.xpath(path, @ns).each do
       header_name = 'qualification_name'
       i += 1
