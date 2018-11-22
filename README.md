@@ -3,7 +3,8 @@
 DESCRIPTION OF PROJECT
 This project contains  rake tasks to extract metadata out of foxml files
 INPUTS: Foxml files within a flat folder containing foxml files only and no subfolders. This must be on a location on the machine running the application or a mapped drive accessible to it
-OUTPUTS: CSV file containing key metadata from all the foxml records found in the specified folder, one per line. No data normalisation at this point, though some data elements - for example the various dc:rights elements - have been filtered into  distinct elements according to their content, or in some cases excluded as irrelevant (dc:type ="Text" being one such case)
+OUTPUTS: CSV file containing key metadata from all the foxml records found in the specified folder, one per line. No data normalisation at this point, though some data elements - for example the various dc:rights elements - have been filtered into  distinct elements according to their content, or in some cases excluded as irrelevant (dc:type ="Text" being one such case).
+csv output files named according to the record type they contain eg theses_key_metadata.csv
 
 REQUIRES
 ruby
@@ -11,9 +12,13 @@ rake
 nokogiri (if nokogiri not already present, run bundle install )
 
 TO RUN METADATA EXTRACTION
-command line call as follows from within the project folder:  
-rake metadata_extraction_tasks:run_metadata_collection_for_folder[<"/path/to/folder"><full|dc|dc_plus_content_location>,<"/path_to_output_location">]
+command line call as follows from within the project folder:
+separate tasks for exam papers and theses
+1) EXAMS
+rake metadata_extraction_tasks:run_exam_metadata_collection_for_folder[<"/path/to/folder"><full|dc|dc_plus_content_location>,<"/path_to_output_location">]
 eg for example rake metadata_extraction_tasks:run_metadata_collection_for_folder["../all_exams_latest","dc_plus_content_location","tmp"]
+2) THESES
+rake metadata_extraction_tasks:run_thesis_metadata_collection_for_folder[<"/path/to/folder"><full|dc|dc_plus_content_location>,<"/path_to_output_location">]
 
 INPUT PARAMETERS
 The first input parameter is the path to the folder containing the foxml files
