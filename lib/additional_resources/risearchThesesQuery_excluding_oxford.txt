@@ -1,0 +1,43 @@
+The following query can be pasted into the risearch query interface to obtain a
+list of all Thesis records. This will (correctly) include the two MNursing
+theses which have been incorrectly put under Undergraduate Papers and Projects.
+Note that this query uses SPARQL rather than ITQL,  in order to permit the wild
+card searching necesary to differentiate postgrad theses from undergraduate
+papers.  The machine the risearch interface is run on will need to have access
+ to fedora/risearch permitted  on the hosts apache configuration. This
+ redesigned query can be used without  updating and reconstructing when repeat
+  exports are required
+Excludes the thesis in the ebooks collection from Oxford Brookes, using a filter on
+an optional dc:publisher element - excludes where found with this value
+tried adding a filter on publisher for inclusion of york , but this fails as not all
+publishers have this listed eg Institute of Advanced Architectural Studies; in
+addition some theses do not (yet) have a dc:publisher element
+WE dont filter the hasModel clause for publisher because the ebooks do not share the
+CModel-Thesis model sso this is not an issue (and it breaks other parts of the query)
+
+
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+SELECT  ?record
+WHERE {
+ {
+?record dc:type ?type .
+?record dc:type 'http://purl.org/eprint/type/Thesis'
+OPTIONAL
+{ ?record dc:publisher ?publisher . }
+FILTER regex (?type, 'aster')
+FILTER (!regex(?publisher,'oxford','i'))
+ }UNION{
+?record dc:type ?type .
+?record dc:type 'Theses'.
+OPTIONAL
+{?record dc:publisher ?publisher .}
+FILTER regex (?type, 'aster')
+FILTER (!regex(?publisher,'oxford','i'))
+ }UNION{
+?record dc:type ?type .
+?record <info:fedora/fedora-system:def/model#hasModel> <info:fedora/york:CModel-Thesis>
+OPTIONAL
+{?record dc:publisher ?publisher .}
+FILTER regex (?type, 'aster')
+ }
+}
