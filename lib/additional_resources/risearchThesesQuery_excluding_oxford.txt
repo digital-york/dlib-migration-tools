@@ -36,8 +36,6 @@ FILTER (!regex(?publisher,'oxford','i'))
  }UNION{
 ?record dc:type ?type .
 ?record <info:fedora/fedora-system:def/model#hasModel> <info:fedora/york:CModel-Thesis>
-OPTIONAL
-{?record dc:publisher ?publisher .}
 FILTER regex (?type, 'aster')
  }
 }
