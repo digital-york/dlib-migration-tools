@@ -14,8 +14,3 @@ The machine it is being called from will need to have access permissions on the
  Note that before this file is used as an input to a fedora export script it
  will require editing to remove the prefix info:fedora/ from each line. The final
  line showing time metrics will also need to be removed if present.
-
- TODO
- need to investigate sed and awk (probably) in order to remove the unwanted
- info:fedora/ prefix from each line, before it can be used as an input to an
- automated fedora export batch file
