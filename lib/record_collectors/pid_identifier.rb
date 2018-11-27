@@ -9,32 +9,47 @@ class PidIdentifier
     @host = host
   end
 
-  def get_pid_list
-    basic_theses_ri_url = @host + "/fedora/risearch?type=tuples&lang=sparql&format=CSV&limit=&distinct=on&dt=on"
-    theses_query = CGI.escape("PREFIX dc: <http://purl.org/dc/elements/1.1/>
-                              SELECT  ?record
-                              WHERE {
-                                      {
+  # extract the list of pids for theses from the server
+  def make_theses_pid_list
+    basic_ri_url = @host + "/fedora/risearch?type=tuples&lang=sparql&format=CSV&limit=&distinct=on&dt=on"
+    query = CGI.escape("PREFIX dc: <http://purl.org/dc/elements/1.1/>
+                            SELECT  ?record
+                            WHERE {
+                                    {
+                                      ?record dc:type ?type .
+                                      ?record dc:type 'http://purl.org/eprint/type/Thesis'
+                                      OPTIONAL
+                                      { ?record dc:publisher ?publisher . }
+                                      FILTER regex (?type, 'aster')
+                                      FILTER (!regex(?publisher,'oxford','i'))
+                                      }UNION{
                                         ?record dc:type ?type .
-                                        ?record dc:type 'http://purl.org/eprint/type/Thesis'
+                                        ?record dc:type 'Theses'.
                                         OPTIONAL
-                                        { ?record dc:publisher ?publisher . }
+                                        {?record dc:publisher ?publisher .}
                                         FILTER regex (?type, 'aster')
                                         FILTER (!regex(?publisher,'oxford','i'))
                                         }UNION{
                                           ?record dc:type ?type .
-                                          ?record dc:type 'Theses'.
-                                          OPTIONAL
-                                          {?record dc:publisher ?publisher .}
+                                          ?record <info:fedora/fedora-system:def/model#hasModel> <info:fedora/york:CModel-Thesis>
                                           FILTER regex (?type, 'aster')
-                                          FILTER (!regex(?publisher,'oxford','i'))
-                                          }UNION{
-                                            ?record dc:type ?type .
-                                            ?record <info:fedora/fedora-system:def/model#hasModel> <info:fedora/york:CModel-Thesis>
-                                            FILTER regex (?type, 'aster')
-                                          }
-                                        }")
-    curl_output = `curl -u #{@user}:#{@password} -X POST  '#{basic_theses_ri_url}&query=#{theses_query}'`
-    File.write('tmp/theses_sparql_outtput.tmp',curl_output)
+                                        }
+                                      }")
+    curl_output = `curl -u #{@user}:#{@password} -X POST  '#{basic_ri_url}&query=#{query}'`
+    File.write('tmp/theses_pids_unedited.txt',curl_output)
+  end
+
+  # remove unwanted first line and pid prefixes from list
+  def remove_unwanted_content
+    outfile = File.open('tmp/theses_pids.txt', 'a')
+    infile = 'tmp/theses_pids_unedited.txt'
+    # read in line by line
+    File.readlines(infile).drop(1).each do |line|
+      wanted = line.strip
+      parts = wanted.split('y')
+      pid = parts[1]
+      outfile.puts 'y' + pid
+    end
+    outfile.close
   end
 end

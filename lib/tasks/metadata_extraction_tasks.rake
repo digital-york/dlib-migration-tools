@@ -3,27 +3,21 @@ desc "extract key dublin core metadata elements from foxml files"
 
 require_relative '../../lib/migration_coordinator.rb'
 require_relative '../../lib/record_collectors/pid_identifier.rb'
+# require_relative '../../tmp/reformat_pidlist.sh'
 
   task :greet do
     puts 'greetings from the new dc_metadata_extraction_tasks'
-    sh "ls"
   end
 
   # this extracts a list of theses pids using curl
   # and is then intended to edit it into the format required by the fedora batch
-  # export script. It needs to be run on a machine with appropriate access to the fedoa host
-  # would need to pass in username and password
-  # then rewrite curl_theses_query.sh to take these as parameters
+  # export script. It needs to be run on a machine with appropriate access to the
+  # fedora host. pass in username, password, fedora host
+  # this is a development task - when complete it will be extended to exams too
   task :get_theses_pids, [:user,:password,:fedorahost] do |t, args|
-    puts args[:user]
-    puts args[:password]
-    puts args[:fedorahost]
     p = PidIdentifier.new(args[:user], args[:password],args[:fedorahost])
-    p.get_pid_list
-    # TODO now add the reformatting which is currrently being done using cut.
-    # something like this from correct dir
-    # sh reformat_pidlist.sh
-    # this should result in a pidlist in the correct format
+    p.make_theses_pid_list
+    p.remove_unwanted_content
   end
 
   # rake metadata_extraction_tasks:run_exam_metadata_collection_for_folder
