@@ -2,25 +2,26 @@ namespace :metadata_extraction_tasks do
 desc "extract key dublin core metadata elements from foxml files"
 
 require_relative '../../lib/migration_coordinator.rb'
+require_relative '../../lib/record_collectors/pid_identifier.rb'
 
   task :greet do
     puts 'greetings from the new dc_metadata_extraction_tasks'
     sh "ls"
   end
 
-  # this is intended to extract a list of theses pids using curl
-  # and then edit it into the format required by the fedora batch export script
-  # would need to be run on a machine with appropriate access - current scripts
-  # sit directly on yodlapp3
+  # this extracts a list of theses pids using curl
+  # and is then intended to edit it into the format required by the fedora batch
+  # export script. It needs to be run on a machine with appropriate access to the fedoa host
   # would need to pass in username and password
   # then rewrite curl_theses_query.sh to take these as parameters
   task :get_theses_pids, [:user,:password,:fedorahost] do |t, args|
-    #puts "user was : {args}"
     puts args[:user]
     puts args[:password]
     puts args[:fedorahost]
+    p = PidIdentifier.new(args[:user], args[:password],args[:fedorahost])
+    p.get_pid_list
+    # TODO now add the reformatting which is currrently being done using cut.
     # something like this from correct dir
-    # sh curl_theses_query.sh > thesis_pids_unedited.txt
     # sh reformat_pidlist.sh
     # this should result in a pidlist in the correct format
   end
