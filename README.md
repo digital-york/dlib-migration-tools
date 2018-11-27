@@ -3,7 +3,7 @@
 DESCRIPTION OF PROJECT
 This project contains  rake tasks to extract metadata out of foxml files
 INPUTS: Foxml files within a flat folder containing foxml files only and no subfolders. This must be on a location on the machine running the application or a mapped drive accessible to it
-OUTPUTS: CSV file containing key metadata from all the foxml records found in the specified folder, one per line. No data normalisation at this point, though some data elements - for example the various dc:rights elements - have been filtered into  distinct elements according to their content, or in some cases excluded as irrelevant (dc:type ="Text" being one such case).
+OUTPUTS: CSV file containing key metadata from all the foxml records found in the specified folder, one per line.
 csv output files named according to the record type they contain eg theses_key_metadata.csv
 
 REQUIRES
