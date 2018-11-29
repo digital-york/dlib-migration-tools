@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require 'cgi'
-
+# make a list of record pids, one per line in format york:dddd
 class PidIdentifier
   # get list of pids from risearch query
   def initialize(user,password,host)
@@ -47,7 +47,7 @@ class PidIdentifier
     File.readlines(infile).drop(1).each do |line|
       wanted = line.strip
       parts = wanted.split('y')
-      pid = parts[1]
+      pid = parts[1].strip
       outfile.puts 'y' + pid
     end
     outfile.close
