@@ -3,16 +3,17 @@ desc "extract key dublin core metadata elements from foxml files"
 
 require_relative '../../lib/migration_coordinator.rb'
 require_relative '../../lib/record_collectors/pid_identifier.rb'
- require_relative '../../lib/record_collectors/exporter.rb'
+require_relative '../../lib/record_collectors/exporter.rb'
 
   task :greet do
     puts 'greetings from the new dc_metadata_extraction_tasks'
   end
 
-  task :bat_test do
+  task :export_records, [:user,:password, :fedpassword, :export_dir] do |t, args|
+    args.with_defaults(:export_dir => '/opt/york/digilib/foxml_exports')
     puts 'hi'
-    #e = Exporter.new
-    #e.bat_test
+    e = Exporter.new
+    e.export_foxml(args[:user], args[:password], args[:fedpassword], args[:export_dir])
   end
 
   # rake metadata_extraction_tasks:run_thesis_metadata_collection_for_folder
