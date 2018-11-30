@@ -7,14 +7,22 @@ require_relative '../../lib/record_collectors/exporter.rb'
 
   task :greet do
     puts 'greetings from the new dc_metadata_extraction_tasks'
+    e = Exporter.new
+    e.transfer_exported_records
+  end
+
+
+  task :transfer,[:pwd] do |t, args|
+    puts 'greetings from the new dc_metadata_extraction_tasks'
+    e = Exporter.new
+    e.transfer_exported_records(args[:pwd])
   end
 
   # rake metadata_extraction_tasks:export_records
-  # [<host> <digilib_password> <fedora_pasword> <pid_file_to_use> </OPTIONALpath_to_export_dir>]
-  task :export_records, [:host, :digilibpassword, :fedpassword, :pidfile,:export_dir] do |t, args|
-    args.with_defaults(:export_dir => '/tmp/fedora_exports')
+  # [<host>, <digilib_password>, <fedora_pasword>, <pid_file_to_use>, <path_to_export_dir>, <dir to export to>]
+  task :export_records, [:host, :digilibpassword, :fedpassword, :pidfile,:export_dir, :to_dir] do |t, args|
     e = Exporter.new
-    e.export_foxml(args[:host], args[:digilibpassword], args[:fedpassword], args[:pidfile], args[:export_dir])
+    e.export_foxml(args[:host], args[:digilibpassword], args[:fedpassword], args[:pidfile], args[:export_dir], args[:to_dir])
   end
 
   # rake metadata_extraction_tasks:run_thesis_metadata_collection_for_folder
