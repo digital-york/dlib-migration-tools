@@ -9,11 +9,13 @@ require_relative '../../lib/record_collectors/exporter.rb'
     puts 'greetings from the new dc_metadata_extraction_tasks'
   end
 
-  task :export_records, [:user,:password, :fedpassword, :export_dir] do |t, args|
-    args.with_defaults(:export_dir => '/opt/york/digilib/foxml_exports')
+  # rake metadata_extraction_tasks:export_records
+  # [<host> <digilib_password> <fedora_pasword> <pid_file_to_use> </OPTIONALpath_to_export_dir>]
+  task :export_records, [:host, :digilibpassword, :fedpassword, :pidfile,:export_dir] do |t, args|
+    args.with_defaults(:export_dir => '/tmp/fedora_exports')
     puts 'hi'
     e = Exporter.new
-    e.export_foxml(args[:user], args[:password], args[:fedpassword], args[:export_dir])
+    e.export_foxml(args[:host], args[:digilibpassword], args[:fedpassword], args[:pidfile], args[:export_dir])
   end
 
   # rake metadata_extraction_tasks:run_thesis_metadata_collection_for_folder
@@ -35,12 +37,6 @@ require_relative '../../lib/record_collectors/exporter.rb'
     p = PidIdentifier.new(args[:user], args[:password], args[:fedorahost])
     p.make_theses_pid_list
     p.remove_unwanted_content
-  end
-
-  task :bat_test do
-    puts 'hi'
-    e = Exporter.new
-    e.bat_test
   end
 
   # rake metadata_extraction_tasks:run_exam_metadata_collection_for_folder
