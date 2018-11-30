@@ -13,7 +13,6 @@ require_relative '../../lib/record_collectors/exporter.rb'
   # [<host> <digilib_password> <fedora_pasword> <pid_file_to_use> </OPTIONALpath_to_export_dir>]
   task :export_records, [:host, :digilibpassword, :fedpassword, :pidfile,:export_dir] do |t, args|
     args.with_defaults(:export_dir => '/tmp/fedora_exports')
-    puts 'hi'
     e = Exporter.new
     e.export_foxml(args[:host], args[:digilibpassword], args[:fedpassword], args[:pidfile], args[:export_dir])
   end
