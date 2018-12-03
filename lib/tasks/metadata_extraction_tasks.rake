@@ -20,7 +20,7 @@ require_relative '../../lib/record_collectors/exporter.rb'
 
   # rake metadata_extraction_tasks:export_records
   # [<host>, <digilib_password>, <fedora_pasword>, <pid_file_to_use>, <path_to_export_dir>, <dir to export to>]
-  task :export_records, [:host, :digilibpassword, :fedpassword, :pidfile,:export_dir, :to_dir] do |t, args|
+  task :export_records, [:host, :digilibpassword, :fedpassword, :pidfile, :export_dir, :to_dir] do |t, args|
     e = Exporter.new
     e.export_foxml(args[:host], args[:digilibpassword], args[:fedpassword], args[:pidfile], args[:export_dir], args[:to_dir])
   end
@@ -40,10 +40,11 @@ require_relative '../../lib/record_collectors/exporter.rb'
   # fedora host. pass in username, password, fedora host
   # this is a development task - when complete it will be extended to exams too
   # metadata_extraction_tasks:get_theses_pids[username,password,fedorahost]
-  task :get_theses_pids, [:user,:password,:fedorahost] do |t, args|
-    p = PidIdentifier.new(args[:user], args[:password], args[:fedorahost])
+  task :get_theses_pids, [:fed_user,:fed_password,:fedorahost,:pidfile_name, :digilib_pwd] do |t, args|
+    p = PidIdentifier.new(args[:fed_user], args[:fed_password], args[:fedorahost])
     p.make_theses_pid_list
     p.remove_unwanted_content
+    p.upload_to_fedora_host(args[:pidfile_name], args[:digilib_pwd])
   end
 
   # rake metadata_extraction_tasks:run_exam_metadata_collection_for_folder
