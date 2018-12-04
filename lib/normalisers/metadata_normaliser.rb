@@ -10,10 +10,14 @@ class MetadataNormaliser
     @record_type = record_type
   end
 
-  def normalise_metadata(key_metadata)
-    normalise_date(key_metadata)
-    normalise_department_names(key_metadata)
-    normalise_qualifications(key_metadata)
+
+  def normalise_metadata(key_metadata_hash)
+    normalise_date(key_metadata_hash)
+    normalise_department_names(key_metadata_hash)
+    normalise_qualifications(key_metadata_hash)
+    if @record_type == 'thesis'
+      normalise_rights(key_metadata_hash)
+    end
   end
 
   def normalise_date(key_metadata)
@@ -50,6 +54,14 @@ class MetadataNormaliser
       key_metadata[q] = standard_qname unless standard_qname.nil?
     end
     key_metadata
+  end
+
+  # in the case of theses some records may not have a rights holder element,
+  # in this case look for the first creator element and populate from this
+  # instead if found
+  def normalise_rights(key_metadata)
+    puts "do sommat about rights"
+
   end
 
   def get_department_keys(key_metadata)
