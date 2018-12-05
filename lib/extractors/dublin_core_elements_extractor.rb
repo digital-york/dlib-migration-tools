@@ -194,9 +194,6 @@ class DublinCoreElementsExtractor
       "foxml:datastreamVersion[@ID='#{@current_dc_version}']/foxml:xmlContent/"\
       'oai_dc:dc/dc:rights/text()[not(contains(.,"http")) and not '\
       '(contains(.,"licenses"))]', @ns).to_s
-    if rights_holder.downcase.include?('zigzag education')
-      rights_holder = 'ZigZag Education'
-    end
     @key_metadata['rights_holder'.to_sym] = rights_holder.to_s
     rights_statement = @doc.xpath('//foxml:datastream[@ID="DC"]/'\
       "foxml:datastreamVersion[@ID='#{@current_dc_version}']/foxml:xmlContent/"\
