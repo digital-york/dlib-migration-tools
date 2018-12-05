@@ -16,7 +16,7 @@ class MetadataNormaliser
     normalise_department_names(key_metadata_hash)
     normalise_qualifications(key_metadata_hash)
     if @record_type == 'thesis'
-      normalise_rights(key_metadata_hash)
+      normalise_rights_holder(key_metadata_hash)
     end
   end
 
@@ -59,9 +59,17 @@ class MetadataNormaliser
   # in the case of theses some records may not have a rights holder element,
   # in this case look for the first creator element and populate from this
   # instead if found
-  def normalise_rights(key_metadata)
-    puts "do sommat about rights"
-
+  def normalise_rights_holder(key_metadata)
+    if key_metadata.key?(:rights_holder)
+      rights_holder = key_metadata.fetch(:rights_holder)
+      if rights_holder.to_s.empty?
+        # try to populate from first creator
+        creators_hash = key_metadata.select { |k, _| k.to_s.include? 'creator' }
+        return if creators_hash.to_s.empty?
+        author = creators_hash.values[0]
+        key_metadata[:rights_holder] = author unless author.to_s.empty?
+      end
+    end
   end
 
   def get_department_keys(key_metadata)
@@ -72,7 +80,7 @@ class MetadataNormaliser
     case @record_type
     when 'exam_paper'
       creators_hash = key_metadata.select { |k, _| k.to_s.include? 'creator' }
-      publishers_hash = key_metadata.select { |k, _| k.to_s.include? 'publisher' }
+      publishers_hash = key_metadata.select { |k, _| k.to_s.include? 'publisher'}
       depts_hash = creators_hash.merge(publishers_hash)
     when 'thesis'
       depts_hash = key_metadata.select { |k, _| k.to_s.include? 'publisher' }
