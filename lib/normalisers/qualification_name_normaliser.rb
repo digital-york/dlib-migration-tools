@@ -30,13 +30,15 @@ class QualificationNameNormaliser
     @philosophy_masters_by_pubs = ['master of philosophy by publications (mphil)',
                                    'master of philosophy by publications']
     @philosophy_masters = ['master of philosophy (mphil)', 'mphil']
-    @art_masters_by_research = ['master of arts (by research) (ma (by research)',
+    @art_masters_by_research = ['master of arts (by research) (ma (by research))',
                                 'master of arts (by research)',
-                                'master of arts by research (mres)']
+                                'master of arts by research (mres)',
+                                'master of arts, by research (mres)']
     @art_masters = ['master of arts (ma)', 'master of arts',
                     'master of art (ma)', 'ma (master of arts)',
                     'masters of arts (ma)', 'ma']
-    @science_masters_by_research = ['master of science (by research)']
+    @science_masters_by_research = ['master of science (by research)',
+                                    'master of science by research (mres)']
     @science_masters_by_thesis = ['master of science (by thesis)',
                                   'msc (by thesis)']
     @science_masters_msc = ['master of science (msc)', 'msc',
@@ -57,8 +59,7 @@ class QualificationNameNormaliser
                           'mchem']
     @engineering_masters = ['master of engineering (meng)',
                             'master of engineering', 'meng']
-    @math_masters = ['master of mathematics (mmath)',
-                     'master of mathematics (mmath)', 'master of mathematics',
+    @math_masters = ['master of mathematics (mmath)', 'master of mathematics',
                      'mmath']
     @physics_masters = ['master of physics (mphys)', 'master of physics',
                         'mphys']
@@ -76,8 +77,7 @@ class QualificationNameNormaliser
                                  '(mswss)']
     @social_work_masters = ['master of social work (msocw)',
                             'master of social work', '(msocw)']
-    @research_masters = ['master of research (mres)',
-                         'master of research (mres)', 'mres', 'mres']
+    @research_masters = ['master of research (mres)', 'mres']
 
     # doctorates
     @letters_docts = ['doctor of letters (dLitt)', 'doctor of Letters',
