@@ -55,8 +55,8 @@ class PidIdentifier
   end
 
   # send list of pids to fedora client on remote server
-  def upload_to_fedora_host(pidfile, digilib_pwd)
-    pidfile = pidfile.shellescape
+  def upload_to_fedora_host(digilib_pwd)
+    pidfile = 'tmp/theses_pids.txt'
     digilib_pwd = digilib_pwd.shellescape
     client_dir = '/opt/york/digilib/fedora/client/bin'
     digilib_user = 'digilib'

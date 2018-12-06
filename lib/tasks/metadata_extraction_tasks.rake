@@ -14,12 +14,11 @@ require_relative '../../lib/record_collectors/exporter.rb'
   # export script. It needs to be run on a machine with appropriate access to the
   # fedora host. pass in username, password, fedora host
   # this is a development task - when complete it will be extended to exams too
-  # metadata_extraction_tasks:get_theses_pids[username,password,fedorahost]
-  task :get_theses_pids, [:fed_user,:fed_password,:fedorahost,:pidfile_name, :digilib_pwd] do |t, args|
+    task :get_theses_pids, [:fed_user,:fed_password,:fedorahost,:digilib_pwd] do |t, args|
     p = PidIdentifier.new(args[:fed_user], args[:fed_password], args[:fedorahost])
     p.make_theses_pid_list
     p.remove_unwanted_content
-    p.upload_to_fedora_host(args[:pidfile_name], args[:digilib_pwd])
+    p.upload_to_fedora_host(args[:digilib_pwd])
   end
 
   # rake metadata_extraction_tasks:export_records
@@ -49,9 +48,19 @@ require_relative '../../lib/record_collectors/exporter.rb'
   # the aim of this task is to run an extraction end to end, starting with
   # identifying the correct records, exporting them from the existing fedora 3
   # repository and then outputting metadata as normalised csv
+  # can this be made interactive?
   task :do_all_extraction_tasks do
     puts 'I dont do anytyhing at all yet!'
-    #string tasks together like so
-    Rake::Task["metadata_extraction_tasks:greet"].invoke
+    STDOUT.puts "ENTER FEDORA USER:"
+    f_user = STDIN.gets.strip
+    STDOUT.puts "ENTER FEDORA PASSWORD"
+    f_pwd = STDIN.gets.strip
+    STDOUT.puts "ENTER FEDORA HOST"
+    host = STDIN.gets.strip
+    STDOUT.puts "ENTER DIGILIB PASSWORD"
+    dlib_pwd = STDIN.gets.strip
+    # string tasks together by simply listing
+    Rake::Task["metadata_extraction_tasks:get_theses_pids"].invoke(f_user, f_pwd, host, dlib_pwd)
+    puts "collected list of pids for theses now in place on remote fedora client "
   end
 end
