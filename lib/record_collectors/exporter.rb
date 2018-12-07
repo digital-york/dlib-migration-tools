@@ -8,6 +8,7 @@ class Exporter
   # run the export command on a fedora server for records identified in pid_file
   # then export to local machine ready for metadata extraction
   def export_foxml(host, digilib_pwd, fed_password, pid_file, to_dir)
+    puts 'emptying directory'
     ensure_empty_export_dir(host, digilib_pwd)
     puts 'ensured empty /tmp/fedora_exports dir, preparing to export records'
     bindir = '/opt/york/digilib/fedora/client/bin'
@@ -18,9 +19,13 @@ class Exporter
     fed_password = fed_password.shellescape
     main_user = 'digilib'
     pidlist = pid_file.shellescape
+    pidlist = pidlist + '.txt'
+    puts 'pidlist ' + pidlist
+
     Net::SSH.start(fedhost, main_user, :password => digilib_pwd) do|ssh|
       args = "#{feduser} #{fed_password} #{fedhost} #{export_dir} #{pidlist}"
-      ssh.exec!("cd #{bindir} && './exportRecordBatch.sh' #{args}")
+      res = ssh.exec!("cd #{bindir} && './exportRecordBatch.sh' #{args}")
+      puts 'res ' + res # worth leaving this as it gives any error output
     end
     exec("sshpass -p #{digilib_pwd} sftp #{main_user}@#{fedhost}:#{export_dir}/*.xml #{to_dir}")
   end
