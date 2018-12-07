@@ -4,15 +4,13 @@ desc 'extract key dublin core metadata elements from foxml files'
 require_relative '../../lib/migration_coordinator.rb'
 require_relative '../../lib/record_collectors/pid_identifier.rb'
 require_relative '../../lib/record_collectors/exporter.rb'
-  # task :test, [:host, :digilib_password, :fed_password, :pid_file, :to_dir,]  do |t, args|
-  task :test do
-    puts 'greetings, earthlings'
-    # put test code here as below
-    # e = Exporter.new
-    # e.export_foxml(args[:host], args[:digilib_password], args[:fed_password], args[:pid_file], args[:to_dir])
-  end
-
-
+    # task :test, [:host, :digilib_password, :fed_password, :pid_file, :to_dir,]  do |t, args|
+    task :test do
+      puts 'greetings, earthlings'
+      # put test code here as below
+      # e = Exporter.new
+      # e.export_foxml(args[:host], args[:digilib_password], args[:fed_password], args[:pid_file], args[:to_dir])
+    end
 
     # this extracts a list of theses pids using curl
     # and edits it into the format required by the fedora batch
