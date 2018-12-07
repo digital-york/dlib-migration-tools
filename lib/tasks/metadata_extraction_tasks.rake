@@ -4,10 +4,13 @@ desc "extract key dublin core metadata elements from foxml files"
 require_relative '../../lib/migration_coordinator.rb'
 require_relative '../../lib/record_collectors/pid_identifier.rb'
 require_relative '../../lib/record_collectors/exporter.rb'
-
-  task :greet do
-    puts 'greetings, earthlings '
+  task :test, [:host, :digilib_password, :fed_password, :pid_file, :to_dir,]  do |t, args|
+    puts 'greetings, earthlings'
+    e = Exporter.new
+    e.export_foxml(args[:host], args[:digilib_password], args[:fed_password], args[:pid_file], args[:to_dir])
   end
+
+
 
   # this extracts a list of theses pids using curl
   # and edits it into the format required by the fedora batch
@@ -23,9 +26,11 @@ require_relative '../../lib/record_collectors/exporter.rb'
 
   # rake metadata_extraction_tasks:export_records
   # [<host>, <digilib_password>, <fedora_pasword>, <pid_file_to_use>, <path_to_export_dir>, <dir to export to>]
-  task :export_records, [:host, :digilibpassword, :fedpassword, :pidfile, :export_dir, :to_dir] do |t, args|
+  # task :export_records, [:host, :digilibpassword, :fedpassword, :pidfile, :export_dir, :to_dir] do |t, args|
+  task :export_records, [:host, :digilibpassword, :fedpassword, :pidfile, :to_dir] do |t, args|
     e = Exporter.new
-    e.export_foxml(args[:host], args[:digilibpassword], args[:fedpassword], args[:pidfile], args[:export_dir], args[:to_dir])
+    # e.export_foxml(args[:host], args[:digilibpassword], args[:fedpassword], args[:pidfile], args[:export_dir], args[:to_dir])
+    e.export_foxml(args[:host], args[:digilibpassword], args[:fedpassword], args[:pidfile], args[:to_dir])
   end
 
   # rake metadata_extraction_tasks:run_thesis_metadata_collection_for_folder
@@ -45,21 +50,24 @@ require_relative '../../lib/record_collectors/exporter.rb'
     c.collect_metadata_for_whole_folder(args[:path_to_folder], args[:scope])
   end
 
-  # the aim of this task is to run an extraction end to end, starting with
-  # identifying the correct records, exporting them from the existing fedora 3
-  # repository and then outputting metadata as normalised csv
-  #the script runs interactively 
+  #  run an extraction end to end, starting with  identifying the correct
+  # records, exporting them from the existing fedora 3 repository and then
+  # outputting metadata as normalised csv. The script runs interactively
   task :do_all_extraction_tasks do
-    STDOUT.puts "ENTER FEDORA USER:"
-    f_user = STDIN.gets.strip
     STDOUT.puts "ENTER FEDORA PASSWORD"
     f_pwd = STDIN.gets.strip
     STDOUT.puts "ENTER FEDORA HOST"
     host = STDIN.gets.strip
     STDOUT.puts "ENTER DIGILIB PASSWORD"
     dlib_pwd = STDIN.gets.strip
+    STDOUT.puts "ENTER PIDFILE NAME" # this may be while developing and testing only
+    pidfile = STDIN.gets.strip
+    STDOUT.puts "ENTER DIR ON LOCAL SERVER TO EXPORT FILES TO"
+    to_dir = STDIN.gets.strip
     # string tasks together by simply listing
-    Rake::Task["metadata_extraction_tasks:get_theses_pids"].invoke(f_user, f_pwd, host, dlib_pwd)
-    puts "collected list of pids for theses now in place on remote fedora client "
+    # at present this assumes the pidfile is called theses_pids, this needs changing a bit
+    Rake::Task["metadata_extraction_tasks:get_theses_pids"].invoke('fedoraAdmin', f_pwd, host, dlib_pwd)
+    puts " list of theses pids is now  on remote fedora client "
+    Rake::Task["metadata_extraction_tasks:export_records"].invoke(host, dlib_pwd, f_pwd, pidfile, to_dir)
   end
 end
