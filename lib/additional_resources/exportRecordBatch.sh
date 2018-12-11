@@ -7,14 +7,16 @@
  FEDORAHOST=$3
  EXPORT_DIR=$4
  PIDLIST=$5
+ LOGFILE="export.log"
  echo "user: $USER"
  echo "password: $PWD"
  echo "fedora host to $FEDORAHOST"
  echo "export to $EXPORT_DIR"
 
-#for PID in `cat app3pids.txt`
+echo  $(date -u) "started export from fedora repository" > $LOGFILE
 for PID in `cat $PIDLIST`
 do
 echo $PID
-./exportRecord.sh $USER $PWD $PID $FEDORAHOST $EXPORT_DIR
+./exportRecord.sh $USER $PWD $PID $FEDORAHOST $EXPORT_DIR  >>  $LOGFILE
 done
+echo $(date -u) "export from fedora repository finished" >> $LOGFILE
