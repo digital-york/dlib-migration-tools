@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require 'cgi'
 require 'shellwords'
+require_relative 'ri_search_query.rb'
 # make a list of record pids, one per line in format york:dddd
 class PidIdentifier
   # get list of pids from risearch query
@@ -12,42 +13,27 @@ class PidIdentifier
     @digilib_pwd = digilib_pwd.shellescape
   end
 
-  def provide_pidlist
-    pid_list_name = make_theses_pid_list
-    edited_name = remove_unwanted_content(pid_list_name)
-    upload_to_fedora_host(edited_name)
+# extract the list of pids for theses from the server
+  def provide_pidlist(record_type)
+    pid_list_file = make_pid_list(record_type)
+    edited_file = remove_unwanted_content(pid_list_file)
+    upload_to_fedora_host(edited_file)
   end
 
-  # extract the list of pids for theses from the server
-  def make_theses_pid_list
+  def make_pid_list(record_type)
     initial_file_dest = 'tmp/' + @pidfile_name + '_unedited.txt'
-    puts "initial_file_dest was:" + initial_file_dest
-    basic_ri_url = @host + '/fedora/risearch?type=tuples&lang=sparql&format=CSV&limit=&distinct=on&dt=on'
-    puts "basic_ri_url was:"+basic_ri_url
-    query = CGI.escape("PREFIX dc: <http://purl.org/dc/elements/1.1/>
-                            SELECT  ?record
-                            WHERE {
-                                    {
-                                      ?record dc:type ?type .
-                                      ?record dc:type 'http://purl.org/eprint/type/Thesis'
-                                      OPTIONAL
-                                      { ?record dc:publisher ?publisher . }
-                                      FILTER regex (?type, 'aster')
-                                      FILTER (!regex(?publisher,'oxford','i'))
-                                      }UNION{
-                                        ?record dc:type ?type .
-                                        ?record dc:type 'Theses'.
-                                        OPTIONAL
-                                        {?record dc:publisher ?publisher .}
-                                        FILTER regex (?type, 'aster')
-                                        FILTER (!regex(?publisher,'oxford','i'))
-                                        }UNION{
-                                          ?record dc:type ?type .
-                                          ?record <info:fedora/fedora-system:def/model#hasModel> <info:fedora/york:CModel-Thesis>
-                                          FILTER regex (?type, 'aster')
-                                        }
-                                      }")
-    curl_output = `curl -u #{@user}:#{@password} -X POST  '#{basic_ri_url}&query=#{query}'`
+    case record_type
+    when /thesis/
+      query_lang = 'sparql'
+    when /exam_paper/
+      query_lang = 'itql'
+    end
+    # basic_ri_url = @host + '/fedora/risearch?type=tuples&lang=sparql&format=CSV&distinct=on&dt=on'
+    basic_ri_url = @host + '/fedora/risearch?type=tuples&lang=' + query_lang + '&format=CSV&distinct=on&dt=on'
+    search_query = RiSearchQuery.new
+    risearch_string = search_query.query(record_type)
+    query = CGI.escape(risearch_string)
+    curl_output = `curl -u #{@user}:#{@password} -X POST '#{basic_ri_url}&query=#{query}'`
     File.write(initial_file_dest, curl_output)
     initial_file_dest
   end

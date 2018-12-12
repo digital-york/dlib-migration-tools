@@ -17,9 +17,10 @@ require_relative '../../lib/record_collectors/exporter.rb'
     # export script. It needs to be run on a machine with appropriate access to
     # the fedora host. pass in username, password, fedora host
     # this is a development task - when complete it will be extended to exams too
-    task :get_theses_pids, [:fed_password,:host,:pidfile_name,:digilib_pwd] do |t, args|
+    task :get_pids, [:fed_password,:host,:pidfile_name,:digilib_pwd,:record_type] do |t, args|
+    # task :get_theses_pids, [:fed_password,:host,:pidfile_name,:digilib_pwd] do |t, args|
       p = PidIdentifier.new(args[:fed_password], args[:host],args[:pidfile_name],args[:digilib_pwd])
-      p.provide_pidlist
+      p.provide_pidlist(args[:record_type])
     end
 
     # rake metadata_extraction_tasks:export_records
@@ -61,8 +62,10 @@ require_relative '../../lib/record_collectors/exporter.rb'
       pidfile = STDIN.gets.strip
       STDOUT.puts 'ENTER DIR ON LOCAL SERVER TO EXPORT FILES TO'
       to_dir = STDIN.gets.strip
+      STDOUT.puts 'ENTER RECORD TYPE(thesis or exam_paper)'
+      record_type = STDIN.gets.strip
       # string tasks together by simply listing
-      Rake::Task['metadata_extraction_tasks:get_theses_pids'].invoke(f_pwd, host, pidfile, dlib_pwd)
+      Rake::Task['metadata_extraction_tasks:get_pids'].invoke(f_pwd, host, pidfile, dlib_pwd, record_type)
       puts ' list of theses pids is now  on remote fedora client '
       Rake::Task['metadata_extraction_tasks:export_records'].invoke(host, dlib_pwd, f_pwd, pidfile, to_dir)
     end
