@@ -11,9 +11,13 @@ class PidIdentifier
     @host = host.shellescape
     @pidfile_name = pidfile_name.shellescape
     @digilib_pwd = digilib_pwd.shellescape
+    testsplit = ' this is a very long string \
+    which needs splitting over several lines like this'
+    puts testsplit
+
   end
 
-# extract the list of pids for theses from the server
+  # extract the list of pids for theses from the server
   def provide_pidlist(record_type)
     pid_list_file = make_pid_list(record_type)
     edited_file = remove_unwanted_content(pid_list_file)
@@ -22,18 +26,23 @@ class PidIdentifier
 
   def make_pid_list(record_type)
     initial_file_dest = 'tmp/' + @pidfile_name + '_unedited.txt'
+
     case record_type
     when /thesis/
       query_lang = 'sparql'
     when /exam_paper/
       query_lang = 'itql'
+    else
+      puts 'record_type ' + record_type + ' not recognised'
     end
-    # basic_ri_url = @host + '/fedora/risearch?type=tuples&lang=sparql&format=CSV&distinct=on&dt=on'
-    basic_ri_url = @host + '/fedora/risearch?type=tuples&lang=' + query_lang + '&format=CSV&distinct=on&dt=on'
+    base_ri_url = @host + '/fedora/risearch?type=tuples&lang=' + query_lang + \
+    '&format=CSV&distinct=on&dt=on'
     search_query = RiSearchQuery.new
     risearch_string = search_query.query(record_type)
     query = CGI.escape(risearch_string)
-    curl_output = `curl -u #{@user}:#{@password} -X POST '#{basic_ri_url}&query=#{query}'`
+    search_string = base_ri_url + '&query=' + query
+    auth = @user + ':' + @password
+    curl_output = `curl -u #{auth} -X POST '#{search_string}'`
     File.write(initial_file_dest, curl_output)
     initial_file_dest
   end
