@@ -11,10 +11,6 @@ class PidIdentifier
     @host = host.shellescape
     @pidfile_name = pidfile_name.shellescape
     @digilib_pwd = digilib_pwd.shellescape
-    testsplit = ' this is a very long string \
-    which needs splitting over several lines like this'
-    puts testsplit
-
   end
 
   # extract the list of pids for theses from the server
@@ -26,7 +22,6 @@ class PidIdentifier
 
   def make_pid_list(record_type)
     initial_file_dest = 'tmp/' + @pidfile_name + '_unedited.txt'
-
     case record_type
     when /thesis/
       query_lang = 'sparql'
@@ -58,6 +53,8 @@ class PidIdentifier
       outfile.puts 'y' + pid
     end
     outfile.close
+    deletion_cmd = 'rm ' + infile
+    system(deletion_cmd)
     outfile_name
   end
 
@@ -69,7 +66,10 @@ class PidIdentifier
     puts 'sending ' + pidfile + ' to ' + remote_destination
     # scp command runs on local machine
     cmd = " sshpass -p #{@digilib_pwd} scp #{pidfile} #{remote_destination} "
-    system("#{cmd}")
+    system(cmd)
     puts 'pidlist sent to ' + remote_destination
+    # delete lists from local box
+    deletion_cmd = 'rm ' + pidfile
+    system(deletion_cmd)
   end
 end

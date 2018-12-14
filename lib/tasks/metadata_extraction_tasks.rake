@@ -16,13 +16,14 @@ require_relative '../../lib/record_collectors/exporter.rb'
     # the fedora host. pass in fedoraAdmin password, host, name (without
     # file extension) of pid file to be created), digilib password, record type
     task :get_pids, [:fed_password,:host,:pidfile_name,:digilib_pwd,:record_type] do |t, args|
+    # task :get_theses_pids, [:fed_password,:host,:pidfile_name,:digilib_pwd] do |t, args|
       p = PidIdentifier.new(args[:fed_password], args[:host],args[:pidfile_name],args[:digilib_pwd])
       p.provide_pidlist(args[:record_type])
     end
 
     # rake metadata_extraction_tasks:export_records
-    # [<host>, <digilib_password>, <fedora_pasword>, <pid_file_to_use>,
-    # <dir on local box to export to>]
+    # [<host>, <digilib_password>, <fedora_pasword>,
+    # <pid_file_to_use, no file extension>,<dir on local box to export to>]
     task :export_records, [:host,:digilibpassword,:fedpassword,:pidfile,:to_dir] do |t, args|
       e = Exporter.new
       e.export_foxml(args[:host], args[:digilibpassword], args[:fedpassword], args[:pidfile], args[:to_dir])
