@@ -13,6 +13,47 @@ def query(record_type)
   search_string
 end
 
+# [WIP] This is not currently used as I have so far failed to make the filters
+# on this work.
+def exam_paper_search_string_as_SPARQL
+  search_string = "PREFIX dc: <http://purl.org/dc/elements/1.1/>
+                          SELECT  ?record
+                          WHERE {
+                                  {
+                                    ?record dc:type ?type .
+                                    ?record dc:type 'http://dlib.york.ac.uk/type/ExamPaper' .
+                                    OPTIONAL
+                                    { ?record dc:publisher ?publisher . }
+                                    FILTER (!regex (?type, 'eprint'))
+                                    FILTER (!regex(?publisher,'ZigZag Education','i'))
+                                    }UNION{
+                                      ?record dc:type ?type .
+                                      ?record dc:type 'Exam papers'.
+                                      OPTIONAL
+                                      {?record dc:publisher ?publisher .}
+                                      FILTER (!regex (?type, 'eprint'))
+                                      FILTER (!regex(?publisher,'ZigZag Education','i'))
+                                      }UNION{
+                                        ?record dc:type ?type .
+                                        ?record dc:type 'Exam paper'.
+                                        OPTIONAL
+                                        {?record dc:publisher ?publisher .}
+                                        FILTER (!regex (?type, 'eprint'))
+                                        FILTER (!regex(?publisher,'ZigZag Education','i'))
+                                        }
+                                    UNION{
+                                        ?record dc:type ?type .
+                                        ?record <info:fedora/fedora-system:def/model#hasModel> <info:fedora/york:CModel-ExamPaper> .
+                                        OPTIONAL
+                                        {?record dc:publisher ?publisher .}
+                                        FILTER (!regex (?type, 'eprint'))
+                                        FILTER (!regex(?publisher,'ZigZag Education','i'))
+                                      }
+                                    }"
+
+  search_string
+end
+
 def exam_paper_search_string
   search_string = "select $object
   from <#ri>
@@ -24,6 +65,7 @@ def exam_paper_search_string
   search_string
 end
 
+# the filter on oxford does work as it makes a difference of 1 to the results
 def thesis_search_string
   search_string = "PREFIX dc: <http://purl.org/dc/elements/1.1/>
                           SELECT  ?record
