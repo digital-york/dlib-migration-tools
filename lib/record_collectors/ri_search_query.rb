@@ -2,12 +2,10 @@
 class RiSearchQuery
 # return appropriate ri search query for required records
 def query(record_type)
-  puts "getting search string for " + record_type
   case record_type
   when /thesis/
     search_string = thesis_search_string
   when /exam_paper/
-    puts "getting exam_paper string"
     search_string = exam_paper_search_string
   end
   search_string
