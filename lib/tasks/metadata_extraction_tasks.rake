@@ -48,9 +48,11 @@ require_relative '../../lib/record_collectors/exporter.rb'
       c.collect_metadata_for_whole_folder(args[:path_to_folder], args[:scope])
     end
 
-    #  run an extraction end to end, starting with  identifying the correct
-    # records, exporting them from the existing fedora 3 repository and then
-    # outputting metadata as normalised csv. The script runs interactively
+    # run a record export end to end, starting with  identifying the correct
+    # records and exporting them from the existing fedora 3 repository
+    # The script runs interactively
+    # TODO add in call to metadata extraction.
+    desc 'interactive task to identify and export foxml records '
     task :do_all_extraction_tasks do
       STDOUT.puts 'ENTER FEDORA PASSWORD'
       f_pwd = STDIN.gets.strip
