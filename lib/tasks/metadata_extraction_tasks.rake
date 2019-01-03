@@ -5,18 +5,18 @@ require_relative '../../lib/migration_coordinator.rb'
 require_relative '../../lib/record_collectors/pid_identifier.rb'
 require_relative '../../lib/record_collectors/exporter.rb'
 
-    task :test do
+    desc 'quick test to confirm rake is working.'
+    task :greet do
       puts 'greetings, earthlings'
-      puts  'and others'
     end
 
-    # this extracts a list of theses pids using curl
-    # and edits it into the format required by the fedora batch
-    # export script. It needs to be run on a machine with appropriate access to
-    # the fedora host. pass in fedoraAdmin password, host, name (without
-    # file extension) of pid file to be created), digilib password, record type
+    # extract a list of  pids using curl
+    # and edit it into the format required by the fedora batch
+    # export script. Must be run on a machine with appropriate access to
+    # the fedora host. Params:  fedoraAdmin password, host, name (without
+    # file extension) of pid file to be created), digilib password, record type'
+    desc 'make pidfile (list of record identifiers).'
     task :get_pids, [:fed_password,:host,:pidfile_name,:digilib_pwd,:record_type] do |t, args|
-    # task :get_theses_pids, [:fed_password,:host,:pidfile_name,:digilib_pwd] do |t, args|
       p = PidIdentifier.new(args[:fed_password], args[:host],args[:pidfile_name],args[:digilib_pwd])
       p.provide_pidlist(args[:record_type])
     end
@@ -24,22 +24,25 @@ require_relative '../../lib/record_collectors/exporter.rb'
     # rake metadata_extraction_tasks:export_records
     # [<host>, <digilib_password>, <fedora_pasword>,
     # <pid_file_to_use, no file extension>,<dir on local box to export to>]
+    desc 'export records listed in pidfile from fedora3 repo'
     task :export_records, [:host,:digilibpassword,:fedpassword,:pidfile,:to_dir] do |t, args|
       e = Exporter.new
       e.export_foxml(args[:host], args[:digilibpassword], args[:fedpassword], args[:pidfile], args[:to_dir])
     end
 
-    # rake metadata_extraction_tasks:run_thesis_metadata_collection_for_folder
+    # rake metadata_extraction_tasks:collect_thesis_metadata_from_folder
     # [<"path/to/exported/foxml/folder">,<full|dc|dc_plus_content_location>,<"/path_to_output_location">]
-    task :run_thesis_metadata_collection_for_folder, [:path_to_folder,:scope,:output_location] do |t, args|
+    desc 'extract theses metadata from foxml records to csv file'
+    task :collect_thesis_metadata_from_folder, [:path_to_foxml_folder,:scope,:output_location] do |t, args|
       args.with_defaults(:output_location => 'tmp')
       c = MigrationCoordinator.new(args[:output_location], 'thesis')
-      c.collect_metadata_for_whole_folder(args[:path_to_folder], args[:scope])
+      c.collect_metadata_for_whole_folder(args[:path_to_foxml_folder], args[:scope])
     end
 
-    # rake metadata_extraction_tasks:run_exam_metadata_collection_for_folder
+    # rake metadata_extraction_tasks:collect_exam_metadata_collection_from_folder
     # [<"/path/to/exported/foxml/folder">,<full|dc|dc_plus_content_location>,<"/path_to_output_location">]
-    task :run_exam_metadata_collection_for_folder, [:path_to_folder,:scope,:output_location] do |t, args|
+    desc 'extract exam metadata from foxml records to csv file'
+    task :collect_exam_metadata_from_folder, [:path_to_folder,:scope,:output_location] do |t, args|
       args.with_defaults(:output_location => 'tmp')
       c = MigrationCoordinator.new(args[:output_location], 'exam_paper')
       c.collect_metadata_for_whole_folder(args[:path_to_folder], args[:scope])

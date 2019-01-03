@@ -18,7 +18,7 @@ class MigrationCoordinator
 
   # batch csv extraction from a single flat folder containing foxml files only
   # command line call syntax: rake metadata_extraction_tasks:
-  # run_<exam_paper|thesis>_metadata_collection_for _folder[<"/path/to/folder">
+  # collect_<exam_paper|thesis>_metadata_from_folder[<"/path/to/folder">
   # <full|dc|dc_plus_content_location>,<"/path_to_output_location">]
   def collect_metadata_for_whole_folder(folderpath, ds_scope)
     ds_to_collect = get_datastream_scope(ds_scope.strip)
