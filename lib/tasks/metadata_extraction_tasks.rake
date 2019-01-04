@@ -1,6 +1,8 @@
 namespace :metadata_extraction_tasks do
 desc 'extract key dublin core metadata elements from foxml files'
-
+require 'rubygems'
+require 'bundler/setup'
+Bundler.require(:default)
 require_relative '../../lib/migration_coordinator.rb'
 require_relative '../../lib/record_collectors/pid_identifier.rb'
 require_relative '../../lib/record_collectors/exporter.rb'
