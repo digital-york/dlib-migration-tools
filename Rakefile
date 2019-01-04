@@ -13,6 +13,8 @@ task :default do
   puts 'Tasks are defined in lib/tasks/metadata_extraction_tasks.rake'
   puts 'Call tasks using the following syntax '
   puts 'rake  metadata_extraction_tasks:TASK_NAME[<"PARAM_1">,<"PARAM_2">]'
+  puts 'prepend calls to rake tasks with bundle exec to use local gems only'
+  puts 'thus: bundle exec rake metadata_extraction_tasks:TASK_NAME'
   puts 'to see available  tasks and their parameters, run rake --tasks | cat'
   puts 'to see detailed descriptions of tasks and their parameters, '
   puts 'open lib/tasks/metadata_extraction_tasks.rake '
